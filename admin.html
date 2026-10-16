@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<title>Sakinah Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#1b2240;--night-2:#262f55;--night-3:#39436f;
+  --sand:#d9bc8c;--sand-lt:#ecd9b8;--cream:#faf7f2;--paper:#fff;
+  --ink:#232736;--ink-soft:#6b7186;--line:#e6e1d8;
+  --sage:#6f8f6a;--sage-bg:#eaf3e8;--rose:#b4635f;--rose-bg:#fbeceb;
+  --amber:#8a6a20;--amber-bg:#fdf6e7;--radius:10px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--cream);color:var(--ink);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.6;
+  -webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+input,textarea,select{font-family:inherit;font-size:15px}
+.display{font-family:'Cormorant Garamond',Georgia,serif;font-weight:300}
+.wordmark{font-family:'Cormorant Garamond',serif;font-weight:400;letter-spacing:.34em;text-transform:uppercase}
+
+/* gate */
+#gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem;
+  background:radial-gradient(1100px 620px at 50% -12%,var(--night-3) 0%,transparent 62%),var(--night)}
+.gate-card{width:100%;max-width:390px;text-align:center}
+.gate-mark{color:var(--sand);font-size:.72rem;margin-bottom:.5rem}
+.gate-title{font-size:2.3rem;color:#fff;margin:0 0 1.8rem;line-height:1.1}
+.gate-box{background:rgba(255,255,255,.055);border:1px solid rgba(217,188,140,.22);
+  border-radius:var(--radius);padding:1.6rem;text-align:left;backdrop-filter:blur(8px)}
+.gate-box label{display:block;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,.55);margin-bottom:.4rem}
+.gate-box input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);
+  border-radius:6px;padding:.72rem .85rem;color:#fff;margin-bottom:1rem;outline:none}
+.gate-box input:focus{border-color:var(--sand)}
+.btn-primary{width:100%;background:var(--sand);color:var(--night);border:none;border-radius:6px;
+  padding:.82rem;font-weight:600;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase}
+.btn-primary:hover{background:var(--sand-lt)}
+.btn-primary:disabled{opacity:.55;cursor:default}
+.gate-msg{font-size:.8rem;margin-top:.9rem;text-align:center;min-height:1.1rem;color:var(--rose)}
+
+/* shell */
+#app{display:none;min-height:100vh;flex-direction:column}
+.topbar{background:var(--night);color:#fff;padding:0 1.3rem;height:58px;display:flex;
+  align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar .wordmark{color:var(--sand);font-size:.8rem}
+.topbar .tag{font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--night);background:var(--sand);padding:.16rem .5rem;border-radius:3px;
+  margin-left:.7rem;font-weight:600;font-family:'Inter',sans-serif}
+.topbar-right{display:flex;align-items:center;gap:.9rem}
+.who{font-size:.76rem;color:rgba(255,255,255,.6);max-width:30vw;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.btn-ghost{background:none;border:1px solid rgba(255,255,255,.22);color:rgba(255,255,255,.8);
+  border-radius:5px;padding:.34rem .7rem;font-size:.72rem}
+.btn-ghost:hover{border-color:var(--sand);color:var(--sand)}
+
+.tabs{display:flex;background:var(--paper);border-bottom:1px solid var(--line);
+  position:sticky;top:58px;z-index:49;overflow-x:auto}
+.tab{flex:1;min-width:112px;background:none;border:none;padding:.85rem .5rem;font-size:.7rem;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);
+  border-bottom:2px solid transparent;white-space:nowrap}
+.tab.active{color:var(--night);border-bottom-color:var(--sand);font-weight:600}
+.tab .count{display:inline-block;background:var(--rose);color:#fff;border-radius:9px;
+  font-size:.62rem;padding:0 .36rem;margin-left:.3rem;vertical-align:1px}
+
+main{flex:1;width:100%;max-width:980px;margin:0 auto;padding:1.5rem 1.1rem 3rem}
+.view{display:none}
+.view.active{display:block}
+.view-head{margin-bottom:1.2rem;display:flex;justify-content:space-between;
+  align-items:flex-end;gap:1rem;flex-wrap:wrap}
+.view-head h2{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:1.6rem;
+  margin:0 0 .1rem;color:var(--night)}
+.view-head p{margin:0;color:var(--ink-soft);font-size:.84rem}
+
+/* action queue */
+.queue{background:var(--amber-bg);border:1px solid #ecd9b8;border-left:3px solid var(--sand);
+  border-radius:var(--radius);padding:1rem 1.2rem;margin-bottom:1.3rem}
+.queue h3{margin:0 0 .5rem;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
+.queue ul{margin:0;padding-left:1.1rem;font-size:.86rem;color:#6d561f}
+.queue li{margin-bottom:.25rem}
+.queue a{color:#6d561f;cursor:pointer;text-decoration:underline}
+
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+  padding:1.2rem;margin-bottom:.9rem}
+.row{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
+.name{font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:var(--night);margin:0 0 .1rem}
+.meta{font-size:.8rem;color:var(--ink-soft);margin:0}
+.pill{display:inline-block;font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;
+  padding:.24rem .58rem;border-radius:20px;font-weight:600;white-space:nowrap}
+.pill-ok{background:var(--sage-bg);color:#4a6b45}
+.pill-wait{background:var(--amber-bg);color:var(--amber)}
+.pill-off{background:#eee;color:#777}
+.pill-no{background:var(--rose-bg);color:var(--rose)}
+.actions{margin-top:.9rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:6px;
+  padding:.46rem .85rem;font-size:.75rem;font-weight:500}
+.btn:hover{border-color:var(--sand)}
+.btn-go{background:var(--night);color:#fff;border-color:var(--night)}
+.btn-go:hover{background:var(--night-2);border-color:var(--night-2)}
+.btn-key{background:var(--sand);color:var(--night);border-color:var(--sand);font-weight:600}
+.btn-key:hover{background:var(--sand-lt);border-color:var(--sand-lt)}
+.btn-bad{color:var(--rose);border-color:#f0d6d4}
+.btn-bad:hover{background:var(--rose-bg);border-color:var(--rose)}
+.btn:disabled{opacity:.45;cursor:default}
+.detail{margin-top:.9rem;padding-top:.9rem;border-top:1px solid var(--line);
+  font-size:.86rem;display:none}
+.detail.open{display:block}
+.detail dl{display:grid;grid-template-columns:135px 1fr;gap:.35rem .9rem;margin:0}
+.detail dt{color:var(--ink-soft);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase}
+.detail dd{margin:0}
+
+.field{margin-bottom:.9rem}
+.field label{display:block;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);margin-bottom:.32rem}
+.field input,.field select,.field textarea{width:100%;background:var(--cream);
+  border:1px solid var(--line);border-radius:6px;padding:.6rem .75rem;color:var(--ink);outline:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--sand)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+.search{width:100%;background:var(--paper);border:1px solid var(--line);border-radius:8px;
+  padding:.65rem .9rem;margin-bottom:1rem;outline:none}
+.search:focus{border-color:var(--sand)}
+.empty{text-align:center;padding:2.6rem 1.2rem;color:var(--ink-soft)}
+.empty .display{font-size:1.15rem;color:var(--night);margin-bottom:.3rem}
+.empty p{font-size:.85rem;margin:0}
+
+/* chat */
+.thread{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+  padding:1.1rem;height:46vh;min-height:260px;overflow-y:auto;margin-bottom:.8rem}
+.msg{margin-bottom:1rem;display:flex;flex-direction:column;max-width:78%}
+.msg.mine{margin-left:auto;align-items:flex-end}
+.msg-who{font-size:.67rem;letter-spacing:.06em;color:var(--ink-soft);margin-bottom:.2rem}
+.msg-body{padding:.58rem .82rem;border-radius:10px;font-size:.87rem;line-height:1.6;
+  white-space:pre-wrap;word-break:break-word}
+.msg.mine .msg-body{background:var(--night);color:#fff;border-bottom-right-radius:3px}
+.msg.theirs .msg-body{background:var(--cream);border:1px solid var(--line);border-bottom-left-radius:3px}
+.msg.wali .msg-body{background:var(--amber-bg);border:1px solid #ecd9b8;color:#6d561f}
+.msg-time{font-size:.65rem;color:var(--ink-soft);margin-top:.18rem}
+.composer{display:flex;gap:.6rem;align-items:flex-end}
+.composer textarea{flex:1;background:var(--paper);border:1px solid var(--line);border-radius:8px;
+  padding:.68rem .82rem;resize:none;min-height:46px;max-height:140px;outline:none;line-height:1.5}
+.composer textarea:focus{border-color:var(--sand)}
+.composer button{background:var(--night);color:#fff;border:none;border-radius:8px;
+  padding:.72rem 1.2rem;font-size:.75rem;letter-spacing:.07em;text-transform:uppercase;
+  font-weight:600;flex-shrink:0}
+.composer button:disabled{opacity:.45;cursor:default}
+.back{background:none;border:1px solid var(--line);border-radius:5px;padding:.34rem .7rem;
+  font-size:.74rem;color:var(--ink-soft);margin-bottom:.9rem}
+.back:hover{border-color:var(--sand);color:var(--night)}
+
+.toast{position:fixed;left:50%;bottom:1.6rem;transform:translateX(-50%) translateY(140%);
+  background:var(--night);color:#fff;padding:.75rem 1.3rem;border-radius:7px;font-size:.84rem;
+  box-shadow:0 10px 30px rgba(27,34,64,.28);transition:transform .3s cubic-bezier(.3,1.2,.5,1);
+  z-index:200;max-width:88vw;text-align:center}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.bad{background:var(--rose)}
+#loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  background:var(--night);color:var(--sand);z-index:300;font-family:'Cormorant Garamond',serif;
+  letter-spacing:.3em;text-transform:uppercase;font-size:.78rem}
+@media(max-width:600px){
+  .grid-2{grid-template-columns:1fr}
+  .detail dl{grid-template-columns:1fr;gap:.15rem}
+  .detail dt{margin-top:.5rem}
+  main{padding:1.1rem .85rem 2.4rem}
+  .msg{max-width:88%}
+  .who{display:none}
+}
+</style>
+</head>
+<body>
+
+<div id="loading">Sakinah Admin</div>
+
+<script>
+window.__sakinahBoot = false;
+setTimeout(function(){
+  if (window.__sakinahBoot) return;
+  var el = document.getElementById('loading');
+  if (!el || el.style.display === 'none') return;
+  el.innerHTML = '<div style="max-width:400px;text-align:center;line-height:2;letter-spacing:normal;'
+    + 'text-transform:none;font-size:.95rem"><strong style="letter-spacing:.2em">SAKINAH ADMIN</strong>'
+    + '<br><br>This page couldn\'t finish loading.<br>Check your connection and refresh.</div>';
+}, 8000);
+</script>
+
+<!-- ───────── GATE ───────── -->
+<div id="gate" style="display:none">
+  <div class="gate-card">
+    <div class="wordmark gate-mark">Sakinah</div>
+    <h1 class="display gate-title">Admin</h1>
+    <div class="gate-box">
+      <label>Email</label>
+      <input type="email" id="g-email" placeholder="you@email.com" autocomplete="email"/>
+      <label>Password</label>
+      <input type="password" id="g-pass" placeholder="••••••••" autocomplete="current-password"/>
+      <button class="btn-primary" id="g-btn">Sign In</button>
+      <div class="gate-msg" id="g-msg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ───────── APP ───────── -->
+<div id="app">
+  <div class="topbar">
+    <span><span class="wordmark">Sakinah</span><span class="tag">Admin</span></span>
+    <div class="topbar-right">
+      <span class="who" id="who"></span>
+      <button class="btn-ghost" id="btn-signout">Sign out</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-view="members">Members <span id="c-members"></span></button>
+    <button class="tab" data-view="matches">Matches <span id="c-matches"></span></button>
+    <button class="tab" data-view="convos">Conversations</button>
+  </div>
+
+  <main>
+    <section class="view active" id="view-members">
+      <div class="view-head">
+        <div>
+          <h2>Members</h2>
+          <p>Verify an account once you've checked it against your registrations.</p>
+        </div>
+      </div>
+      <div id="queue"></div>
+      <input class="search" id="m-search" placeholder="Search by name, email or city…"/>
+      <div id="members-list"></div>
+    </section>
+
+    <section class="view" id="view-matches">
+      <div class="view-head">
+        <div>
+          <h2>Matches</h2>
+          <p>Propose a pairing. Neither side sees the other until they both ask.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="grid-2">
+          <div class="field">
+            <label>First member</label>
+            <select id="new-a"></select>
+          </div>
+          <div class="field">
+            <label>Second member</label>
+            <select id="new-b"></select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Private note (only you see this)</label>
+          <input type="text" id="new-note" placeholder="e.g. both Sydney, similar age, compatible on relocation"/>
+        </div>
+        <button class="btn btn-key" id="new-match">Create match</button>
+      </div>
+      <div id="matches-list"></div>
+    </section>
+
+    <section class="view" id="view-convos">
+      <div class="view-head">
+        <div>
+          <h2>Conversations</h2>
+          <p>You are a participant in every one of these.</p>
+        </div>
+      </div>
+      <div id="convos-list"></div>
+    </section>
+
+    <section class="view" id="view-chat">
+      <button class="back" id="chat-back">← Back</button>
+      <div class="view-head">
+        <div>
+          <h2 id="chat-title">—</h2>
+          <p id="chat-sub"></p>
+        </div>
+      </div>
+      <div class="card" style="padding:.9rem 1.1rem">
+        <div class="actions" style="margin-top:0">
+          <input id="wali-email" placeholder="Wali's email address"
+                 style="flex:1;min-width:180px;background:var(--cream);border:1px solid var(--line);
+                        border-radius:6px;padding:.46rem .7rem;outline:none;font-size:.82rem"/>
+          <button class="btn" id="add-wali">Add wali</button>
+          <button class="btn btn-bad" id="toggle-convo">Close conversation</button>
+        </div>
+      </div>
+      <div class="thread" id="thread"></div>
+      <div class="composer">
+        <textarea id="composer-text" placeholder="Write as the Nikkah Pathways team…" rows="1"></textarea>
+        <button id="composer-send">Send</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { createClient }
+  from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.0/+esm";
+
+const SUPABASE_URL = "https://gejqqyilfuaunfinqjit.supabase.co";
+const SUPABASE_KEY = "sb_publishable__Rv3o5oq2TWtbuvtOyTUBQ_B2r_qIER";
+
+window.__sakinahBoot = true;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+});
+
+let ME = null, MEMBERS = [], MATCHES = [], CONVOS = [], PARTS = [];
+let currentConvo = null, msgChannel = null, pollTimer = null, MSGS = [];
+
+function toast(msg, bad){
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (bad ? ' bad' : '');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.className = 'toast' + (bad ? ' bad' : ''), 3600);
+}
+const fmt = ts => {
+  if (!ts) return '';
+  const d = new Date(ts); if (isNaN(d)) return '';
+  const today = d.toDateString() === new Date().toDateString();
+  return today ? d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})
+               : d.toLocaleDateString([], {day:'numeric',month:'short'}) + ', ' +
+                 d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
+};
+function friendly(e){
+  if (!e) return 'Something went wrong.';
+  const m = (e.message || '').toLowerCase();
+  if (m.includes('invalid login credentials')) return 'That email and password don\'t match.';
+  if (m.includes('duplicate key') || m.includes('matches_unique_pair'))
+    return 'Those two are already matched with each other.';
+  if (m.includes('only an admin')) return 'Your account isn\'t an admin.';
+  if (m.includes('different_people')) return 'Pick two different people.';
+  if (m.includes('failed to fetch')) return 'Network problem — check your connection.';
+  return e.message || 'Something went wrong.';
+}
+
+// ───────── auth ─────────
+$('g-btn').onclick = async () => {
+  const email = $('g-email').value.trim(), pass = $('g-pass').value;
+  if (!email || !pass) { $('g-msg').textContent = 'Enter your email and password.'; return; }
+  $('g-btn').disabled = true; $('g-btn').textContent = 'Please wait…';
+  const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+  if (error) {
+    $('g-msg').textContent = friendly(error);
+    $('g-btn').disabled = false; $('g-btn').textContent = 'Sign In';
+  }
+};
+$('g-pass').addEventListener('keydown', e => { if (e.key === 'Enter') $('g-btn').click(); });
+$('btn-signout').onclick = async () => { teardown(); await supabase.auth.signOut(); };
+
+let routedUid;
+supabase.auth.onAuthStateChange((ev, s) => {
+  if (ev === 'TOKEN_REFRESHED') { if (s) supabase.realtime.setAuth(s.access_token); return; }
+  route(s);
+});
+(async () => route((await supabase.auth.getSession()).data.session))();
+
+function showGate(msg){
+  $('app').style.display = 'none';
+  $('gate').style.display = 'flex';
+  $('g-btn').disabled = false; $('g-btn').textContent = 'Sign In';
+  $('g-pass').value = '';
+  $('g-msg').textContent = msg || '';
+}
+
+async function route(session){
+  const uid = session?.user?.id || null;
+  if (uid === routedUid) return;
+  routedUid = uid;
+  $('loading').style.display = 'none';
+
+  if (!uid) { ME = null; teardown(); showGate(); return; }
+
+  // Being signed in is not the same as being an admin. The admins table is
+  // the authority, and nothing here can write to it.
+  const { data: admin } = await supabase
+    .from('admins').select('id').eq('id', uid).maybeSingle();
+
+  if (!admin) {
+    routedUid = undefined;
+    await supabase.auth.signOut();
+    showGate('That account isn\'t an admin.');
+    return;
+  }
+
+  ME = session.user;
+  supabase.realtime.setAuth(session.access_token);
+  $('gate').style.display = 'none';
+  $('app').style.display = 'flex';
+  $('who').textContent = ME.email;
+  await loadAll();
+  showView('members');
+}
+
+// ───────── data ─────────
+async function loadAll(){
+  const [m, mt, cv, pt] = await Promise.all([
+    supabase.rpc('admin_members'),
+    supabase.from('matches').select('*').order('created_at', { ascending:false }),
+    supabase.from('conversations').select('*').order('last_message_at', { ascending:false, nullsFirst:false }),
+    supabase.from('conversation_participants').select('*')
+  ]);
+  if (m.error)  { toast('Could not load members: ' + friendly(m.error), true); return; }
+  MEMBERS = m.data || []; MATCHES = mt.data || [];
+  CONVOS  = cv.data || []; PARTS  = pt.data || [];
+  paintCounts();
+}
+
+const byId = id => MEMBERS.find(x => x.id === id);
+const nameOf = id => byId(id)?.name || 'Unknown';
+
+function paintCounts(){
+  // Walis aren't candidates, so they never belong in the verification queue.
+  const unver = MEMBERS.filter(m => !m.verified && m.kind !== 'wali').length;
+  const ready = MATCHES.filter(m => (m.intro_requested_by||[]).length >= 2 && !m.conversation_id).length;
+  $('c-members').innerHTML = unver  ? `<span class="count">${unver}</span>` : '';
+  $('c-matches').innerHTML = ready  ? `<span class="count">${ready}</span>` : '';
+
+  const jobs = [];
+  if (unver) jobs.push(`<li><a data-jump="members">${unver} member${unver>1?'s':''} waiting to be verified</a></li>`);
+  if (ready) jobs.push(`<li><a data-jump="matches">${ready} match${ready>1?'es':''} where both sides have asked for an introduction</a></li>`);
+  $('queue').innerHTML = jobs.length
+    ? `<div class="queue"><h3>Needs you</h3><ul>${jobs.join('')}</ul></div>` : '';
+  $('queue').querySelectorAll('[data-jump]').forEach(a => a.onclick = () => showView(a.dataset.jump));
+}
+
+// ───────── routing ─────────
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => showView(t.dataset.view));
+function showView(name){
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  $('view-' + name).classList.add('active');
+  const lit = name === 'chat' ? 'convos' : name;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.view === lit));
+  window.scrollTo(0,0);
+  if (name === 'members') paintMembers();
+  if (name === 'matches') { paintPickers(); paintMatches(); }
+  if (name === 'convos')  paintConvos();
+}
+function teardown(){
+  if (msgChannel) { supabase.removeChannel(msgChannel); msgChannel = null; }
+  if (pollTimer)  { clearInterval(pollTimer); pollTimer = null; }
+  currentConvo = null; MSGS = [];
+}
+$('chat-back').onclick = () => { teardown(); showView('convos'); };
+
+// ───────── members ─────────
+$('m-search').oninput = () => paintMembers();
+
+function paintMembers(){
+  const q = $('m-search').value.trim().toLowerCase();
+  const rows = MEMBERS.filter(m => !q ||
+    [m.name, m.email, m.city].filter(Boolean).join(' ').toLowerCase().includes(q));
+
+  if (!rows.length) {
+    $('members-list').innerHTML = `<div class="empty"><div class="display">No members${q?' match that':' yet'}</div>
+      <p>${q ? 'Try a different search.' : 'They appear here as soon as someone signs up.'}</p></div>`;
+    return;
+  }
+
+  $('members-list').innerHTML = rows.map(m => {
+    const wali = m.kind === 'wali';
+    const pill = wali ? '<span class="pill pill-off">Wali / guardian</span>'
+      : !m.verified ? '<span class="pill pill-wait">Unverified</span>'
+      : m.status === 'paused' ? '<span class="pill pill-off">Paused</span>'
+      : '<span class="pill pill-ok">Active</span>';
+    const meta = [m.age, m.gender, m.city, m.occupation].filter(Boolean).map(esc).join(' · ');
+    return `<div class="card">
+      <div class="row">
+        <div style="min-width:0">
+          <h3 class="name">${esc(m.name || '(no name yet)')}</h3>
+          <p class="meta">${esc(m.email || '')}${meta ? ' — ' + meta : ''}</p>
+        </div>${pill}
+      </div>
+      <div class="actions">
+        ${wali ? '' : `<button class="btn ${m.verified ? '' : 'btn-key'}" data-verify="${esc(m.id)}">
+          ${m.verified ? 'Unverify' : 'Verify'}</button>
+        <button class="btn" data-pause="${esc(m.id)}">${m.status === 'paused' ? 'Un-pause' : 'Pause'}</button>`}
+        <button class="btn" data-open="${esc(m.id)}">Details</button>
+        <button class="btn" data-kind="${esc(m.id)}">${wali ? 'Treat as member' : 'Mark as wali'}</button>
+        ${wali ? '' : `<span class="meta">${m.match_count || 0} match${m.match_count === 1 ? '' : 'es'}</span>`}
+      </div>
+      <div class="detail" id="d-${esc(m.id)}">
+        <dl>
+          <dt>Education</dt><dd>${esc(m.education || '—')}</dd>
+          <dt>Languages</dt><dd>${esc(m.languages || '—')}</dd>
+          <dt>About</dt><dd>${esc(m.bio || '—')}</dd>
+          <dt>Looking for</dt><dd>${esc(m.looking_for || '—')}</dd>
+          <dt>Joined</dt><dd>${fmt(m.created_at)}</dd>
+        </dl>
+      </div>
+    </div>`;
+  }).join('');
+
+  $('members-list').querySelectorAll('[data-open]').forEach(b =>
+    b.onclick = () => $('d-' + b.dataset.open).classList.toggle('open'));
+
+  $('members-list').querySelectorAll('[data-verify]').forEach(b => b.onclick = async () => {
+    const m = byId(b.dataset.verify);
+    b.disabled = true;
+    const { error } = await supabase.from('profiles')
+      .update({ verified: !m.verified }).eq('id', m.id);
+    if (error) { toast(friendly(error), true); b.disabled = false; return; }
+    m.verified = !m.verified;
+    toast(m.verified ? `✓ ${m.name} verified` : `${m.name} is no longer verified`);
+    paintCounts(); paintMembers();
+  });
+
+  $('members-list').querySelectorAll('[data-kind]').forEach(b => b.onclick = async () => {
+    const m = byId(b.dataset.kind);
+    const next = m.kind === 'wali' ? 'member' : 'wali';
+    b.disabled = true;
+    const { error } = await supabase.from('profiles').update({ kind: next }).eq('id', m.id);
+    if (error) { toast(friendly(error), true); b.disabled = false; return; }
+    m.kind = next;
+    toast(next === 'wali'
+      ? `${m.name} marked as a wali — they won't appear as a match`
+      : `${m.name} is back in the matching pool`);
+    paintCounts(); paintMembers();
+  });
+
+  $('members-list').querySelectorAll('[data-pause]').forEach(b => b.onclick = async () => {
+    const m = byId(b.dataset.pause);
+    const next = m.status === 'paused' ? 'active' : 'paused';
+    b.disabled = true;
+    const { error } = await supabase.from('profiles').update({ status: next }).eq('id', m.id);
+    if (error) { toast(friendly(error), true); b.disabled = false; return; }
+    m.status = next;
+    toast(`${m.name} is now ${next}`);
+    paintMembers();
+  });
+}
+
+// ───────── matches ─────────
+function paintPickers(){
+  // Only verified, active members can be matched — that is the whole point
+  // of verifying.
+  const pool = MEMBERS.filter(m => m.verified && m.status !== 'paused' && m.kind !== 'wali');
+  const opts = sel => '<option value="">— choose —</option>' + pool.map(m =>
+    `<option value="${esc(m.id)}">${esc(m.name || m.email)}${m.city ? ' (' + esc(m.city) + ')' : ''}</option>`).join('');
+  const a = $('new-a'), b = $('new-b');
+  const keepA = a.value, keepB = b.value;
+  a.innerHTML = opts(); b.innerHTML = opts();
+  a.value = keepA; b.value = keepB;
+  if (!pool.length) {
+    a.innerHTML = b.innerHTML = '<option value="">No verified members yet</option>';
+  }
+}
+
+$('new-match').onclick = async () => {
+  const a = $('new-a').value, b = $('new-b').value;
+  if (!a || !b)  return toast('Choose two members.', true);
+  if (a === b)   return toast('Pick two different people.', true);
+  const btn = $('new-match'); btn.disabled = true;
+  const { error } = await supabase.from('matches').insert({
+    member_a: a, member_b: b, note: $('new-note').value.trim()
+  });
+  btn.disabled = false;
+  if (error) return toast(friendly(error), true);
+  $('new-note').value = ''; $('new-a').value = ''; $('new-b').value = '';
+  toast('✓ Match created — both will be told they have a new match');
+  await loadAll(); paintMatches();
+};
+
+function paintMatches(){
+  if (!MATCHES.length) {
+    $('matches-list').innerHTML = `<div class="empty"><div class="display">No matches yet</div>
+      <p>Create one above once you have two verified members.</p></div>`;
+    return;
+  }
+  $('matches-list').innerHTML = MATCHES.map(m => {
+    const asked = (m.intro_requested_by || []).length;
+    const both  = asked >= 2;
+    let pill, note, action = '';
+    if (m.conversation_id) {
+      pill = '<span class="pill pill-ok">Conversation open</span>';
+      note = 'Talking now.';
+      action = `<button class="btn" data-goconvo="${esc(m.conversation_id)}">Open conversation</button>`;
+    } else if (both) {
+      pill = '<span class="pill pill-wait">Both asked</span>';
+      note = 'Both have requested an introduction.';
+      action = `<button class="btn btn-key" data-openconvo="${esc(m.id)}">Open conversation</button>`;
+    } else if (asked === 1) {
+      pill = '<span class="pill pill-wait">One asked</span>';
+      note = `${esc(nameOf(m.intro_requested_by[0]))} has asked. Waiting on the other.`;
+    } else {
+      pill = '<span class="pill pill-off">Proposed</span>';
+      note = 'Neither has responded yet.';
+    }
+    return `<div class="card">
+      <div class="row">
+        <div style="min-width:0">
+          <h3 class="name">${esc(nameOf(m.member_a))} &amp; ${esc(nameOf(m.member_b))}</h3>
+          <p class="meta">${note}${m.note ? ' — <em>' + esc(m.note) + '</em>' : ''}</p>
+        </div>${pill}
+      </div>
+      <div class="actions">
+        ${action}
+        <button class="btn btn-bad" data-decline="${esc(m.id)}">Remove</button>
+        <span class="meta">${fmt(m.created_at)}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  $('matches-list').querySelectorAll('[data-openconvo]').forEach(b => b.onclick = async () => {
+    b.disabled = true; b.textContent = 'Opening…';
+    const { data, error } = await supabase.rpc('open_conversation', { p_match_id: b.dataset.openconvo });
+    if (error) { toast(friendly(error), true); b.disabled = false; b.textContent = 'Open conversation'; return; }
+    toast('✓ Conversation opened — both members have been told');
+    await loadAll(); showView('convos');
+    const c = CONVOS.find(c => c.id === data);
+    if (c) openChat(c);
+  });
+
+  $('matches-list').querySelectorAll('[data-goconvo]').forEach(b => b.onclick = () => {
+    const c = CONVOS.find(c => c.id === b.dataset.goconvo);
+    if (c) { showView('convos'); openChat(c); } else toast('That conversation has been deleted.', true);
+  });
+
+  $('matches-list').querySelectorAll('[data-decline]').forEach(b => b.onclick = async () => {
+    if (!confirm('Remove this match? They will no longer see each other.')) return;
+    b.disabled = true;
+    const { error } = await supabase.from('matches').delete().eq('id', b.dataset.decline);
+    if (error) { toast(friendly(error), true); b.disabled = false; return; }
+    toast('Match removed');
+    await loadAll(); paintMatches();
+  });
+}
+
+// ───────── conversations ─────────
+const partsOf = cid => PARTS.filter(p => p.conversation_id === cid);
+
+function paintConvos(){
+  if (!CONVOS.length) {
+    $('convos-list').innerHTML = `<div class="empty"><div class="display">No conversations yet</div>
+      <p>Open one from a match where both sides have asked.</p></div>`;
+    return;
+  }
+  $('convos-list').innerHTML = CONVOS.map(c => {
+    const ps = partsOf(c.id);
+    const members = ps.filter(p => p.role === 'member').map(p => nameOf(p.user_id));
+    const extra = ps.filter(p => p.role === 'wali').map(p => nameOf(p.user_id));
+    return `<div class="card" style="cursor:pointer" data-convo="${esc(c.id)}">
+      <div class="row">
+        <div style="min-width:0">
+          <h3 class="name">${esc(members.join(' & ') || 'Conversation')}</h3>
+          <p class="meta">${esc(c.last_message_preview || 'No messages yet')}</p>
+          ${extra.length ? `<p class="meta">Wali present: ${esc(extra.join(', '))}</p>` : ''}
+        </div>
+        ${c.status === 'closed' ? '<span class="pill pill-no">Closed</span>'
+                                : '<span class="pill pill-ok">Open</span>'}
+      </div>
+    </div>`;
+  }).join('');
+  $('convos-list').querySelectorAll('[data-convo]').forEach(el =>
+    el.onclick = () => openChat(CONVOS.find(c => c.id === el.dataset.convo)));
+}
+
+function renderThread(){
+  const t = $('thread');
+  if (!MSGS.length) { t.innerHTML = '<div class="empty"><p>No messages yet.</p></div>'; return; }
+  const bottom = t.scrollHeight - t.scrollTop - t.clientHeight < 60;
+  t.innerHTML = MSGS.map(m => {
+    const mine = m.sender_id === ME.id;
+    const cls = mine ? 'mine' : (m.sender_role === 'wali' ? 'theirs wali' : 'theirs');
+    const tag = m.sender_role === 'wali' ? ' · Wali' : (m.sender_role === 'admin' && !mine ? ' · Team' : '');
+    return `<div class="msg ${cls}">
+      <span class="msg-who">${mine ? 'You' : esc(m.sender_name || 'Member')}${tag}</span>
+      <div class="msg-body">${esc(m.body)}</div>
+      <span class="msg-time">${fmt(m.created_at)}</span>
+    </div>`;
+  }).join('');
+  if (bottom) t.scrollTop = t.scrollHeight;
+}
+function merge(incoming){
+  const seen = new Set(MSGS.map(m => m.id));
+  let added = false;
+  for (const m of incoming) if (!seen.has(m.id)) { MSGS.push(m); seen.add(m.id); added = true; }
+  if (added) { MSGS.sort((a,b) => new Date(a.created_at) - new Date(b.created_at)); renderThread(); }
+}
+async function fetchMessages(){
+  const { data, error } = await supabase.from('messages')
+    .select('id,sender_id,sender_name,sender_role,body,created_at')
+    .eq('conversation_id', currentConvo.id).order('created_at', { ascending:true });
+  if (error) return false;
+  merge(data); return true;
+}
+
+async function openChat(c){
+  if (!c) return;
+  teardown();
+  currentConvo = c;
+  showView('chat');
+
+  const ps = partsOf(c.id);
+  const members = ps.filter(p => p.role === 'member').map(p => nameOf(p.user_id));
+  const others  = ps.filter(p => p.role !== 'member').map(p => nameOf(p.user_id) + ' (' + p.role + ')');
+  $('chat-title').textContent = members.join(' & ') || 'Conversation';
+  $('chat-sub').textContent = 'Also present: ' + (others.join(', ') || 'just you');
+
+  const closed = c.status === 'closed';
+  $('toggle-convo').textContent = closed ? 'Reopen conversation' : 'Close conversation';
+  $('toggle-convo').className = 'btn ' + (closed ? '' : 'btn-bad');
+  $('composer-text').disabled = closed;
+  $('composer-send').disabled = closed;
+  $('composer-text').placeholder = closed
+    ? 'Reopen the conversation to write.' : 'Write as the Nikkah Pathways team…';
+
+  $('thread').innerHTML = '<div class="empty"><p>Loading…</p></div>';
+  MSGS = [];
+  if (!await fetchMessages()) {
+    $('thread').innerHTML = '<div class="empty"><p>Couldn\'t load this conversation.</p></div>';
+    return;
+  }
+  renderThread(); $('thread').scrollTop = $('thread').scrollHeight;
+
+  const id = c.id;
+  msgChannel = supabase.channel('admin:convo:' + id)
+    .on('postgres_changes', { event:'INSERT', schema:'public', table:'messages',
+                              filter:'conversation_id=eq.' + id },
+        p => { if (currentConvo?.id === id) merge([p.new]); })
+    .subscribe();
+  pollTimer = setInterval(() => { if (currentConvo?.id === id) fetchMessages(); }, 12000);
+}
+
+$('toggle-convo').onclick = async () => {
+  if (!currentConvo) return;
+  const next = currentConvo.status === 'closed' ? 'open' : 'closed';
+  const b = $('toggle-convo'); b.disabled = true;
+  const { error } = await supabase.from('conversations')
+    .update({ status: next }).eq('id', currentConvo.id);
+  b.disabled = false;
+  if (error) return toast(friendly(error), true);
+  currentConvo.status = next;
+  toast(next === 'closed' ? 'Conversation closed' : 'Conversation reopened');
+  await loadAll();
+  openChat(CONVOS.find(c => c.id === currentConvo.id) || currentConvo);
+};
+
+$('add-wali').onclick = async () => {
+  const email = $('wali-email').value.trim();
+  if (!email || !currentConvo) return toast('Enter the wali\'s email address.', true);
+  const b = $('add-wali'); b.disabled = true;
+  const { data, error } = await supabase.rpc('add_participant',
+    { p_convo: currentConvo.id, p_email: email, p_role: 'wali' });
+  b.disabled = false;
+  if (error) return toast(friendly(error), true);
+  $('wali-email').value = '';
+  toast(`✓ ${data} added as wali`);
+  await loadAll();
+  openChat(CONVOS.find(c => c.id === currentConvo.id) || currentConvo);
+};
+
+const composer = $('composer-text');
+composer.addEventListener('input', () => {
+  composer.style.height = 'auto';
+  composer.style.height = Math.min(composer.scrollHeight, 140) + 'px';
+});
+composer.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('composer-send').click(); }
+});
+
+$('composer-send').onclick = async () => {
+  const text = composer.value.trim();
+  if (!text || !currentConvo) return;
+  const b = $('composer-send'); b.disabled = true;
+  // sender_name and sender_role are stamped by the database from the
+  // participants table, so what's sent here is only a fallback.
+  const { data, error } = await supabase.from('messages').insert({
+    conversation_id: currentConvo.id, sender_id: ME.id,
+    sender_name: 'Nikkah Pathways', sender_role: 'admin', body: text
+  }).select().maybeSingle();
+  b.disabled = false;
+  if (error) return toast('Could not send: ' + friendly(error), true);
+  composer.value = ''; composer.style.height = 'auto';
+  if (data) merge([data]);
+  supabase.rpc('touch_conversation', { p_convo: currentConvo.id, p_preview: text })
+    .then(() => {}, () => {});
+};
+</script>
+</body>
+</html>
