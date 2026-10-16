@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<title>Sakinah — One-Time Setup</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--night:#1b2240;--night-3:#39436f;--sand:#d9bc8c;--sand-lt:#ecd9b8;--rose:#b4635f;--sage:#8fbf86}
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:1.5rem;font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.65;
+  background:radial-gradient(1100px 620px at 50% -12%,var(--night-3) 0%,transparent 62%),var(--night);
+  color:#fff;
+}
+.wrap{width:100%;max-width:480px}
+h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:2.3rem;margin:0 0 .2rem;text-align:center}
+.sub{text-align:center;color:rgba(255,255,255,.5);font-size:.84rem;margin:0 0 1.8rem}
+.box{
+  background:rgba(255,255,255,.055);border:1px solid rgba(217,188,140,.22);
+  border-radius:10px;padding:1.6rem;backdrop-filter:blur(8px);
+}
+label{display:block;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,.55);margin-bottom:.4rem}
+input{
+  width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);
+  border-radius:6px;padding:.72rem .85rem;color:#fff;margin-bottom:1rem;outline:none;
+  font-family:inherit;font-size:15px;
+}
+input:focus{border-color:var(--sand)}
+input::placeholder{color:rgba(255,255,255,.3)}
+button{
+  width:100%;background:var(--sand);color:var(--night);border:none;border-radius:6px;
+  padding:.82rem;font-weight:600;font-size:.82rem;letter-spacing:.1em;
+  text-transform:uppercase;cursor:pointer;font-family:inherit;transition:background .18s;
+}
+button:hover{background:var(--sand-lt)}
+button:disabled{opacity:.5;cursor:default}
+.alt{background:none;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.75);margin-top:.7rem}
+.alt:hover{background:rgba(255,255,255,.07)}
+.msg{margin-top:1rem;font-size:.84rem;line-height:1.7;min-height:1.2rem}
+.msg.err{color:var(--rose)}
+.msg.ok{color:var(--sage)}
+.step{
+  margin-top:1.3rem;padding-top:1.3rem;border-top:1px solid rgba(255,255,255,.1);
+  font-size:.84rem;color:rgba(255,255,255,.65);line-height:1.8;
+}
+.step strong{color:var(--sand-lt)}
+code{
+  background:rgba(0,0,0,.3);padding:.15rem .4rem;border-radius:3px;
+  font-size:.8rem;word-break:break-all;color:var(--sand-lt);
+}
+.warn{
+  margin-top:1.4rem;font-size:.78rem;color:rgba(255,255,255,.45);
+  text-align:center;line-height:1.7;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Setup</h1>
+  <p class="sub">One-time — creates your admin account for Sakinah</p>
+
+  <div class="box">
+    <label>Your email</label>
+    <input type="email" id="email" placeholder="admin@nikkahpathways.com.au" autocomplete="email"/>
+    <label>Password</label>
+    <input type="password" id="pass" placeholder="Choose a strong password" autocomplete="new-password"/>
+
+    <button id="go">Create Admin Account</button>
+    <button class="alt" id="existing">I already have an account — just make me admin</button>
+
+    <div class="msg" id="msg"></div>
+    <div class="step" id="next" style="display:none"></div>
+  </div>
+
+  <p class="warn">
+    This page can only ever create the <em>first</em> admin. Once one exists it
+    refuses to run — so it can't be used against you later. Delete it from the
+    site once you're done anyway.
+  </p>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, getDocs, doc, setDoc, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyBvH4U4lnKK5nmTkILlYYs2ZJdK3pkmsG8",
+  authDomain: "nikkah-pathways.firebaseapp.com",
+  projectId: "nikkah-pathways",
+  storageBucket: "nikkah-pathways.firebasestorage.app",
+  messagingSenderId: "253123587587",
+  appId: "1:253123587587:web:8829c5dcce9a78aeb3e836"
+});
+const auth = getAuth(app);
+const db   = getFirestore(app, "nikkahpathways");
+
+const $ = id => document.getElementById(id);
+const say = (text, kind='') => { const m = $('msg'); m.className = 'msg ' + kind; m.innerHTML = text; };
+
+function friendly(e){
+  const map = {
+    'auth/email-already-in-use':'An account already exists with that email — use the second button instead.',
+    'auth/weak-password':'Password must be at least 6 characters.',
+    'auth/invalid-email':'That email address doesn\'t look right.',
+    'auth/wrong-password':'Incorrect password.',
+    'auth/invalid-credential':'That email and password don\'t match.',
+    'auth/user-not-found':'No account with that email — use the first button to create one.',
+    'auth/operation-not-allowed':'Email/password sign-in isn\'t switched on yet. In Firebase Console → Authentication → Sign-in method, enable <strong>Email/Password</strong>, then try again.',
+    'permission-denied':'Firestore refused the write. If you\'ve already published the new security rules, this page can no longer run — add the admin document from the Firebase console instead.'
+  };
+  return map[e.code] || (e.code ? e.code + ' — ' + e.message : e.message);
+}
+
+// Bootstrap guard: this may only ever create the FIRST admin.
+async function adminsExist(){
+  const snap = await getDocs(collection(db, 'admins'));
+  return !snap.empty;
+}
+
+async function run(mode){
+  const email = $('email').value.trim();
+  const pass  = $('pass').value;
+  if (!email || !pass) return say('Enter your email and password first.', 'err');
+
+  $('go').disabled = true; $('existing').disabled = true;
+  say('Working…');
+
+  try {
+    if (await adminsExist()) {
+      say('An admin already exists, so this page has locked itself. ' +
+          'Any further admins must be added from the Firebase console.', 'err');
+      return;
+    }
+
+    const cred = mode === 'create'
+      ? await createUserWithEmailAndPassword(auth, email, pass)
+      : await signInWithEmailAndPassword(auth, email, pass);
+
+    const uid = cred.user.uid;
+
+    await setDoc(doc(db, 'admins', uid), {
+      email,
+      created_at: serverTimestamp(),
+      note: 'Bootstrapped via setup.html'
+    });
+
+    say('✓ Done — you are now an admin.', 'ok');
+    $('next').style.display = 'block';
+    $('next').innerHTML =
+      `<strong>Your UID:</strong> <code>${uid}</code><br><br>
+       <strong>What's left:</strong><br>
+       1. Publish <code>firestore.rules</code> in Firebase Console → Firestore → Rules.<br>
+       2. Delete this page from your site.<br><br>
+       Keep that UID somewhere safe — it's your admin identity if you ever need
+       to check it in the console.`;
+  } catch(e){
+    say(friendly(e), 'err');
+    $('go').disabled = false; $('existing').disabled = false;
+  }
+}
+
+$('go').onclick       = () => run('create');
+$('existing').onclick = () => run('signin');
+$('pass').addEventListener('keydown', e => { if (e.key === 'Enter') $('go').click(); });
+</script>
+</body>
+</html>
