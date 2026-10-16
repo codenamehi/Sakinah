@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<title>Sakinah — by Nikkah Pathways</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#1b2240;        /* deep calm indigo */
+  --night-2:#262f55;
+  --night-3:#39436f;
+  --sand:#d9bc8c;         /* warm champagne */
+  --sand-lt:#ecd9b8;
+  --cream:#faf7f2;
+  --paper:#ffffff;
+  --ink:#232736;
+  --ink-soft:#6b7186;
+  --line:#e6e1d8;
+  --sage:#6f8f6a;
+  --rose:#b4635f;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--cream);
+  color:var(--ink);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  font-size:15px;line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit;cursor:pointer}
+input,textarea,select{font-family:inherit;font-size:15px}
+
+/* ── typography ── */
+.display{font-family:'Cormorant Garamond',Georgia,serif;font-weight:300;letter-spacing:.02em}
+.wordmark{font-family:'Cormorant Garamond',serif;font-weight:400;letter-spacing:.34em;text-transform:uppercase}
+
+/* ── auth gate ── */
+#gate{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:1.5rem;
+  background:
+    radial-gradient(1100px 620px at 50% -12%, var(--night-3) 0%, transparent 62%),
+    var(--night);
+}
+.gate-card{width:100%;max-width:400px;text-align:center}
+.gate-mark{color:var(--sand);font-size:.74rem;margin-bottom:.5rem}
+.gate-title{font-size:2.6rem;color:#fff;margin:0 0 .3rem;line-height:1.1}
+.gate-verse{
+  color:rgba(255,255,255,.52);font-size:.82rem;font-style:italic;
+  margin:0 auto 2.2rem;max-width:300px;line-height:1.7;
+}
+.gate-box{
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(217,188,140,.22);
+  border-radius:var(--radius);padding:1.6rem;text-align:left;
+  backdrop-filter:blur(8px);
+}
+.gate-box label{
+  display:block;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,.55);margin-bottom:.4rem;
+}
+.gate-box input{
+  width:100%;background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.14);border-radius:6px;
+  padding:.72rem .85rem;color:#fff;margin-bottom:1rem;outline:none;
+  transition:border-color .18s;
+}
+.gate-box input:focus{border-color:var(--sand)}
+.gate-box input::placeholder{color:rgba(255,255,255,.3)}
+.btn-primary{
+  width:100%;background:var(--sand);color:var(--night);border:none;
+  border-radius:6px;padding:.82rem;font-weight:600;font-size:.82rem;
+  letter-spacing:.1em;text-transform:uppercase;transition:background .18s;
+}
+.btn-primary:hover{background:var(--sand-lt)}
+.btn-primary:disabled{opacity:.55;cursor:default}
+.gate-switch{
+  text-align:center;margin-top:1.1rem;font-size:.82rem;
+  color:rgba(255,255,255,.5);
+}
+.gate-switch button{
+  background:none;border:none;color:var(--sand);
+  text-decoration:underline;padding:0;font-size:.82rem;
+}
+.gate-msg{
+  font-size:.8rem;margin-top:.9rem;text-align:center;
+  min-height:1.1rem;color:var(--rose);
+}
+.gate-msg.ok{color:var(--sand-lt)}
+.gate-foot{
+  margin-top:1.7rem;font-size:.7rem;color:rgba(255,255,255,.3);
+  letter-spacing:.08em;
+}
+
+/* ── app shell ── */
+#app{display:none;min-height:100vh;flex-direction:column}
+.topbar{
+  background:var(--night);color:#fff;
+  padding:0 1.3rem;height:58px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:50;
+}
+.topbar .wordmark{color:var(--sand);font-size:.82rem}
+.topbar-right{display:flex;align-items:center;gap:.9rem}
+.who{font-size:.78rem;color:rgba(255,255,255,.6);
+  max-width:34vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn-ghost{
+  background:none;border:1px solid rgba(255,255,255,.22);color:rgba(255,255,255,.8);
+  border-radius:5px;padding:.34rem .7rem;font-size:.72rem;
+}
+.btn-ghost:hover{border-color:var(--sand);color:var(--sand)}
+
+.tabs{
+  display:flex;background:var(--paper);border-bottom:1px solid var(--line);
+  position:sticky;top:58px;z-index:49;
+}
+.tab{
+  flex:1;background:none;border:none;padding:.85rem .5rem;
+  font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);border-bottom:2px solid transparent;
+  transition:color .15s,border-color .15s;
+}
+.tab.active{color:var(--night);border-bottom-color:var(--sand);font-weight:600}
+
+main{flex:1;width:100%;max-width:760px;margin:0 auto;padding:1.6rem 1.1rem 3rem}
+.view{display:none}
+.view.active{display:block}
+
+.view-head{margin-bottom:1.4rem}
+.view-head h2{
+  font-family:'Cormorant Garamond',serif;font-weight:400;
+  font-size:1.65rem;margin:0 0 .15rem;color:var(--night);
+}
+.view-head p{margin:0;color:var(--ink-soft);font-size:.86rem}
+
+.card{
+  background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius);padding:1.3rem;margin-bottom:1rem;
+}
+.field{margin-bottom:1rem}
+.field:last-child{margin-bottom:0}
+.field label{
+  display:block;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-soft);margin-bottom:.35rem;
+}
+.field input,.field textarea,.field select{
+  width:100%;background:var(--cream);border:1px solid var(--line);
+  border-radius:6px;padding:.64rem .78rem;color:var(--ink);outline:none;
+  transition:border-color .18s;
+}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--sand)}
+.field textarea{resize:vertical;min-height:88px;line-height:1.6}
+.field .hint{font-size:.72rem;color:var(--ink-soft);margin-top:.3rem}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.readonly{
+  background:var(--cream);border:1px solid var(--line);border-radius:6px;
+  padding:.64rem .78rem;color:var(--ink-soft);
+}
+
+.btn-save{
+  background:var(--night);color:#fff;border:none;border-radius:6px;
+  padding:.7rem 1.4rem;font-size:.76rem;letter-spacing:.1em;
+  text-transform:uppercase;font-weight:600;transition:background .18s;
+}
+.btn-save:hover{background:var(--night-2)}
+.btn-save:disabled{opacity:.5;cursor:default}
+.btn-soft{
+  background:var(--sand);color:var(--night);border:none;border-radius:6px;
+  padding:.6rem 1.1rem;font-size:.74rem;letter-spacing:.08em;
+  text-transform:uppercase;font-weight:600;
+}
+.btn-soft:hover{background:var(--sand-lt)}
+.btn-soft:disabled{opacity:.5;cursor:default}
+
+.notice{
+  border-radius:var(--radius);padding:1.1rem 1.25rem;margin-bottom:1.2rem;
+  font-size:.86rem;line-height:1.7;
+}
+.notice-wait{background:#fdf6e7;border:1px solid #ecd9b8;color:#7a6025}
+.notice-calm{background:var(--paper);border:1px solid var(--line);color:var(--ink-soft)}
+
+.empty{
+  text-align:center;padding:3rem 1.2rem;color:var(--ink-soft);
+}
+.empty .display{font-size:1.2rem;color:var(--night);margin-bottom:.4rem}
+.empty p{font-size:.86rem;margin:0;line-height:1.7}
+
+/* ── match card ── */
+.match{
+  background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius);padding:1.25rem;margin-bottom:.9rem;
+}
+.match-top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
+.match-name{
+  font-family:'Cormorant Garamond',serif;font-size:1.3rem;
+  color:var(--night);margin:0 0 .1rem;
+}
+.match-meta{font-size:.8rem;color:var(--ink-soft);margin:0}
+.match-bio{
+  font-size:.87rem;color:var(--ink);margin:.8rem 0 0;line-height:1.7;
+  padding-top:.8rem;border-top:1px solid var(--line);
+}
+.pill{
+  display:inline-block;font-size:.66rem;letter-spacing:.1em;
+  text-transform:uppercase;padding:.25rem .6rem;border-radius:20px;
+  font-weight:600;white-space:nowrap;
+}
+.pill-wait{background:#fdf6e7;color:#8a6a20}
+.pill-open{background:#eaf3e8;color:#4a6b45}
+.match-actions{margin-top:1rem;display:flex;align-items:center;gap:.8rem;flex-wrap:wrap}
+.match-note{font-size:.78rem;color:var(--ink-soft)}
+
+/* ── conversations ── */
+.convo{
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+  padding:1rem 1.2rem;margin-bottom:.7rem;cursor:pointer;
+  display:flex;justify-content:space-between;align-items:center;gap:1rem;
+  transition:border-color .15s;
+}
+.convo:hover{border-color:var(--sand)}
+.convo-name{font-weight:500;color:var(--night);margin:0 0 .12rem}
+.convo-prev{
+  font-size:.8rem;color:var(--ink-soft);margin:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:46vw;
+}
+
+/* ── chat ── */
+.chat-head{
+  display:flex;align-items:center;gap:.8rem;margin-bottom:.9rem;
+}
+.chat-back{
+  background:none;border:1px solid var(--line);border-radius:5px;
+  padding:.35rem .7rem;font-size:.75rem;color:var(--ink-soft);
+}
+.chat-back:hover{border-color:var(--sand);color:var(--night)}
+.chat-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--night);margin:0}
+.chat-sub{font-size:.76rem;color:var(--ink-soft);margin:0}
+
+.supervised{
+  background:var(--paper);border:1px solid var(--line);
+  border-left:3px solid var(--sand);
+  border-radius:6px;padding:.7rem .9rem;margin-bottom:.9rem;
+  font-size:.78rem;color:var(--ink-soft);line-height:1.6;
+}
+
+.thread{
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+  padding:1.1rem;height:52vh;min-height:300px;overflow-y:auto;margin-bottom:.8rem;
+}
+.msg{margin-bottom:1rem;display:flex;flex-direction:column;max-width:78%}
+.msg:last-child{margin-bottom:0}
+.msg.mine{margin-left:auto;align-items:flex-end}
+.msg-who{
+  font-size:.68rem;letter-spacing:.07em;color:var(--ink-soft);
+  margin-bottom:.22rem;
+}
+.msg-body{
+  padding:.6rem .85rem;border-radius:10px;font-size:.88rem;line-height:1.6;
+  white-space:pre-wrap;word-break:break-word;
+}
+.msg.mine .msg-body{background:var(--night);color:#fff;border-bottom-right-radius:3px}
+.msg.theirs .msg-body{background:var(--cream);border:1px solid var(--line);border-bottom-left-radius:3px}
+.msg.staff .msg-body{background:#fdf6e7;border:1px solid #ecd9b8;color:#6d561f}
+.msg-time{font-size:.66rem;color:var(--ink-soft);margin-top:.2rem}
+
+.composer{display:flex;gap:.6rem;align-items:flex-end}
+.composer textarea{
+  flex:1;background:var(--paper);border:1px solid var(--line);border-radius:8px;
+  padding:.7rem .85rem;resize:none;min-height:46px;max-height:140px;
+  outline:none;line-height:1.5;
+}
+.composer textarea:focus{border-color:var(--sand)}
+.composer button{
+  background:var(--night);color:#fff;border:none;border-radius:8px;
+  padding:.72rem 1.2rem;font-size:.76rem;letter-spacing:.08em;
+  text-transform:uppercase;font-weight:600;flex-shrink:0;
+}
+.composer button:disabled{opacity:.45;cursor:default}
+
+.toast{
+  position:fixed;left:50%;bottom:1.6rem;transform:translateX(-50%) translateY(140%);
+  background:var(--night);color:#fff;padding:.75rem 1.3rem;border-radius:7px;
+  font-size:.84rem;box-shadow:0 10px 30px rgba(27,34,64,.28);
+  transition:transform .3s cubic-bezier(.3,1.2,.5,1);z-index:200;
+  max-width:88vw;text-align:center;
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+#loading{
+  position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  background:var(--night);color:var(--sand);z-index:300;
+  font-family:'Cormorant Garamond',serif;letter-spacing:.3em;
+  text-transform:uppercase;font-size:.78rem;
+}
+
+@media(max-width:560px){
+  .grid-2{grid-template-columns:1fr}
+  .gate-title{font-size:2.1rem}
+  main{padding:1.2rem .9rem 2.4rem}
+  .msg{max-width:88%}
+  .convo-prev{max-width:40vw}
+}
+</style>
+</head>
+<body>
+
+<div id="loading">Sakinah</div>
+
+<!-- ───────── AUTH GATE ───────── -->
+<div id="gate" style="display:none">
+  <div class="gate-card">
+    <div class="wordmark gate-mark">Nikkah Pathways</div>
+    <h1 class="display gate-title">Sakinah</h1>
+    <p class="gate-verse">“And He placed between you affection and mercy.”</p>
+
+    <div class="gate-box">
+      <div id="signup-name-wrap" style="display:none">
+        <label>Full name</label>
+        <input type="text" id="g-name" placeholder="Your full name" autocomplete="name"/>
+      </div>
+      <label>Email</label>
+      <input type="email" id="g-email" placeholder="you@email.com" autocomplete="email"/>
+      <label>Password</label>
+      <input type="password" id="g-pass" placeholder="••••••••" autocomplete="current-password"/>
+      <button class="btn-primary" id="g-btn">Sign In</button>
+      <div class="gate-msg" id="g-msg"></div>
+      <div class="gate-switch">
+        <span id="g-switch-text">New here?</span>
+        <button id="g-switch">Create an account</button>
+      </div>
+      <div class="gate-switch" style="margin-top:.5rem">
+        <button id="g-reset" style="color:rgba(255,255,255,.45)">Forgot password?</button>
+      </div>
+    </div>
+    <div class="gate-foot">A halal, supervised path to marriage</div>
+  </div>
+</div>
+
+<!-- ───────── APP ───────── -->
+<div id="app">
+  <div class="topbar">
+    <span class="wordmark">Sakinah</span>
+    <div class="topbar-right">
+      <span class="who" id="who"></span>
+      <button class="btn-ghost" id="btn-signout">Sign out</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-view="profile">Profile</button>
+    <button class="tab" data-view="matches">Matches</button>
+    <button class="tab" data-view="messages">Messages</button>
+  </div>
+
+  <main>
+    <!-- PROFILE -->
+    <section class="view active" id="view-profile">
+      <div class="view-head">
+        <h2>Your profile</h2>
+        <p>This is what we share with someone once you've both been matched.</p>
+      </div>
+      <div id="verify-notice"></div>
+      <div class="card">
+        <div class="grid-2">
+          <div class="field">
+            <label>Name</label>
+            <div class="readonly" id="p-name">—</div>
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <div class="readonly" id="p-email">—</div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Age</label>
+            <div class="readonly" id="p-age">—</div>
+          </div>
+          <div class="field">
+            <label>City</label>
+            <input type="text" id="p-city" placeholder="e.g. Sydney"/>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Occupation</label>
+            <input type="text" id="p-occupation" placeholder="e.g. Teacher"/>
+          </div>
+          <div class="field">
+            <label>Education</label>
+            <input type="text" id="p-education" placeholder="e.g. Bachelor's degree"/>
+          </div>
+        </div>
+        <div class="field">
+          <label>Languages</label>
+          <input type="text" id="p-languages" placeholder="e.g. English, Arabic"/>
+        </div>
+        <div class="field">
+          <label>About you</label>
+          <textarea id="p-bio" placeholder="A few honest lines about who you are — your deen, your character, what matters to you."></textarea>
+          <div class="hint">Shared with someone only once you've both been matched.</div>
+        </div>
+        <div class="field">
+          <label>What you're looking for</label>
+          <textarea id="p-looking" placeholder="The qualities that matter most to you in a spouse."></textarea>
+        </div>
+        <button class="btn-save" id="p-save">Save changes</button>
+      </div>
+      <p class="match-note">Name, age and the details from your questionnaire are managed by the Nikkah Pathways team. Message us if any of it needs correcting.</p>
+    </section>
+
+    <!-- MATCHES -->
+    <section class="view" id="view-matches">
+      <div class="view-head">
+        <h2>Your matches</h2>
+        <p>People we believe you're genuinely compatible with, based on your questionnaire.</p>
+      </div>
+      <div id="matches-list"></div>
+    </section>
+
+    <!-- MESSAGES -->
+    <section class="view" id="view-messages">
+      <div class="view-head">
+        <h2>Messages</h2>
+        <p>Every conversation here includes a member of our team.</p>
+      </div>
+      <div id="convo-list"></div>
+    </section>
+
+    <!-- CHAT -->
+    <section class="view" id="view-chat">
+      <div class="chat-head">
+        <button class="chat-back" id="chat-back">← Back</button>
+        <div>
+          <h2 class="chat-title" id="chat-title">—</h2>
+          <p class="chat-sub" id="chat-sub"></p>
+        </div>
+      </div>
+      <div class="supervised" id="chat-supervised"></div>
+      <div class="thread" id="thread"></div>
+      <div class="composer">
+        <textarea id="composer-text" placeholder="Write a message…" rows="1"></textarea>
+        <button id="composer-send">Send</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+  onAuthStateChanged, signOut, sendPasswordResetEmail, updateProfile
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where,
+  getDocs, onSnapshot, addDoc, serverTimestamp, orderBy, arrayUnion
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBvH4U4lnKK5nmTkILlYYs2ZJdK3pkmsG8",
+  authDomain: "nikkah-pathways.firebaseapp.com",
+  projectId: "nikkah-pathways",
+  storageBucket: "nikkah-pathways.firebasestorage.app",
+  messagingSenderId: "253123587587",
+  appId: "1:253123587587:web:8829c5dcce9a78aeb3e836"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app, "nikkahpathways");
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+let ME = null;          // firebase auth user
+let PROFILE = null;     // members/{uid}
+let unsubMessages = null;
+let currentConvo = null;
+
+function toast(msg){
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+function fmtTime(ts){
+  if (!ts) return '';
+  try {
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    if (isNaN(d)) return '';
+    const today = new Date();
+    const sameDay = d.toDateString() === today.toDateString();
+    return sameDay
+      ? d.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'})
+      : d.toLocaleDateString([], {day:'numeric', month:'short'}) + ', ' +
+        d.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+  } catch(e){ return ''; }
+}
+
+// ───────── AUTH GATE ─────────
+let gateMode = 'signin';
+
+function setGateMode(mode){
+  gateMode = mode;
+  const signup = mode === 'signup';
+  $('signup-name-wrap').style.display = signup ? 'block' : 'none';
+  $('g-btn').textContent = signup ? 'Create Account' : 'Sign In';
+  $('g-switch-text').textContent = signup ? 'Already registered?' : 'New here?';
+  $('g-switch').textContent = signup ? 'Sign in instead' : 'Create an account';
+  $('g-pass').setAttribute('autocomplete', signup ? 'new-password' : 'current-password');
+  $('g-msg').textContent = '';
+}
+
+function gateError(e){
+  const map = {
+    'auth/invalid-email':'That email address doesn\'t look right.',
+    'auth/user-not-found':'No account found with that email.',
+    'auth/wrong-password':'Incorrect password.',
+    'auth/invalid-credential':'That email and password don\'t match.',
+    'auth/email-already-in-use':'An account already exists with that email — try signing in.',
+    'auth/weak-password':'Please choose a password of at least 6 characters.',
+    'auth/too-many-requests':'Too many attempts. Please wait a moment and try again.',
+    'auth/network-request-failed':'Network problem — please check your connection.'
+  };
+  return map[e.code] || e.message || 'Something went wrong. Please try again.';
+}
+
+$('g-switch').onclick = () => setGateMode(gateMode === 'signin' ? 'signup' : 'signin');
+
+$('g-btn').onclick = async () => {
+  const email = $('g-email').value.trim();
+  const pass  = $('g-pass').value;
+  const name  = $('g-name').value.trim();
+  const msg   = $('g-msg');
+  msg.className = 'gate-msg';
+
+  if (!email || !pass) { msg.textContent = 'Please enter your email and password.'; return; }
+  if (gateMode === 'signup' && !name) { msg.textContent = 'Please enter your full name.'; return; }
+
+  $('g-btn').disabled = true;
+  $('g-btn').textContent = 'Please wait…';
+  try {
+    if (gateMode === 'signup') {
+      const cred = await createUserWithEmailAndPassword(auth, email, pass);
+      await updateProfile(cred.user, { displayName: name });
+      // Create the member profile. verified stays false until the team
+      // confirms this person against their registration.
+      await setDoc(doc(db, 'members', cred.user.uid), {
+        name, email,
+        verified: false,
+        status: 'active',
+        bio:'', occupation:'', education:'', city:'', languages:'', looking_for:'',
+        created_at: serverTimestamp(),
+        updated_at: serverTimestamp()
+      });
+    } else {
+      await signInWithEmailAndPassword(auth, email, pass);
+    }
+  } catch(e){
+    msg.textContent = gateError(e);
+    $('g-btn').disabled = false;
+    setGateMode(gateMode);
+  }
+};
+
+$('g-reset').onclick = async () => {
+  const email = $('g-email').value.trim();
+  const msg = $('g-msg');
+  if (!email) { msg.className = 'gate-msg'; msg.textContent = 'Enter your email above first, then tap this again.'; return; }
+  try {
+    await sendPasswordResetEmail(auth, email);
+    msg.className = 'gate-msg ok';
+    msg.textContent = 'Password reset email sent — check your inbox.';
+  } catch(e){
+    msg.className = 'gate-msg';
+    msg.textContent = gateError(e);
+  }
+};
+
+$('g-pass').addEventListener('keydown', e => { if (e.key === 'Enter') $('g-btn').click(); });
+
+$('btn-signout').onclick = () => signOut(auth);
+
+// ───────── ROUTING ─────────
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.onclick = () => showView(tab.dataset.view);
+});
+
+function showView(name){
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  $('view-' + name).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.view === name));
+  window.scrollTo(0, 0);
+  if (name === 'matches')  loadMatches();
+  if (name === 'messages') loadConversations();
+}
+
+$('chat-back').onclick = () => {
+  if (unsubMessages) { unsubMessages(); unsubMessages = null; }
+  currentConvo = null;
+  showView('messages');
+};
+
+// ───────── SESSION ─────────
+onAuthStateChanged(auth, async user => {
+  $('loading').style.display = 'none';
+  if (!user) {
+    ME = null; PROFILE = null;
+    if (unsubMessages) { unsubMessages(); unsubMessages = null; }
+    $('app').style.display = 'none';
+    $('gate').style.display = 'flex';
+    $('g-btn').disabled = false;
+    setGateMode('signin');
+    $('g-pass').value = '';
+    return;
+  }
+
+  ME = user;
+  $('gate').style.display = 'none';
+  $('app').style.display = 'flex';
+
+  try {
+    const snap = await getDoc(doc(db, 'members', user.uid));
+    PROFILE = snap.exists() ? snap.data() : null;
+  } catch(e){ PROFILE = null; }
+
+  if (!PROFILE) {
+    // Signed in but no member record (e.g. created before this portal
+    // existed). Make one so they aren't stuck on a blank screen.
+    PROFILE = {
+      name: user.displayName || '', email: user.email || '',
+      verified: false, status:'active',
+      bio:'', occupation:'', education:'', city:'', languages:'', looking_for:''
+    };
+    try {
+      await setDoc(doc(db, 'members', user.uid), {
+        ...PROFILE, created_at: serverTimestamp(), updated_at: serverTimestamp()
+      });
+    } catch(e){}
+  }
+
+  $('who').textContent = PROFILE.name || user.email;
+  fillProfile();
+  showView('profile');
+});
+
+// ───────── PROFILE ─────────
+function fillProfile(){
+  $('p-name').textContent  = PROFILE.name  || '—';
+  $('p-email').textContent = PROFILE.email || ME.email || '—';
+  $('p-age').textContent   = PROFILE.age   || 'Not set';
+  $('p-city').value        = PROFILE.city        || '';
+  $('p-occupation').value  = PROFILE.occupation  || '';
+  $('p-education').value   = PROFILE.education   || '';
+  $('p-languages').value   = PROFILE.languages   || '';
+  $('p-bio').value         = PROFILE.bio         || '';
+  $('p-looking').value     = PROFILE.looking_for || '';
+
+  $('verify-notice').innerHTML = PROFILE.verified
+    ? ''
+    : `<div class="notice notice-wait">
+         <strong>Your account is awaiting verification.</strong><br>
+         We check each new account against our registrations before matching begins.
+         You can fill in your profile now — matches will appear here once you're verified inshAllah.
+       </div>`;
+}
+
+$('p-save').onclick = async () => {
+  const btn = $('p-save');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const patch = {
+    city:        $('p-city').value.trim(),
+    occupation:  $('p-occupation').value.trim(),
+    education:   $('p-education').value.trim(),
+    languages:   $('p-languages').value.trim(),
+    bio:         $('p-bio').value.trim(),
+    looking_for: $('p-looking').value.trim(),
+    updated_at:  serverTimestamp()
+  };
+  try {
+    await updateDoc(doc(db, 'members', ME.uid), patch);
+    Object.assign(PROFILE, patch);
+    toast('✓ Profile saved');
+  } catch(e){
+    toast('Could not save: ' + (e.code || e.message));
+  }
+  btn.disabled = false; btn.textContent = 'Save changes';
+};
+
+// ───────── MATCHES ─────────
+async function loadMatches(){
+  const el = $('matches-list');
+
+  if (!PROFILE.verified) {
+    el.innerHTML = `<div class="empty">
+      <div class="display">Not yet</div>
+      <p>Matches appear here once your account has been verified by our team.</p>
+    </div>`;
+    return;
+  }
+
+  el.innerHTML = '<div class="empty"><p>Loading…</p></div>';
+  let rows = [];
+  try {
+    const q = query(collection(db, 'member_matches'),
+                    where('member_uids', 'array-contains', ME.uid));
+    rows = (await getDocs(q)).docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch(e){
+    el.innerHTML = `<div class="empty"><p>Couldn't load your matches just now. Please try again shortly.</p></div>`;
+    return;
+  }
+
+  rows = rows.filter(r => r.status !== 'declined');
+
+  if (!rows.length) {
+    el.innerHTML = `<div class="empty">
+      <div class="display">No matches yet</div>
+      <p>We match people carefully rather than quickly. When we find someone
+         we believe is genuinely compatible with you, they'll appear here inshAllah.</p>
+    </div>`;
+    return;
+  }
+
+  el.innerHTML = rows.map(r => {
+    const otherUid = (r.member_uids || []).find(u => u !== ME.uid);
+    const them     = (r.profiles && r.profiles[otherUid]) || {};
+    const asked    = (r.intro_requested_by || []).includes(ME.uid);
+    const bothAsked= (r.intro_requested_by || []).length >= 2;
+    const open     = r.status === 'conversation_open';
+
+    let pill = '', action = '', note = '';
+    if (open) {
+      pill = '<span class="pill pill-open">Conversation open</span>';
+      note = 'Your conversation is in Messages.';
+    } else if (asked) {
+      pill = '<span class="pill pill-wait">Introduction requested</span>';
+      note = bothAsked
+        ? 'You\'ve both asked — we\'re setting up your conversation inshAllah.'
+        : 'We\'ve passed your request on. We\'ll set things up once they\'ve responded too.';
+    } else {
+      action = `<button class="btn-soft" data-intro="${esc(r.id)}">Request introduction</button>`;
+      note   = 'Nothing is shared with them until you ask.';
+    }
+
+    return `<div class="match">
+      <div class="match-top">
+        <div>
+          <h3 class="match-name">${esc(them.name || 'A member')}</h3>
+          <p class="match-meta">${[them.age, them.city, them.occupation]
+            .filter(Boolean).map(esc).join(' · ') || 'Details shared on introduction'}</p>
+        </div>
+        ${pill}
+      </div>
+      ${them.bio ? `<p class="match-bio">${esc(them.bio)}</p>` : ''}
+      <div class="match-actions">
+        ${action}
+        <span class="match-note">${note}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  el.querySelectorAll('[data-intro]').forEach(btn => {
+    btn.onclick = async () => {
+      btn.disabled = true; btn.textContent = 'Sending…';
+      try {
+        await updateDoc(doc(db, 'member_matches', btn.dataset.intro), {
+          intro_requested_by: arrayUnion(ME.uid)
+        });
+        toast('✓ Request sent — we\'ll be in touch');
+        loadMatches();
+      } catch(e){
+        toast('Could not send: ' + (e.code || e.message));
+        btn.disabled = false; btn.textContent = 'Request introduction';
+      }
+    };
+  });
+}
+
+// ───────── CONVERSATIONS ─────────
+async function loadConversations(){
+  const el = $('convo-list');
+  el.innerHTML = '<div class="empty"><p>Loading…</p></div>';
+
+  let rows = [];
+  try {
+    const q = query(collection(db, 'conversations'),
+                    where('participants', 'array-contains', ME.uid));
+    rows = (await getDocs(q)).docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch(e){
+    el.innerHTML = `<div class="empty"><p>Couldn't load your messages just now. Please try again shortly.</p></div>`;
+    return;
+  }
+
+  if (!rows.length) {
+    el.innerHTML = `<div class="empty">
+      <div class="display">No conversations yet</div>
+      <p>Once you and a match have both asked for an introduction,
+         our team will open a conversation here.</p>
+    </div>`;
+    return;
+  }
+
+  rows.sort((a,b) => {
+    const t = x => x.last_message_at?.toMillis?.() || 0;
+    return t(b) - t(a);
+  });
+
+  el.innerHTML = rows.map(c => {
+    const names = c.participant_names || {};
+    const otherUid = (c.member_uids || []).find(u => u !== ME.uid);
+    const title = names[otherUid] || 'Conversation';
+    return `<div class="convo" data-convo="${esc(c.id)}">
+      <div style="min-width:0">
+        <p class="convo-name">${esc(title)}</p>
+        <p class="convo-prev">${esc(c.last_message_preview || 'No messages yet')}</p>
+      </div>
+      ${c.status === 'closed'
+        ? '<span class="pill pill-wait">Closed</span>'
+        : '<span class="pill pill-open">Open</span>'}
+    </div>`;
+  }).join('');
+
+  el.querySelectorAll('[data-convo]').forEach(row => {
+    row.onclick = () => openChat(rows.find(c => c.id === row.dataset.convo));
+  });
+}
+
+// ───────── CHAT ─────────
+function openChat(convo){
+  if (!convo) return;
+  currentConvo = convo;
+  showView('chat');
+
+  const names = convo.participant_names || {};
+  const otherUid = (convo.member_uids || []).find(u => u !== ME.uid);
+  $('chat-title').textContent = names[otherUid] || 'Conversation';
+
+  const others = (convo.participants || [])
+    .filter(u => u !== ME.uid && u !== otherUid)
+    .map(u => names[u] || 'Nikkah Pathways');
+  $('chat-sub').textContent = others.length
+    ? 'Also in this conversation: ' + others.join(', ')
+    : '';
+
+  $('chat-supervised').textContent = convo.status === 'closed'
+    ? 'This conversation has been closed by the Nikkah Pathways team. You can still read it, but no new messages can be sent.'
+    : 'A member of the Nikkah Pathways team is part of this conversation and can see every message. Please keep things respectful and appropriate.';
+
+  const closed = convo.status === 'closed';
+  $('composer-text').disabled = closed;
+  $('composer-send').disabled = closed;
+  $('composer-text').placeholder = closed ? 'This conversation is closed.' : 'Write a message…';
+
+  if (unsubMessages) unsubMessages();
+  const thread = $('thread');
+  thread.innerHTML = '<div class="empty"><p>Loading…</p></div>';
+
+  const q = query(collection(db, 'conversations', convo.id, 'messages'),
+                  orderBy('created_at'));
+  unsubMessages = onSnapshot(q, snap => {
+    if (snap.empty) {
+      thread.innerHTML = `<div class="empty">
+        <p>No messages yet. As-salāmu ʿalaykum is a good place to start.</p>
+      </div>`;
+      return;
+    }
+    thread.innerHTML = snap.docs.map(d => {
+      const m = d.data();
+      const mine = m.sender_uid === ME.uid;
+      const staff = m.sender_role === 'admin' || m.sender_role === 'wali';
+      const cls = mine ? 'mine' : (staff ? 'theirs staff' : 'theirs');
+      return `<div class="msg ${cls}">
+        <span class="msg-who">${mine ? 'You' : esc(m.sender_name || 'Member')}${
+          staff && !mine ? ' · ' + esc(m.sender_role === 'wali' ? 'Wali' : 'Nikkah Pathways') : ''}</span>
+        <div class="msg-body">${esc(m.text)}</div>
+        <span class="msg-time">${fmtTime(m.created_at)}</span>
+      </div>`;
+    }).join('');
+    thread.scrollTop = thread.scrollHeight;
+  }, err => {
+    thread.innerHTML = `<div class="empty"><p>Couldn't load this conversation.</p></div>`;
+  });
+}
+
+const composer = $('composer-text');
+composer.addEventListener('input', () => {
+  composer.style.height = 'auto';
+  composer.style.height = Math.min(composer.scrollHeight, 140) + 'px';
+});
+composer.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('composer-send').click(); }
+});
+
+$('composer-send').onclick = async () => {
+  const text = composer.value.trim();
+  if (!text || !currentConvo) return;
+  const btn = $('composer-send');
+  btn.disabled = true;
+  try {
+    await addDoc(collection(db, 'conversations', currentConvo.id, 'messages'), {
+      sender_uid: ME.uid,
+      sender_name: PROFILE.name || ME.email,
+      sender_role: 'member',
+      text,
+      created_at: serverTimestamp()
+    });
+    // Keeps the conversation list ordered and previewed. Deliberately not
+    // awaited — a failure here must never lose a message that already sent.
+    updateDoc(doc(db, 'conversations', currentConvo.id), {
+      last_message_at: serverTimestamp(),
+      last_message_preview: text.slice(0, 80)
+    }).catch(() => {});
+    composer.value = '';
+    composer.style.height = 'auto';
+  } catch(e){
+    toast('Could not send: ' + (e.code || e.message));
+  }
+  btn.disabled = false;
+};
+</script>
+</body>
+</html>
