@@ -312,6 +312,29 @@ main{flex:1;width:100%;max-width:760px;margin:0 auto;padding:1.6rem 1.1rem 3rem}
 
 <div id="loading">Sakinah</div>
 
+<script>
+// The app code is an ES module that pulls the Supabase client from a CDN. If
+// that import fails — no connection, or a network/extension blocking the CDN —
+// the module never runs at all and the splash would sit there forever with no
+// explanation. This plain script isn't a module, so it always runs, and says
+// something useful if the app hasn't booted.
+window.__sakinahBoot = false;
+setTimeout(function(){
+  if (window.__sakinahBoot) return;
+  var el = document.getElementById('loading');
+  if (!el || el.style.display === 'none') return;
+  el.innerHTML =
+    '<div style="max-width:420px;text-align:center;line-height:2;letter-spacing:normal;' +
+    'text-transform:none;font-size:.95rem">' +
+    '<strong style="letter-spacing:.2em">SAKINAH</strong><br><br>' +
+    'Sakinah couldn\'t finish loading.<br>' +
+    'Check your internet connection and refresh the page.<br><br>' +
+    '<span style="opacity:.6;font-size:.86rem">If it keeps happening, a network ' +
+    'or browser extension may be blocking cdn.jsdelivr.net. Message the Nikkah ' +
+    'Pathways team and we\'ll help.</span></div>';
+}, 8000);
+</script>
+
 <!-- ───────── AUTH GATE ───────── -->
 <div id="gate" style="display:none">
   <div class="gate-card">
@@ -324,9 +347,11 @@ main{flex:1;width:100%;max-width:760px;margin:0 auto;padding:1.6rem 1.1rem 3rem}
         <label>Full name</label>
         <input type="text" id="g-name" placeholder="Your full name" autocomplete="name"/>
       </div>
-      <label>Email</label>
-      <input type="email" id="g-email" placeholder="you@email.com" autocomplete="email"/>
-      <label>Password</label>
+      <div id="email-wrap">
+        <label>Email</label>
+        <input type="email" id="g-email" placeholder="you@email.com" autocomplete="email"/>
+      </div>
+      <label id="pass-label">Password</label>
       <input type="password" id="g-pass" placeholder="••••••••" autocomplete="current-password"/>
       <button class="btn-primary" id="g-btn">Sign In</button>
       <div class="gate-msg" id="g-msg"></div>
@@ -455,37 +480,53 @@ main{flex:1;width:100%;max-width:760px;margin:0 auto;padding:1.6rem 1.1rem 3rem}
 <div class="toast" id="toast"></div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {
-  getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
-  onAuthStateChanged, signOut, sendPasswordResetEmail, updateProfile
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import {
-  getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where,
-  getDocs, onSnapshot, addDoc, serverTimestamp, orderBy, arrayUnion
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { createClient }
+  from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.0/+esm";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBvH4U4lnKK5nmTkILlYYs2ZJdK3pkmsG8",
-  authDomain: "nikkah-pathways.firebaseapp.com",
-  projectId: "nikkah-pathways",
-  storageBucket: "nikkah-pathways.firebasestorage.app",
-  messagingSenderId: "253123587587",
-  appId: "1:253123587587:web:8829c5dcce9a78aeb3e836"
-};
+/* ═══════════════════════════════════════════════════════════════════════════
+   YOUR SUPABASE DETAILS — fill in these two lines, nothing else.
+   Supabase dashboard → Project Settings → API
+     • Project URL        → SUPABASE_URL
+     • anon / public key  → SUPABASE_KEY   (newer projects call this the
+                                            "publishable" key — either works)
+   Both are safe to put in a public page. They grant nothing on their own;
+   every table is protected by the row-level security policies in
+   sakinah-schema.sql.
+   ═══════════════════════════════════════════════════════════════════════════ */
+const SUPABASE_URL = "https://gejqqyilfuaunfinqjit.supabase.co";
+const SUPABASE_KEY = "sb_publishable__Rv3o5oq2TWtbuvtOyTUBQ_B2r_qIER";
 
-const app  = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db   = getFirestore(app, "nikkahpathways");
+window.__sakinahBoot = true;   // tells the watchdog above the module loaded
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
   ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-let ME = null;          // firebase auth user
-let PROFILE = null;     // members/{uid}
-let unsubMessages = null;
+// Fail loudly and legibly rather than throwing somewhere deep in the client.
+if (SUPABASE_URL.includes('YOUR-PROJECT-REF') || SUPABASE_KEY.includes('YOUR-ANON')) {
+  $('loading').innerHTML =
+    `<div style="max-width:420px;text-align:center;line-height:2;letter-spacing:normal;
+                 text-transform:none;font-size:.95rem">
+       <strong style="letter-spacing:.2em">SAKINAH</strong><br><br>
+       This page hasn't been connected to your Supabase project yet.<br>
+       Open <code style="color:#fff">sakinah.html</code>, find
+       <code style="color:#fff">SUPABASE_URL</code> near the top of the script,
+       and paste in your Project URL and anon key from
+       Supabase → Project Settings → API.
+     </div>`;
+  throw new Error('Supabase not configured');
+}
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+});
+
+let ME = null;            // supabase auth user
+let PROFILE = null;       // profiles row
 let currentConvo = null;
+let msgChannel = null;    // realtime subscription
+let pollTimer = null;     // fallback if realtime can't connect
+let MSGS = [];            // messages in the open conversation, by arrival
 
 function toast(msg){
   const t = $('toast');
@@ -497,44 +538,55 @@ function toast(msg){
 
 function fmtTime(ts){
   if (!ts) return '';
-  try {
-    const d = ts.toDate ? ts.toDate() : new Date(ts);
-    if (isNaN(d)) return '';
-    const today = new Date();
-    const sameDay = d.toDateString() === today.toDateString();
-    return sameDay
-      ? d.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'})
-      : d.toLocaleDateString([], {day:'numeric', month:'short'}) + ', ' +
-        d.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
-  } catch(e){ return ''; }
+  const d = new Date(ts);
+  if (isNaN(d)) return '';
+  const sameDay = d.toDateString() === new Date().toDateString();
+  return sameDay
+    ? d.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'})
+    : d.toLocaleDateString([], {day:'numeric', month:'short'}) + ', ' +
+      d.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+}
+
+// Postgres and Supabase errors read like stack traces. Translate the ones a
+// member can actually hit.
+function friendly(e){
+  if (!e) return 'Something went wrong. Please try again.';
+  const m = (e.message || '').toLowerCase();
+  if (m.includes('invalid login credentials')) return 'That email and password don\'t match.';
+  if (m.includes('email not confirmed'))       return 'Please confirm your email first — check your inbox for the link.';
+  if (m.includes('already registered') || m.includes('already been registered'))
+    return 'An account already exists with that email — try signing in.';
+  if (m.includes('password should be at least')) return 'Please choose a password of at least 6 characters.';
+  if (m.includes('unable to validate email') || m.includes('invalid email'))
+    return 'That email address doesn\'t look right.';
+  if (m.includes('rate limit') || m.includes('too many'))
+    return 'Too many attempts. Please wait a moment and try again.';
+  if (m.includes('row-level security') || m.includes('violates'))
+    return 'That isn\'t something your account can do.';
+  if (m.includes('failed to fetch') || m.includes('networkerror'))
+    return 'Network problem — please check your connection.';
+  return e.message || 'Something went wrong. Please try again.';
 }
 
 // ───────── AUTH GATE ─────────
-let gateMode = 'signin';
+let gateMode = 'signin';   // signin | signup | recover
 
 function setGateMode(mode){
   gateMode = mode;
-  const signup = mode === 'signup';
+  const signup  = mode === 'signup';
+  const recover = mode === 'recover';
   $('signup-name-wrap').style.display = signup ? 'block' : 'none';
-  $('g-btn').textContent = signup ? 'Create Account' : 'Sign In';
+  $('email-wrap').style.display       = recover ? 'none' : 'block';
+  $('pass-label').textContent = recover ? 'New password' : 'Password';
+  $('g-btn').textContent =
+    recover ? 'Set New Password' : (signup ? 'Create Account' : 'Sign In');
+  $('g-switch').parentElement.style.display       = recover ? 'none' : 'block';
+  $('g-reset').parentElement.style.display        = recover ? 'none' : 'block';
   $('g-switch-text').textContent = signup ? 'Already registered?' : 'New here?';
-  $('g-switch').textContent = signup ? 'Sign in instead' : 'Create an account';
-  $('g-pass').setAttribute('autocomplete', signup ? 'new-password' : 'current-password');
-  $('g-msg').textContent = '';
-}
-
-function gateError(e){
-  const map = {
-    'auth/invalid-email':'That email address doesn\'t look right.',
-    'auth/user-not-found':'No account found with that email.',
-    'auth/wrong-password':'Incorrect password.',
-    'auth/invalid-credential':'That email and password don\'t match.',
-    'auth/email-already-in-use':'An account already exists with that email — try signing in.',
-    'auth/weak-password':'Please choose a password of at least 6 characters.',
-    'auth/too-many-requests':'Too many attempts. Please wait a moment and try again.',
-    'auth/network-request-failed':'Network problem — please check your connection.'
-  };
-  return map[e.code] || e.message || 'Something went wrong. Please try again.';
+  $('g-switch').textContent      = signup ? 'Sign in instead' : 'Create an account';
+  $('g-pass').setAttribute('autocomplete', signup || recover ? 'new-password' : 'current-password');
+  $('g-btn').disabled = false;
+  if (!recover) $('g-msg').textContent = '';
 }
 
 $('g-switch').onclick = () => setGateMode(gateMode === 'signin' ? 'signup' : 'signin');
@@ -546,52 +598,64 @@ $('g-btn').onclick = async () => {
   const msg   = $('g-msg');
   msg.className = 'gate-msg';
 
+  if (gateMode === 'recover') {
+    if (!pass) { msg.textContent = 'Choose a new password.'; return; }
+    $('g-btn').disabled = true; $('g-btn').textContent = 'Please wait…';
+    const { error } = await supabase.auth.updateUser({ password: pass });
+    if (error) { msg.textContent = friendly(error); setGateMode('recover'); return; }
+    $('g-pass').value = '';
+    toast('✓ Password updated');
+    setGateMode('signin');
+    const { data } = await supabase.auth.getSession();
+    route(data.session, true);
+    return;
+  }
+
   if (!email || !pass) { msg.textContent = 'Please enter your email and password.'; return; }
   if (gateMode === 'signup' && !name) { msg.textContent = 'Please enter your full name.'; return; }
 
-  $('g-btn').disabled = true;
-  $('g-btn').textContent = 'Please wait…';
-  try {
-    if (gateMode === 'signup') {
-      const cred = await createUserWithEmailAndPassword(auth, email, pass);
-      await updateProfile(cred.user, { displayName: name });
-      // Create the member profile. verified stays false until the team
-      // confirms this person against their registration.
-      await setDoc(doc(db, 'members', cred.user.uid), {
-        name, email,
-        verified: false,
-        status: 'active',
-        bio:'', occupation:'', education:'', city:'', languages:'', looking_for:'',
-        created_at: serverTimestamp(),
-        updated_at: serverTimestamp()
-      });
-    } else {
-      await signInWithEmailAndPassword(auth, email, pass);
+  $('g-btn').disabled = true; $('g-btn').textContent = 'Please wait…';
+
+  if (gateMode === 'signup') {
+    // The name rides along in user metadata; the handle_new_user trigger
+    // reads it when it creates the profiles row, so there's no second
+    // write here that could half-fail.
+    const { data, error } = await supabase.auth.signUp({
+      email, password: pass, options: { data: { name } }
+    });
+    if (error) { msg.textContent = friendly(error); setGateMode('signup'); return; }
+    if (!data.session) {
+      // Email confirmation is switched on for this project, so there's no
+      // session yet. setGateMode clears the message, so write it after.
+      setGateMode('signin');
+      msg.className = 'gate-msg ok';
+      msg.textContent = 'Account created — check your email for a confirmation link, then sign in.';
     }
-  } catch(e){
-    msg.textContent = gateError(e);
-    $('g-btn').disabled = false;
-    setGateMode(gateMode);
+  } else {
+    const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+    if (error) { msg.textContent = friendly(error); setGateMode('signin'); return; }
   }
 };
 
 $('g-reset').onclick = async () => {
   const email = $('g-email').value.trim();
   const msg = $('g-msg');
-  if (!email) { msg.className = 'gate-msg'; msg.textContent = 'Enter your email above first, then tap this again.'; return; }
-  try {
-    await sendPasswordResetEmail(auth, email);
-    msg.className = 'gate-msg ok';
-    msg.textContent = 'Password reset email sent — check your inbox.';
-  } catch(e){
-    msg.className = 'gate-msg';
-    msg.textContent = gateError(e);
-  }
+  msg.className = 'gate-msg';
+  if (!email) { msg.textContent = 'Enter your email above first, then tap this again.'; return; }
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.href.split('#')[0]
+  });
+  if (error) { msg.textContent = friendly(error); return; }
+  msg.className = 'gate-msg ok';
+  msg.textContent = 'Password reset email sent — check your inbox.';
 };
 
 $('g-pass').addEventListener('keydown', e => { if (e.key === 'Enter') $('g-btn').click(); });
 
-$('btn-signout').onclick = () => signOut(auth);
+$('btn-signout').onclick = async () => {
+  closeChat();
+  await supabase.auth.signOut();
+};
 
 // ───────── ROUTING ─────────
 document.querySelectorAll('.tab').forEach(tab => {
@@ -601,61 +665,108 @@ document.querySelectorAll('.tab').forEach(tab => {
 function showView(name){
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   $('view-' + name).classList.add('active');
+  // The chat has no tab of its own — it sits under Messages, so keep that lit.
+  const lit = name === 'chat' ? 'messages' : name;
   document.querySelectorAll('.tab').forEach(t =>
-    t.classList.toggle('active', t.dataset.view === name));
+    t.classList.toggle('active', t.dataset.view === lit));
   window.scrollTo(0, 0);
   if (name === 'matches')  loadMatches();
   if (name === 'messages') loadConversations();
 }
 
-$('chat-back').onclick = () => {
-  if (unsubMessages) { unsubMessages(); unsubMessages = null; }
+function closeChat(){
+  if (msgChannel) { supabase.removeChannel(msgChannel); msgChannel = null; }
+  if (pollTimer)  { clearInterval(pollTimer); pollTimer = null; }
   currentConvo = null;
-  showView('messages');
-};
+  MSGS = [];
+}
+
+$('chat-back').onclick = () => { closeChat(); showView('messages'); };
 
 // ───────── SESSION ─────────
-onAuthStateChanged(auth, async user => {
-  $('loading').style.display = 'none';
-  if (!user) {
-    ME = null; PROFILE = null;
-    if (unsubMessages) { unsubMessages(); unsubMessages = null; }
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'PASSWORD_RECOVERY') {
+    $('loading').style.display = 'none';
     $('app').style.display = 'none';
     $('gate').style.display = 'flex';
-    $('g-btn').disabled = false;
-    setGateMode('signin');
+    setGateMode('recover');
+    const msg = $('g-msg');
+    msg.className = 'gate-msg ok';
+    msg.textContent = 'Choose a new password for your account.';
+    return;
+  }
+  if (event === 'TOKEN_REFRESHED') {
+    if (session) supabase.realtime.setAuth(session.access_token);
+    return;
+  }
+  route(session);
+});
+
+// Guard against the listener and the initial check both firing for the same
+// user — signing in should not reload the profile twice.
+let routedUid = undefined;
+
+async function route(session, force){
+  const uid = session?.user?.id || null;
+  if (!force && uid === routedUid) return;
+  routedUid = uid;
+
+  $('loading').style.display = 'none';
+
+  if (!uid) {
+    ME = null; PROFILE = null;
+    closeChat();
+    $('app').style.display = 'none';
+    $('gate').style.display = 'flex';
     $('g-pass').value = '';
+    if (gateMode !== 'recover') setGateMode('signin');
     return;
   }
 
-  ME = user;
+  ME = session.user;
+  // Realtime respects RLS, so the socket needs the member's token or the
+  // chat simply receives nothing.
+  supabase.realtime.setAuth(session.access_token);
+
   $('gate').style.display = 'none';
   $('app').style.display = 'flex';
 
-  try {
-    const snap = await getDoc(doc(db, 'members', user.uid));
-    PROFILE = snap.exists() ? snap.data() : null;
-  } catch(e){ PROFILE = null; }
+  const { data, error } = await supabase
+    .from('profiles').select('*').eq('id', uid).maybeSingle();
 
-  if (!PROFILE) {
-    // Signed in but no member record (e.g. created before this portal
-    // existed). Make one so they aren't stuck on a blank screen.
-    PROFILE = {
-      name: user.displayName || '', email: user.email || '',
-      verified: false, status:'active',
-      bio:'', occupation:'', education:'', city:'', languages:'', looking_for:''
+  PROFILE = data || null;
+
+  if (!PROFILE && !error) {
+    // The signup trigger should have made this row. If it didn't (schema run
+    // after the account was created), make it now rather than leaving them
+    // on a blank screen.
+    const row = {
+      id: uid,
+      name: ME.user_metadata?.name || '',
+      email: ME.email || ''
     };
-    try {
-      await setDoc(doc(db, 'members', user.uid), {
-        ...PROFILE, created_at: serverTimestamp(), updated_at: serverTimestamp()
-      });
-    } catch(e){}
+    const { data: made } = await supabase
+      .from('profiles').insert(row).select().maybeSingle();
+    PROFILE = made || { ...row, verified:false, status:'active',
+      city:'', occupation:'', education:'', languages:'', bio:'', looking_for:'' };
   }
 
-  $('who').textContent = PROFILE.name || user.email;
+  if (!PROFILE) {
+    $('verify-notice').innerHTML =
+      `<div class="notice notice-wait">We couldn't load your profile just now.
+         Please refresh the page — if it keeps happening, message the team.</div>`;
+    return;
+  }
+
+  $('who').textContent = PROFILE.name || ME.email;
   fillProfile();
   showView('profile');
-});
+}
+
+(async () => {
+  const { data } = await supabase.auth.getSession();
+  route(data.session);
+})();
 
 // ───────── PROFILE ─────────
 function fillProfile(){
@@ -687,16 +798,13 @@ $('p-save').onclick = async () => {
     education:   $('p-education').value.trim(),
     languages:   $('p-languages').value.trim(),
     bio:         $('p-bio').value.trim(),
-    looking_for: $('p-looking').value.trim(),
-    updated_at:  serverTimestamp()
+    looking_for: $('p-looking').value.trim()
   };
-  try {
-    await updateDoc(doc(db, 'members', ME.uid), patch);
-    Object.assign(PROFILE, patch);
-    toast('✓ Profile saved');
-  } catch(e){
-    toast('Could not save: ' + (e.code || e.message));
-  }
+  // updated_at is set by the trigger, not trusted to the client.
+  const { error } = await supabase
+    .from('profiles').update(patch).eq('id', ME.id);
+  if (error) toast('Could not save: ' + friendly(error));
+  else { Object.assign(PROFILE, patch); toast('✓ Profile saved'); }
   btn.disabled = false; btn.textContent = 'Save changes';
 };
 
@@ -713,17 +821,14 @@ async function loadMatches(){
   }
 
   el.innerHTML = '<div class="empty"><p>Loading…</p></div>';
-  let rows = [];
-  try {
-    const q = query(collection(db, 'member_matches'),
-                    where('member_uids', 'array-contains', ME.uid));
-    rows = (await getDocs(q)).docs.map(d => ({ id: d.id, ...d.data() }));
-  } catch(e){
+
+  // my_matches() returns only the columns a match is meant to see — no
+  // email address, no verification status, no admin notes.
+  const { data: rows, error } = await supabase.rpc('my_matches');
+  if (error) {
     el.innerHTML = `<div class="empty"><p>Couldn't load your matches just now. Please try again shortly.</p></div>`;
     return;
   }
-
-  rows = rows.filter(r => r.status !== 'declined');
 
   if (!rows.length) {
     el.innerHTML = `<div class="empty">
@@ -735,36 +840,36 @@ async function loadMatches(){
   }
 
   el.innerHTML = rows.map(r => {
-    const otherUid = (r.member_uids || []).find(u => u !== ME.uid);
-    const them     = (r.profiles && r.profiles[otherUid]) || {};
-    const asked    = (r.intro_requested_by || []).includes(ME.uid);
-    const bothAsked= (r.intro_requested_by || []).length >= 2;
-    const open     = r.status === 'conversation_open';
-
+    const open = r.status === 'conversation_open';
     let pill = '', action = '', note = '';
+
     if (open) {
       pill = '<span class="pill pill-open">Conversation open</span>';
       note = 'Your conversation is in Messages.';
-    } else if (asked) {
+    } else if (r.i_requested) {
       pill = '<span class="pill pill-wait">Introduction requested</span>';
-      note = bothAsked
+      note = r.both_requested
         ? 'You\'ve both asked — we\'re setting up your conversation inshAllah.'
         : 'We\'ve passed your request on. We\'ll set things up once they\'ve responded too.';
     } else {
-      action = `<button class="btn-soft" data-intro="${esc(r.id)}">Request introduction</button>`;
+      action = `<button class="btn-soft" data-intro="${esc(r.match_id)}">Request introduction</button>`;
       note   = 'Nothing is shared with them until you ask.';
     }
+
+    const meta = [r.other_age, r.other_city, r.other_occupation,
+                  r.other_education, r.other_languages]
+      .filter(Boolean).map(esc).join(' · ');
 
     return `<div class="match">
       <div class="match-top">
         <div>
-          <h3 class="match-name">${esc(them.name || 'A member')}</h3>
-          <p class="match-meta">${[them.age, them.city, them.occupation]
-            .filter(Boolean).map(esc).join(' · ') || 'Details shared on introduction'}</p>
+          <h3 class="match-name">${esc(r.other_name || 'A member')}</h3>
+          <p class="match-meta">${meta || 'Details shared on introduction'}</p>
         </div>
         ${pill}
       </div>
-      ${them.bio ? `<p class="match-bio">${esc(them.bio)}</p>` : ''}
+      ${r.other_bio ? `<p class="match-bio">${esc(r.other_bio)}</p>` : ''}
+      ${r.other_looking_for ? `<p class="match-bio"><em>Looking for:</em> ${esc(r.other_looking_for)}</p>` : ''}
       <div class="match-actions">
         ${action}
         <span class="match-note">${note}</span>
@@ -775,34 +880,33 @@ async function loadMatches(){
   el.querySelectorAll('[data-intro]').forEach(btn => {
     btn.onclick = async () => {
       btn.disabled = true; btn.textContent = 'Sending…';
-      try {
-        await updateDoc(doc(db, 'member_matches', btn.dataset.intro), {
-          intro_requested_by: arrayUnion(ME.uid)
-        });
+      // Members have no write access to matches at all; the request goes
+      // through an RPC that can only ever add the caller.
+      const { error } = await supabase.rpc('request_intro', { p_match_id: btn.dataset.intro });
+      if (error) {
+        toast('Could not send: ' + friendly(error));
+        btn.disabled = false; btn.textContent = 'Request introduction';
+      } else {
         toast('✓ Request sent — we\'ll be in touch');
         loadMatches();
-      } catch(e){
-        toast('Could not send: ' + (e.code || e.message));
-        btn.disabled = false; btn.textContent = 'Request introduction';
       }
     };
   });
 }
 
 // ───────── CONVERSATIONS ─────────
+let CONVOS = [];
+
 async function loadConversations(){
   const el = $('convo-list');
   el.innerHTML = '<div class="empty"><p>Loading…</p></div>';
 
-  let rows = [];
-  try {
-    const q = query(collection(db, 'conversations'),
-                    where('participants', 'array-contains', ME.uid));
-    rows = (await getDocs(q)).docs.map(d => ({ id: d.id, ...d.data() }));
-  } catch(e){
+  const { data: rows, error } = await supabase.rpc('my_conversations');
+  if (error) {
     el.innerHTML = `<div class="empty"><p>Couldn't load your messages just now. Please try again shortly.</p></div>`;
     return;
   }
+  CONVOS = rows;
 
   if (!rows.length) {
     el.innerHTML = `<div class="empty">
@@ -813,86 +917,125 @@ async function loadConversations(){
     return;
   }
 
-  rows.sort((a,b) => {
-    const t = x => x.last_message_at?.toMillis?.() || 0;
-    return t(b) - t(a);
-  });
-
-  el.innerHTML = rows.map(c => {
-    const names = c.participant_names || {};
-    const otherUid = (c.member_uids || []).find(u => u !== ME.uid);
-    const title = names[otherUid] || 'Conversation';
-    return `<div class="convo" data-convo="${esc(c.id)}">
+  el.innerHTML = rows.map(c => `
+    <div class="convo" data-convo="${esc(c.id)}">
       <div style="min-width:0">
-        <p class="convo-name">${esc(title)}</p>
+        <p class="convo-name">${esc(c.other_name || 'Conversation')}</p>
         <p class="convo-prev">${esc(c.last_message_preview || 'No messages yet')}</p>
       </div>
       ${c.status === 'closed'
         ? '<span class="pill pill-wait">Closed</span>'
         : '<span class="pill pill-open">Open</span>'}
-    </div>`;
-  }).join('');
+    </div>`).join('');
 
   el.querySelectorAll('[data-convo]').forEach(row => {
-    row.onclick = () => openChat(rows.find(c => c.id === row.dataset.convo));
+    row.onclick = () => openChat(CONVOS.find(c => c.id === row.dataset.convo));
   });
 }
 
 // ───────── CHAT ─────────
-function openChat(convo){
+function renderThread(){
+  const thread = $('thread');
+  if (!MSGS.length) {
+    thread.innerHTML = `<div class="empty">
+      <p>No messages yet. As-salāmu ʿalaykum is a good place to start.</p>
+    </div>`;
+    return;
+  }
+  const atBottom = thread.scrollHeight - thread.scrollTop - thread.clientHeight < 60;
+  thread.innerHTML = MSGS.map(m => {
+    const mine  = m.sender_id === ME.id;
+    const staff = m.sender_role === 'admin' || m.sender_role === 'wali';
+    const cls   = mine ? 'mine' : (staff ? 'theirs staff' : 'theirs');
+    const tag   = staff && !mine
+      ? ' · ' + esc(m.sender_role === 'wali' ? 'Wali' : 'Nikkah Pathways') : '';
+    return `<div class="msg ${cls}">
+      <span class="msg-who">${mine ? 'You' : esc(m.sender_name || 'Member')}${tag}</span>
+      <div class="msg-body">${esc(m.body)}</div>
+      <span class="msg-time">${fmtTime(m.created_at)}</span>
+    </div>`;
+  }).join('');
+  if (atBottom) thread.scrollTop = thread.scrollHeight;
+}
+
+function mergeMessages(incoming){
+  let added = false;
+  const seen = new Set(MSGS.map(m => m.id));
+  for (const m of incoming) {
+    if (!seen.has(m.id)) { MSGS.push(m); seen.add(m.id); added = true; }
+  }
+  if (added) {
+    MSGS.sort((a,b) => new Date(a.created_at) - new Date(b.created_at));
+    renderThread();
+  }
+}
+
+async function fetchMessages(){
+  const { data, error } = await supabase
+    .from('messages')
+    .select('id,sender_id,sender_name,sender_role,body,created_at')
+    .eq('conversation_id', currentConvo.id)
+    .order('created_at', { ascending: true });
+  if (error) return false;
+  mergeMessages(data);
+  return true;
+}
+
+async function openChat(convo){
   if (!convo) return;
+  closeChat();
   currentConvo = convo;
   showView('chat');
 
-  const names = convo.participant_names || {};
-  const otherUid = (convo.member_uids || []).find(u => u !== ME.uid);
-  $('chat-title').textContent = names[otherUid] || 'Conversation';
-
-  const others = (convo.participants || [])
-    .filter(u => u !== ME.uid && u !== otherUid)
-    .map(u => names[u] || 'Nikkah Pathways');
+  $('chat-title').textContent = convo.other_name || 'Conversation';
+  const others = (convo.others || []).filter(Boolean);
   $('chat-sub').textContent = others.length
     ? 'Also in this conversation: ' + others.join(', ')
     : '';
 
-  $('chat-supervised').textContent = convo.status === 'closed'
+  const closed = convo.status === 'closed';
+  $('chat-supervised').textContent = closed
     ? 'This conversation has been closed by the Nikkah Pathways team. You can still read it, but no new messages can be sent.'
     : 'A member of the Nikkah Pathways team is part of this conversation and can see every message. Please keep things respectful and appropriate.';
 
-  const closed = convo.status === 'closed';
   $('composer-text').disabled = closed;
   $('composer-send').disabled = closed;
   $('composer-text').placeholder = closed ? 'This conversation is closed.' : 'Write a message…';
 
-  if (unsubMessages) unsubMessages();
-  const thread = $('thread');
-  thread.innerHTML = '<div class="empty"><p>Loading…</p></div>';
+  $('thread').innerHTML = '<div class="empty"><p>Loading…</p></div>';
+  MSGS = [];
+  const ok = await fetchMessages();
+  if (!ok) {
+    $('thread').innerHTML = `<div class="empty"><p>Couldn't load this conversation.</p></div>`;
+    return;
+  }
+  renderThread();
+  $('thread').scrollTop = $('thread').scrollHeight;
 
-  const q = query(collection(db, 'conversations', convo.id, 'messages'),
-                  orderBy('created_at'));
-  unsubMessages = onSnapshot(q, snap => {
-    if (snap.empty) {
-      thread.innerHTML = `<div class="empty">
-        <p>No messages yet. As-salāmu ʿalaykum is a good place to start.</p>
-      </div>`;
-      return;
-    }
-    thread.innerHTML = snap.docs.map(d => {
-      const m = d.data();
-      const mine = m.sender_uid === ME.uid;
-      const staff = m.sender_role === 'admin' || m.sender_role === 'wali';
-      const cls = mine ? 'mine' : (staff ? 'theirs staff' : 'theirs');
-      return `<div class="msg ${cls}">
-        <span class="msg-who">${mine ? 'You' : esc(m.sender_name || 'Member')}${
-          staff && !mine ? ' · ' + esc(m.sender_role === 'wali' ? 'Wali' : 'Nikkah Pathways') : ''}</span>
-        <div class="msg-body">${esc(m.text)}</div>
-        <span class="msg-time">${fmtTime(m.created_at)}</span>
-      </div>`;
-    }).join('');
-    thread.scrollTop = thread.scrollHeight;
-  }, err => {
-    thread.innerHTML = `<div class="empty"><p>Couldn't load this conversation.</p></div>`;
-  });
+  const convoId = convo.id;
+
+  // Mark it read. This is what stops the notification emails nagging someone
+  // who is already sitting in the conversation reading it.
+  supabase.from('conversation_participants')
+    .update({ last_read: new Date().toISOString() })
+    .eq('conversation_id', convoId).eq('user_id', ME.id)
+    .then(() => {}, () => {});
+
+  // Live updates.
+  msgChannel = supabase
+    .channel('sakinah:convo:' + convoId)
+    .on('postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'messages',
+          filter: 'conversation_id=eq.' + convoId },
+        payload => { if (currentConvo?.id === convoId) mergeMessages([payload.new]); })
+    .subscribe();
+
+  // Realtime depends on the project having it switched on for this table.
+  // A slow refresh is a far better failure than a chat that silently stops
+  // updating, so poll alongside it and let the id check drop duplicates.
+  pollTimer = setInterval(() => {
+    if (currentConvo?.id === convoId) fetchMessages();
+  }, 12000);
 }
 
 const composer = $('composer-text');
@@ -909,24 +1052,27 @@ $('composer-send').onclick = async () => {
   if (!text || !currentConvo) return;
   const btn = $('composer-send');
   btn.disabled = true;
-  try {
-    await addDoc(collection(db, 'conversations', currentConvo.id, 'messages'), {
-      sender_uid: ME.uid,
-      sender_name: PROFILE.name || ME.email,
-      sender_role: 'member',
-      text,
-      created_at: serverTimestamp()
-    });
-    // Keeps the conversation list ordered and previewed. Deliberately not
-    // awaited — a failure here must never lose a message that already sent.
-    updateDoc(doc(db, 'conversations', currentConvo.id), {
-      last_message_at: serverTimestamp(),
-      last_message_preview: text.slice(0, 80)
-    }).catch(() => {});
+
+  const { data, error } = await supabase.from('messages').insert({
+    conversation_id: currentConvo.id,
+    sender_id: ME.id,
+    sender_name: PROFILE.name || ME.email,
+    sender_role: 'member',
+    body: text
+  }).select().maybeSingle();
+
+  if (error) {
+    toast('Could not send: ' + friendly(error));
+  } else {
     composer.value = '';
     composer.style.height = 'auto';
-  } catch(e){
-    toast('Could not send: ' + (e.code || e.message));
+    if (data) mergeMessages([data]);
+    // Keeps the conversation list ordered and previewed. Not awaited — a
+    // failure here must never look like a lost message — but it still needs
+    // .then(), because a Supabase builder only runs when something subscribes
+    // to it. Dropping it on the floor would quietly send nothing.
+    supabase.rpc('touch_conversation', { p_convo: currentConvo.id, p_preview: text })
+      .then(() => {}, () => {});
   }
   btn.disabled = false;
 };
