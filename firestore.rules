@@ -1,0 +1,222 @@
+rules_version = '2';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Nikkah Pathways — Firestore security rules
+//
+// Replaces "allow read, write: if true", which let anyone who found the
+// database read and write everything in it.
+//
+// Model:
+//   • Public pages (register, questionnaire, feedback) can CREATE records
+//     without logging in — that flow must keep working for strangers.
+//   • Nobody unauthenticated can READ personal data.
+//   • Admins are identified by a document in /admins/{uid}. That document's
+//     existence IS the permission; it is not writable from any client.
+//   • Members read only their own profile and their own conversations.
+//   • Conversations are created ONLY by an admin, and admin is always a
+//     participant. Members cannot create, delete, or remove people from one.
+//   • Messages cannot be edited or deleted by members — in a supervised
+//     setting a record that can be quietly altered is worse than none.
+// ─────────────────────────────────────────────────────────────────────────────
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── helpers ──
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // The signed-in member's own member document id == their auth uid.
+    function isSelf(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function isParticipant(convo) {
+      return signedIn() && request.auth.uid in convo.participants;
+    }
+
+    // Fields a member is allowed to change on their own profile. Anything
+    // else (verified status, admin notes, which event they're tied to)
+    // stays admin-only, so a member cannot promote or re-link themselves.
+    function memberEditableOnly() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['bio','occupation','education','city','languages',
+                  'looking_for','photo_url','updated_at']);
+    }
+
+    // ── admins ──
+    // Readable so the apps can check "am I an admin?". Never client-writable:
+    // granting admin happens in the Firebase console only.
+    match /admins/{uid} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    // ── members (the matrimonial profiles) ──
+    match /members/{uid} {
+      // A member reads their own profile. Admin reads all.
+      allow get: if isSelf(uid) || isAdmin();
+      // Only admin can list every member. Browsing other profiles goes
+      // through curated matches, not an open directory.
+      allow list: if isAdmin();
+
+      allow create: if isSelf(uid) || isAdmin();
+      allow update: if isAdmin() || (isSelf(uid) && memberEditableOnly());
+      allow delete: if isAdmin();
+    }
+
+    // ── member matches ──
+    // Admin proposes a match between two members. Each member can see a
+    // match they are part of, and the ONLY thing they may change is adding
+    // themselves to intro_requested_by — i.e. "yes, please set this up".
+    // They cannot create, decline on the other's behalf, or open a chat.
+    match /member_matches/{id} {
+      allow get, list: if isAdmin()
+        || (signedIn() && request.auth.uid in resource.data.member_uids);
+
+      allow create, delete: if isAdmin();
+
+      allow update: if isAdmin()
+        || (signedIn()
+            && request.auth.uid in resource.data.member_uids
+            && request.resource.data.diff(resource.data).affectedKeys()
+                 .hasOnly(['intro_requested_by'])
+            // may only add themselves, never remove or add anyone else
+            && request.resource.data.intro_requested_by
+                 .hasAll(resource.data.intro_requested_by)
+            && request.resource.data.intro_requested_by
+                 .hasOnly(resource.data.intro_requested_by
+                   .concat([request.auth.uid])));
+    }
+
+    // ── conversations ──
+    // Created by admin only. Admin is always a participant, which is what
+    // makes every conversation supervised by construction rather than by
+    // convention.
+    match /conversations/{convoId} {
+      allow get, list: if isAdmin()
+        || (signedIn() && request.auth.uid in resource.data.participants);
+
+      allow create: if isAdmin()
+        && request.resource.data.participants is list
+        && request.auth.uid in request.resource.data.participants;
+
+      // Members may only touch their read marker and the derived "last
+      // message" fields that keep the conversation list ordered — both are
+      // consequences of a message they were already allowed to send.
+      // Participants, status and closing a conversation stay admin-only.
+      allow update: if isAdmin()
+        || (isParticipant(resource.data)
+            && request.resource.data.diff(resource.data).affectedKeys()
+                 .hasOnly(['last_read','last_message_at','last_message_preview']));
+
+      allow delete: if isAdmin();
+
+      // ── messages live under their conversation ──
+      match /messages/{messageId} {
+        function parentConvo() {
+          return get(/databases/$(database)/documents/conversations/$(convoId)).data;
+        }
+
+        allow get, list: if isAdmin() || isParticipant(parentConvo());
+
+        // You may only post as yourself, and only into a conversation you're
+        // in, and only while it's open.
+        allow create: if (isAdmin() || isParticipant(parentConvo()))
+          && request.resource.data.sender_uid == request.auth.uid
+          && parentConvo().status == 'open';
+
+        // Messages are immutable for members. Admin can moderate.
+        allow update, delete: if isAdmin();
+      }
+    }
+
+    // ── registrations ──
+    // Anyone can create one (the public form). Reading is admin-only, since
+    // these carry name, email, phone, religion and marital history.
+    match /registrations/{id} {
+      allow create: if true;
+      allow get, list: if isAdmin();
+      allow update, delete: if isAdmin();
+    }
+
+    // ── questionnaire responses ──
+    // Same shape: public write, admin-only read. These are the most
+    // sensitive records in the database.
+    match /questionnaire_responses/{id} {
+      allow create: if true;
+      allow get, list: if isAdmin();
+      allow update, delete: if isAdmin();
+    }
+
+    // ── feedback & subscribers ── public can submit, admin reads
+    match /feedback/{id} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /subscribers/{id} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // ── public content ── the website needs these without a login
+    match /events/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /faqs/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /scholars/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /countdown/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /questionnaire_config/{id} {
+      allow read: if true;       // form structure only, no personal data
+      allow write: if isAdmin();
+    }
+
+    // ── settings ──
+    // The public register page reads the email webhook URL from here.
+    match /settings/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ── admin-only internals ──
+    match /matches/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    match /seating_history/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    match /email_templates/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    // ── default deny ──
+    // Any collection not named above is closed. New features must opt in
+    // here deliberately rather than inheriting open access.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
