@@ -153,6 +153,12 @@ main{flex:1;width:100%;max-width:980px;margin:0 auto;padding:1.5rem 1.1rem 3rem}
   font-size:.74rem;color:var(--ink-soft);margin-bottom:.9rem}
 .back:hover{border-color:var(--sand);color:var(--night)}
 
+#demo-bar{background:var(--sand);color:var(--night);text-align:center;
+  padding:.5rem 1rem;font-size:.8rem;position:sticky;top:0;z-index:60}
+#demo-bar strong{letter-spacing:.1em;text-transform:uppercase;font-size:.72rem}
+#demo-bar a{margin-left:.6rem;text-decoration:underline}
+body.demo .topbar{top:33px}
+body.demo .tabs{top:91px}
 .toast{position:fixed;left:50%;bottom:1.6rem;transform:translateX(-50%) translateY(140%);
   background:var(--night);color:#fff;padding:.75rem 1.3rem;border-radius:7px;font-size:.84rem;
   box-shadow:0 10px 30px rgba(27,34,64,.28);transition:transform .3s cubic-bezier(.3,1.2,.5,1);
@@ -206,6 +212,10 @@ setTimeout(function(){
 
 <!-- ───────── APP ───────── -->
 <div id="app">
+  <div id="demo-bar" style="display:none">
+    <strong>Demo</strong> — made-up members, nothing is saved. Changes disappear when you refresh.
+    <a href="?" style="color:inherit">Leave demo</a>
+  </div>
   <div class="topbar">
     <span><span class="wordmark">Sakinah</span><span class="tag">Admin</span></span>
     <div class="topbar-right">
@@ -216,6 +226,7 @@ setTimeout(function(){
 
   <div class="tabs">
     <button class="tab active" data-view="members">Members <span id="c-members"></span></button>
+    <button class="tab" data-view="idchecks">ID checks <span id="c-id"></span></button>
     <button class="tab" data-view="matches">Matches <span id="c-matches"></span></button>
     <button class="tab" data-view="convos">Conversations</button>
   </div>
@@ -231,6 +242,22 @@ setTimeout(function(){
       <div id="queue"></div>
       <input class="search" id="m-search" placeholder="Search by name, email or city…"/>
       <div id="members-list"></div>
+    </section>
+
+    <section class="view" id="view-idchecks">
+      <div class="view-head">
+        <div>
+          <h2>ID checks</h2>
+          <p>Confirm the date of birth matches the document, then approve.</p>
+        </div>
+      </div>
+      <div class="card" style="background:var(--amber-bg);border-color:#ecd9b8">
+        <p class="meta" style="color:#6d561f;margin:0">
+          These are identity documents. Open one only when you're reviewing it, and don't
+          save copies anywhere. The file is deleted the moment you approve or reject.
+        </p>
+      </div>
+      <div id="id-list"></div>
     </section>
 
     <section class="view" id="view-matches">
@@ -311,7 +338,253 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
   ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+/* ═══════════════════════════════════════════════════════════════════════════
+   DEMO MODE — add ?demo=1 to the address to explore the panel with made-up
+   members. Nothing is read from or written to your real database; everything
+   lives in memory and disappears on refresh. Useful for seeing how the whole
+   thing fits together before you have real members, and for showing someone
+   else without exposing anyone's details.
+   ═══════════════════════════════════════════════════════════════════════════ */
+const DEMO = new URLSearchParams(location.search).has('demo');
+
+function makeDemoClient(){
+  const day = n => new Date(Date.now() - n * 86400000).toISOString();
+  const ago = n => new Date(Date.now() - n * 60000).toISOString();
+  const dob = years => {
+    const d = new Date(); d.setFullYear(d.getFullYear() - years); d.setMonth(3, 12);
+    return d.toISOString().slice(0,10);
+  };
+
+  const S = {
+    members: [
+      { id:'d-hana', name:'Hana Mahmoud', email:'hana@example.com', phone:'0400 111 222',
+        gender:'female', city:'Melbourne', occupation:'Primary teacher', education:"Bachelor of Education",
+        languages:'English, Arabic', bio:'I teach year 3 and spend most weekends with my sisters. Trying to be more consistent with my Qur\'an.',
+        looking_for:'Someone kind, settled in his deen, who wants a family soon inshAllah.',
+        verified:false, status:'active', kind:'member', date_of_birth:dob(27),
+        id_status:'pending', id_file_path:'d-hana/licence.jpg', id_submitted_at:ago(180),
+        created_at:day(2), match_count:0 },
+      { id:'d-aisha', name:'Aisha Rahman', email:'aisha@example.com', phone:'0400 333 444',
+        gender:'female', city:'Sydney', occupation:'Pharmacist', education:"Bachelor of Pharmacy",
+        languages:'English, Urdu', bio:'Community pharmacist in the inner west. I like long walks and I am a terrible cook, which I am working on.',
+        looking_for:'Patience, good character, and someone who prays on time.',
+        verified:true, status:'active', kind:'member', date_of_birth:dob(28),
+        id_status:'approved', id_file_path:null, created_at:day(21), match_count:2 },
+      { id:'d-yusuf', name:'Yusuf Ahmed', email:'yusuf@example.com', phone:'0400 555 666',
+        gender:'male', city:'Sydney', occupation:'Civil engineer', education:"Master of Engineering",
+        languages:'English, Arabic', bio:'Revert of six years alhamdulillah. I work on bridges, which is less exciting than it sounds.',
+        looking_for:'Someone practising and easy to talk to. I would like us to learn together.',
+        verified:true, status:'active', kind:'member', date_of_birth:dob(30),
+        id_status:'approved', id_file_path:null, created_at:day(25), match_count:1 },
+      { id:'d-omar', name:'Omar Siddiqui', email:'omar@example.com', phone:'0400 777 888',
+        gender:'male', city:'Sydney', occupation:'Dentist', education:"Bachelor of Dental Surgery",
+        languages:'English', bio:'Quiet, close to my parents, and I run most mornings.',
+        looking_for:'Someone family-oriented who does not mind an early riser.',
+        verified:true, status:'active', kind:'member', date_of_birth:dob(31),
+        id_status:'approved', id_file_path:null, created_at:day(30), match_count:1 },
+      { id:'d-fatima', name:'Fatima Noor', email:'fatima@example.com', phone:'',
+        gender:'female', city:'Melbourne', occupation:'Accountant', education:"Bachelor of Commerce",
+        languages:'English, Somali', bio:'', looking_for:'',
+        verified:false, status:'active', kind:'member', date_of_birth:null,
+        id_status:'none', id_file_path:null, created_at:day(1), match_count:0 },
+      { id:'d-wali', name:'Abu Yusuf', email:'wali@example.com', phone:'0400 999 000',
+        gender:'male', city:'Sydney', occupation:'', education:'', languages:'', bio:'', looking_for:'',
+        verified:false, status:'active', kind:'wali', date_of_birth:null,
+        id_status:'none', id_file_path:null, created_at:day(5), match_count:0 },
+    ],
+    matches: [
+      { id:'d-m1', member_a:'d-aisha', member_b:'d-yusuf', status:'intro_requested',
+        intro_requested_by:['d-aisha','d-yusuf'], conversation_id:null,
+        note:'Both Sydney, close in age, both said relocation is not a dealbreaker.',
+        created_at:day(4) },
+      { id:'d-m2', member_a:'d-aisha', member_b:'d-omar', status:'conversation_open',
+        intro_requested_by:['d-aisha','d-omar'], conversation_id:'d-c1',
+        note:'', created_at:day(12) },
+      { id:'d-m3', member_a:'d-yusuf', member_b:'d-hana', status:'proposed',
+        intro_requested_by:[], conversation_id:null,
+        note:'Different cities — worth asking how they both feel about that.',
+        created_at:day(1) },
+    ],
+    conversations: [
+      { id:'d-c1', match_id:'d-m2', status:'open', created_by:'demo-admin',
+        last_message_at:ago(42), last_message_preview:'That sounds good, jazakAllah khair.' },
+    ],
+    participants: [
+      { conversation_id:'d-c1', user_id:'d-aisha', role:'member', last_read:ago(40), last_notified_at:null },
+      { conversation_id:'d-c1', user_id:'d-omar',  role:'member', last_read:ago(44), last_notified_at:null },
+      { conversation_id:'d-c1', user_id:'demo-admin', role:'admin', last_read:ago(1), last_notified_at:null },
+      { conversation_id:'d-c1', user_id:'d-wali',  role:'wali',   last_read:ago(50), last_notified_at:null },
+    ],
+    messages: [
+      { id:'d-x1', conversation_id:'d-c1', sender_id:'demo-admin', sender_name:'Nikkah Pathways',
+        sender_role:'admin', body:'Assalamu alaykum both. I\'ll be here throughout, and Omar\'s wali Abu Yusuf is in the conversation too. Please keep things respectful and let me know if you need anything.',
+        created_at:ago(120) },
+      { id:'d-x2', conversation_id:'d-c1', sender_id:'d-omar', sender_name:'Omar Siddiqui',
+        sender_role:'member', body:'Wa alaykum assalam. JazakAllah khair for arranging this.', created_at:ago(110) },
+      { id:'d-x3', conversation_id:'d-c1', sender_id:'d-aisha', sender_name:'Aisha Rahman',
+        sender_role:'member', body:'Wa alaykum assalam warahmatullah.', created_at:ago(100) },
+      { id:'d-x4', conversation_id:'d-c1', sender_id:'d-wali', sender_name:'Abu Yusuf',
+        sender_role:'wali', body:'Assalamu alaykum, I am Omar\'s wali and will be following along.', created_at:ago(60) },
+      { id:'d-x5', conversation_id:'d-c1', sender_id:'d-aisha', sender_name:'Aisha Rahman',
+        sender_role:'member', body:'That sounds good, jazakAllah khair.', created_at:ago(42) },
+    ],
+  };
+
+  // A placeholder standing in for the uploaded document, so the review flow
+  // can be walked through without anyone's real ID being involved.
+  const SAMPLE_DOC = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="520" height="320">
+      <rect width="520" height="320" rx="14" fill="#eceef4" stroke="#c7cbd8"/>
+      <rect x="28" y="30" width="150" height="180" rx="8" fill="#d6dae5"/>
+      <text x="103" y="128" font-family="Inter,sans-serif" font-size="13" fill="#6b7186"
+            text-anchor="middle">photo</text>
+      <text x="205" y="62" font-family="Inter,sans-serif" font-size="11" fill="#6b7186">NAME</text>
+      <text x="205" y="84" font-family="Inter,sans-serif" font-size="17" fill="#232736">HANA MAHMOUD</text>
+      <text x="205" y="124" font-family="Inter,sans-serif" font-size="11" fill="#6b7186">DATE OF BIRTH</text>
+      <text x="205" y="146" font-family="Inter,sans-serif" font-size="17" fill="#232736">12 / 04 / ${new Date().getFullYear()-27}</text>
+      <text x="205" y="186" font-family="Inter,sans-serif" font-size="11" fill="#6b7186">LICENCE NO.</text>
+      <text x="205" y="206" font-family="Inter,sans-serif" font-size="15" fill="#232736">0000 0000</text>
+      <text x="260" y="268" font-family="Inter,sans-serif" font-size="15" fill="#b4635f"
+            text-anchor="middle" font-weight="bold">SAMPLE — NOT A REAL DOCUMENT</text>
+      <text x="260" y="292" font-family="Inter,sans-serif" font-size="12" fill="#6b7186"
+            text-anchor="middle">a real submission would be a photo of their ID</text>
+    </svg>`);
+
+  const session = { access_token:'demo', user:{ id:'demo-admin', email:'demo@sakinah (sample data)' } };
+  const member = id => S.members.find(m => m.id === id);
+
+  function build(table){
+    const f = {};
+    const b = {
+      _f: f,
+      select(){ return b; },
+      eq(c,v){ (f[c] ||= []).push(v); return b; },
+      order(){ return b; },
+      insert(r){ b._row = r; return b; },
+      update(p){ b._patch = p; return b; },
+      delete(){ b._del = true; return b; },
+      maybeSingle(){ b._one = true; return b; },
+      single(){ b._one = true; return b; },
+      then(ok, bad){ return Promise.resolve(run()).then(ok, bad); }
+    };
+    function match(row){
+      return Object.entries(f).every(([c,vals]) => vals.every(v => row[c] === v));
+    }
+    function run(){
+      if (table === 'admins') return { data:{ id:'demo-admin' }, error:null };
+
+      if (b._patch) {
+        const list = table === 'profiles' ? S.members
+                   : table === 'conversations' ? S.conversations
+                   : table === 'conversation_participants' ? S.participants : [];
+        list.filter(match).forEach(r => Object.assign(r, b._patch));
+        return { data:null, error:null };
+      }
+      if (b._del) {
+        const key = table === 'matches' ? 'matches' : null;
+        if (key) { const keep = S[key].filter(r => !match(r)); S[key].length = 0; S[key].push(...keep); }
+        return { data:null, error:null };
+      }
+      if (b._row) {
+        if (table === 'matches') {
+          const clash = S.matches.some(m =>
+            [m.member_a, m.member_b].sort().join() === [b._row.member_a, b._row.member_b].sort().join());
+          if (clash) return { data:null, error:{ message:'duplicate key value violates matches_unique_pair' } };
+          S.matches.unshift({ id:'d-m' + Date.now(), status:'proposed', intro_requested_by:[],
+            conversation_id:null, created_at:new Date().toISOString(), note:'', ...b._row });
+          return { data:null, error:null };
+        }
+        if (table === 'messages') {
+          const row = { id:'d-x' + Date.now(), created_at:new Date().toISOString(), ...b._row };
+          S.messages.push(row);
+          return { data:row, error:null };
+        }
+        return { data:null, error:null };
+      }
+
+      const src = table === 'profiles' ? S.members
+                : table === 'matches' ? S.matches
+                : table === 'conversations' ? S.conversations
+                : table === 'conversation_participants' ? S.participants
+                : table === 'messages' ? S.messages : [];
+      const rows = src.filter(match);
+      return { data: b._one ? (rows[0] ?? null) : rows, error:null };
+    }
+    return b;
+  }
+
+  function rpcBuilder(name, args){
+    const b = { then(ok, bad){ return Promise.resolve(run()).then(ok, bad); } };
+    function run(){
+      if (name === 'admin_members') {
+        const order = m => (m.kind === 'wali' ? 1 : 0) * 10 + (m.id_status === 'pending' ? 0 : 1) * 2 + (m.verified ? 1 : 0);
+        return { data: [...S.members].sort((x,y) => order(x) - order(y)), error:null };
+      }
+      if (name === 'open_conversation') {
+        const m = S.matches.find(x => x.id === args.p_match_id);
+        if (!m) return { data:null, error:{ message:'No such match' } };
+        if (m.conversation_id) return { data:m.conversation_id, error:null };
+        const id = 'd-c' + Date.now();
+        S.conversations.unshift({ id, match_id:m.id, status:'open', created_by:'demo-admin',
+          last_message_at:null, last_message_preview:null });
+        S.participants.push(
+          { conversation_id:id, user_id:m.member_a, role:'member' },
+          { conversation_id:id, user_id:m.member_b, role:'member' },
+          { conversation_id:id, user_id:'demo-admin', role:'admin' });
+        m.conversation_id = id; m.status = 'conversation_open';
+        return { data:id, error:null };
+      }
+      if (name === 'add_participant') {
+        const who = S.members.find(x => (x.email||'').toLowerCase() === String(args.p_email||'').trim().toLowerCase());
+        if (!who) return { data:null, error:{ message:'No Sakinah account with that email. They need to sign up first.' } };
+        const existing = S.participants.find(p => p.conversation_id === args.p_convo && p.user_id === who.id);
+        if (existing) existing.role = args.p_role;
+        else S.participants.push({ conversation_id:args.p_convo, user_id:who.id, role:args.p_role });
+        return { data:who.name, error:null };
+      }
+      if (name === 'review_id') {
+        if (!args.p_approve && !String(args.p_reason || '').trim())
+          return { data:null, error:{ message:'Give a reason so they know what to fix' } };
+        const who = member(args.p_user);
+        if (who) {
+          who.id_status = args.p_approve ? 'approved' : 'rejected';
+          who.id_reason = args.p_approve ? null : args.p_reason;
+          who.id_file_path = null;
+        }
+        return { data:null, error:null };
+      }
+      if (name === 'touch_conversation') {
+        const c = S.conversations.find(x => x.id === args.p_convo);
+        if (c) { c.last_message_at = new Date().toISOString();
+                 c.last_message_preview = String(args.p_preview || '').slice(0,80); }
+        return { data:null, error:null };
+      }
+      return { data:null, error:null };
+    }
+    return b;
+  }
+
+  return {
+    auth: {
+      onAuthStateChange(){ return { data:{ subscription:{ unsubscribe(){} } } }; },
+      async getSession(){ return { data:{ session }, error:null }; },
+      async signInWithPassword(){ return { data:{ session }, error:null }; },
+      async signOut(){ location.search = ''; return { error:null }; }
+    },
+    realtime: { setAuth(){} },
+    from: build,
+    rpc: rpcBuilder,
+    storage: { from(){ return {
+      async createSignedUrl(){ return { data:{ signedUrl: SAMPLE_DOC }, error:null }; },
+      async remove(){ return { data:null, error:null }; },
+      async upload(){ return { data:null, error:null }; }
+    }; } },
+    channel(){ const c = { on(){ return c; }, subscribe(){ return c; } }; return c; },
+    removeChannel(){}
+  };
+}
+
+const supabase = DEMO ? makeDemoClient() : createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
 });
 
@@ -395,6 +668,7 @@ async function route(session){
   }
 
   ME = session.user;
+  if (DEMO) { $('demo-bar').style.display = 'block'; document.body.classList.add('demo'); }
   supabase.realtime.setAuth(session.access_token);
   $('gate').style.display = 'none';
   $('app').style.display = 'flex';
@@ -424,11 +698,14 @@ function paintCounts(){
   // Walis aren't candidates, so they never belong in the verification queue.
   const unver = MEMBERS.filter(m => !m.verified && m.kind !== 'wali').length;
   const ready = MATCHES.filter(m => (m.intro_requested_by||[]).length >= 2 && !m.conversation_id).length;
+  const ids   = MEMBERS.filter(m => m.id_status === 'pending').length;
   $('c-members').innerHTML = unver  ? `<span class="count">${unver}</span>` : '';
   $('c-matches').innerHTML = ready  ? `<span class="count">${ready}</span>` : '';
+  $('c-id').innerHTML      = ids    ? `<span class="count">${ids}</span>` : '';
 
   const jobs = [];
   if (unver) jobs.push(`<li><a data-jump="members">${unver} member${unver>1?'s':''} waiting to be verified</a></li>`);
+  if (ids)   jobs.push(`<li><a data-jump="idchecks">${ids} ID check${ids>1?'s':''} waiting to be reviewed</a></li>`);
   if (ready) jobs.push(`<li><a data-jump="matches">${ready} match${ready>1?'es':''} where both sides have asked for an introduction</a></li>`);
   $('queue').innerHTML = jobs.length
     ? `<div class="queue"><h3>Needs you</h3><ul>${jobs.join('')}</ul></div>` : '';
@@ -444,6 +721,7 @@ function showView(name){
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.view === lit));
   window.scrollTo(0,0);
   if (name === 'members') paintMembers();
+  if (name === 'idchecks') paintIdChecks();
   if (name === 'matches') { paintPickers(); paintMatches(); }
   if (name === 'convos')  paintConvos();
 }
@@ -475,6 +753,11 @@ function paintMembers(){
       : m.status === 'paused' ? '<span class="pill pill-off">Paused</span>'
       : '<span class="pill pill-ok">Active</span>';
     const meta = [m.age, m.gender, m.city, m.occupation].filter(Boolean).map(esc).join(' · ');
+    const idTag = m.kind === 'wali' ? ''
+      : m.id_status === 'approved' ? '<span class="meta" style="color:#4a6b45">Age verified</span>'
+      : m.id_status === 'pending'  ? '<span class="meta" style="color:var(--amber)">ID awaiting review</span>'
+      : m.id_status === 'rejected' ? '<span class="meta" style="color:var(--rose)">ID rejected</span>'
+      : '<span class="meta">Age not verified</span>';
     return `<div class="card">
       <div class="row">
         <div style="min-width:0">
@@ -489,6 +772,7 @@ function paintMembers(){
         <button class="btn" data-open="${esc(m.id)}">Details</button>
         <button class="btn" data-kind="${esc(m.id)}">${wali ? 'Treat as member' : 'Mark as wali'}</button>
         ${wali ? '' : `<span class="meta">${m.match_count || 0} match${m.match_count === 1 ? '' : 'es'}</span>`}
+        ${idTag}
       </div>
       <div class="detail" id="d-${esc(m.id)}">
         <dl>
@@ -539,6 +823,99 @@ function paintMembers(){
     toast(`${m.name} is now ${next}`);
     paintMembers();
   });
+}
+
+// ───────── ID checks ─────────
+function paintIdChecks(){
+  const rows = MEMBERS.filter(m => m.id_status === 'pending');
+  if (!rows.length) {
+    $('id-list').innerHTML = `<div class="empty"><div class="display">Nothing to review</div>
+      <p>ID checks appear here as members submit them.</p></div>`;
+    return;
+  }
+  $('id-list').innerHTML = rows.map(m => {
+    const age = m.date_of_birth ? ageFrom(m.date_of_birth) : null;
+    return `<div class="card">
+      <div class="row">
+        <div style="min-width:0">
+          <h3 class="name">${esc(m.name || '(no name)')}</h3>
+          <p class="meta">${esc(m.email || '')}${m.phone ? ' · ' + esc(m.phone) : ''}</p>
+        </div>
+        <span class="pill pill-wait">Awaiting review</span>
+      </div>
+      <div class="detail open" style="border-top:1px solid var(--line)">
+        <dl>
+          <dt>Date of birth</dt><dd><strong>${esc(m.date_of_birth || '—')}</strong>
+            ${age !== null ? ` — that makes them <strong>${age}</strong>` : ''}</dd>
+          <dt>Submitted</dt><dd>${fmt(m.id_submitted_at)}</dd>
+        </dl>
+      </div>
+      <div class="actions">
+        <button class="btn btn-go" data-viewdoc="${esc(m.id)}">View document</button>
+        <button class="btn btn-key" data-approve="${esc(m.id)}">Approve</button>
+        <button class="btn btn-bad" data-reject="${esc(m.id)}">Reject</button>
+      </div>
+      <div id="doc-${esc(m.id)}" style="margin-top:.9rem"></div>
+    </div>`;
+  }).join('');
+
+  $('id-list').querySelectorAll('[data-viewdoc]').forEach(b => b.onclick = async () => {
+    const m = byId(b.dataset.viewdoc);
+    const box = $('doc-' + m.id);
+    if (box.innerHTML) { box.innerHTML = ''; b.textContent = 'View document'; return; }
+    if (!m.id_file_path) { toast('No document on file for them.', true); return; }
+    b.disabled = true;
+    // A link that works for a few minutes, not a public URL. The bucket is
+    // private, so this is the only way the image can be seen at all.
+    const { data, error } = await supabase.storage.from('id-documents')
+      .createSignedUrl(m.id_file_path, 300);
+    b.disabled = false;
+    if (error) return toast('Could not open it: ' + friendly(error), true);
+    const isPdf = /\.pdf$/i.test(m.id_file_path);
+    box.innerHTML = isPdf
+      ? `<a class="btn" href="${esc(data.signedUrl)}" target="_blank" rel="noopener">Open PDF in a new tab</a>`
+      : `<img src="${esc(data.signedUrl)}" alt="Identity document"
+             style="max-width:100%;border-radius:8px;border:1px solid var(--line)"/>`;
+    b.textContent = 'Hide document';
+  });
+
+  $('id-list').querySelectorAll('[data-approve]').forEach(b => b.onclick = () => review(b.dataset.approve, true));
+  $('id-list').querySelectorAll('[data-reject]').forEach(b => b.onclick = () => {
+    const reason = prompt('What was wrong with it? They will see this, so be specific —\n' +
+                          'e.g. "The photo is too blurry to read the date of birth."');
+    if (reason === null) return;
+    if (!reason.trim()) return toast('A reason is needed so they know what to fix.', true);
+    review(b.dataset.reject, false, reason.trim());
+  });
+}
+
+async function review(userId, approve, reason){
+  const m = byId(userId);
+  const path = m?.id_file_path;
+  const { error } = await supabase.rpc('review_id',
+    { p_user: userId, p_approve: approve, p_reason: reason || null });
+  if (error) return toast(friendly(error), true);
+
+  // The document has served its purpose. Keeping identity documents after
+  // the check is done is pure liability, so remove it now.
+  if (path) {
+    const del = await supabase.storage.from('id-documents').remove([path]);
+    if (del.error) toast('Reviewed, but the document could not be deleted — remove it in Supabase.', true);
+  }
+  toast(approve ? `✓ ${m?.name || 'Member'} verified — their age is now confirmed`
+                : `${m?.name || 'Member'} asked to send a clearer document`);
+  await loadAll();
+  paintIdChecks();
+}
+
+function ageFrom(dob){
+  if (!dob) return null;
+  const b = new Date(dob); if (isNaN(b)) return null;
+  const t = new Date();
+  let a = t.getFullYear() - b.getFullYear();
+  const mo = t.getMonth() - b.getMonth();
+  if (mo < 0 || (mo === 0 && t.getDate() < b.getDate())) a--;
+  return a;
 }
 
 // ───────── matches ─────────
