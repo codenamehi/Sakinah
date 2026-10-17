@@ -391,6 +391,7 @@ setTimeout(function(){
         <p>This is what we share with someone once you've both been matched.</p>
       </div>
       <div id="verify-notice"></div>
+      <div id="id-card"></div>
       <div class="card">
         <div class="grid-2">
           <div class="field">
@@ -408,8 +409,18 @@ setTimeout(function(){
             <div class="readonly" id="p-age">—</div>
           </div>
           <div class="field">
+            <label>Phone</label>
+            <input type="tel" id="p-phone" placeholder="e.g. 0400 000 000"/>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
             <label>City</label>
             <input type="text" id="p-city" placeholder="e.g. Sydney"/>
+          </div>
+          <div class="field">
+            <label>Gender</label>
+            <div class="readonly" id="p-gender">—</div>
           </div>
         </div>
         <div class="grid-2">
@@ -769,10 +780,25 @@ async function route(session, force){
 })();
 
 // ───────── PROFILE ─────────
+// Age is worked out from the date of birth an admin has seen evidence for,
+// so it can't drift and can't be invented.
+function ageFrom(dob){
+  if (!dob) return null;
+  const b = new Date(dob); if (isNaN(b)) return null;
+  const t = new Date();
+  let a = t.getFullYear() - b.getFullYear();
+  const m = t.getMonth() - b.getMonth();
+  if (m < 0 || (m === 0 && t.getDate() < b.getDate())) a--;
+  return a;
+}
+
 function fillProfile(){
+  const age = ageFrom(PROFILE.date_of_birth) ?? PROFILE.age;
   $('p-name').textContent  = PROFILE.name  || '—';
   $('p-email').textContent = PROFILE.email || ME.email || '—';
-  $('p-age').textContent   = PROFILE.age   || 'Not set';
+  $('p-age').textContent   = age ? age + ' years' : 'Not verified yet';
+  $('p-gender').textContent= PROFILE.gender || 'Not set';
+  $('p-phone').value       = PROFILE.phone  || '';
   $('p-city').value        = PROFILE.city        || '';
   $('p-occupation').value  = PROFILE.occupation  || '';
   $('p-education').value   = PROFILE.education   || '';
@@ -787,12 +813,126 @@ function fillProfile(){
          We check each new account against our registrations before matching begins.
          You can fill in your profile now — matches will appear here once you're verified inshAllah.
        </div>`;
+
+  paintIdCard();
+}
+
+// ───────── ID / age verification ─────────
+function paintIdCard(){
+  const s = PROFILE.id_status || 'none';
+  const dob = PROFILE.date_of_birth || '';
+
+  if (s === 'approved') {
+    $('id-card').innerHTML = `<div class="card">
+      <div class="match-top">
+        <div>
+          <h3 class="match-name" style="font-size:1.1rem">Age verified</h3>
+          <p class="match-meta">Your age is confirmed, so it's shown accurately to your matches.</p>
+        </div>
+        <span class="pill pill-open">Verified</span>
+      </div>
+    </div>`;
+    return;
+  }
+
+  if (s === 'pending') {
+    $('id-card').innerHTML = `<div class="card">
+      <div class="match-top">
+        <div>
+          <h3 class="match-name" style="font-size:1.1rem">We're checking your ID</h3>
+          <p class="match-meta">Usually within a day or two. We'll email you as soon as it's done,
+             and your document is deleted once we've checked it.</p>
+        </div>
+        <span class="pill pill-wait">In review</span>
+      </div>
+    </div>`;
+    return;
+  }
+
+  const rejected = s === 'rejected';
+  $('id-card').innerHTML = `<div class="card">
+    <div class="match-top">
+      <div>
+        <h3 class="match-name" style="font-size:1.1rem">Verify your age</h3>
+        <p class="match-meta">We confirm everyone's age before matching. It's the floor
+           everything else on Sakinah stands on.</p>
+      </div>
+      ${rejected ? '<span class="pill pill-wait">Needs attention</span>' : ''}
+    </div>
+    ${rejected ? `<p class="match-bio" style="color:var(--rose)">
+        <strong>We couldn't accept the last one:</strong> ${esc(PROFILE.id_reason || '')}</p>` : ''}
+    <div style="margin-top:1rem">
+      <div class="field">
+        <label>Date of birth</label>
+        <input type="date" id="id-dob" value="${esc(dob)}" max="${new Date().toISOString().slice(0,10)}"/>
+      </div>
+      <div class="field">
+        <label>Photo of your ID</label>
+        <input type="file" id="id-file" accept="image/*,application/pdf"/>
+        <div class="hint">Driver's licence, passport or any government ID showing your date of
+          birth. Only our team ever sees it, it is never shown to other members, and we delete
+          it as soon as we've checked it. Cover anything you don't want us to see apart from
+          your name and date of birth. Max 8MB.</div>
+      </div>
+      <button class="btn-soft" id="id-submit">${rejected ? 'Send a new photo' : 'Submit for verification'}</button>
+    </div>
+  </div>`;
+
+  $('id-submit').onclick = submitId;
+}
+
+async function submitId(){
+  const dob  = $('id-dob').value;
+  const file = $('id-file').files[0];
+  const btn  = $('id-submit');
+
+  if (!dob)  return toast('Please enter your date of birth.');
+  if (!file) return toast('Please choose a photo of your ID.');
+  if (file.size > 8 * 1024 * 1024) return toast('That file is over 8MB — try a smaller photo.');
+
+  const age = ageFrom(dob);
+  if (age === null)  return toast('That date doesn\'t look right.');
+  if (age < 18)      return toast('You must be at least 18 to use Sakinah.');
+  if (age > 100)     return toast('Please check that date of birth.');
+
+  btn.disabled = true; btn.textContent = 'Uploading…';
+
+  // The folder name must be this member's own id — the storage policy
+  // enforces it, this just builds a path that satisfies it.
+  const ext  = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
+  const path = `${ME.id}/${Date.now()}.${ext || 'jpg'}`;
+
+  const up = await supabase.storage.from('id-documents')
+    .upload(path, file, { upsert: false, contentType: file.type || undefined });
+  if (up.error) {
+    toast('Could not upload: ' + friendly(up.error));
+    btn.disabled = false; btn.textContent = 'Submit for verification';
+    return;
+  }
+
+  const { error } = await supabase.rpc('submit_id', {
+    p_path: path, p_dob: dob, p_phone: $('p-phone').value.trim() || null
+  });
+  if (error) {
+    // Don't leave an orphaned document behind if the record didn't update.
+    await supabase.storage.from('id-documents').remove([path]);
+    toast(friendly(error));
+    btn.disabled = false; btn.textContent = 'Submit for verification';
+    return;
+  }
+
+  PROFILE.id_status = 'pending';
+  PROFILE.date_of_birth = dob;
+  PROFILE.id_reason = null;
+  toast('✓ Sent — we\'ll let you know once it\'s checked');
+  fillProfile();
 }
 
 $('p-save').onclick = async () => {
   const btn = $('p-save');
   btn.disabled = true; btn.textContent = 'Saving…';
   const patch = {
+    phone:       $('p-phone').value.trim(),
     city:        $('p-city').value.trim(),
     occupation:  $('p-occupation').value.trim(),
     education:   $('p-education').value.trim(),
