@@ -10,35 +10,38 @@
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..600;1,6..72,200..500&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ─────────────────────────────────────────────────────────────────────────
-   Sakinah — twilight and lamplight.
-   The hour between maghrib and isha: the calmest part of the day. A
-   matrimonial platform should feel like a quiet room, not a marketplace,
-   so there is no urgency here, nothing that counts down, nothing bright.
+   Sakinah — turquoise, gold and warm sand.
+   The colours of Persian and Andalusian tilework: deep teal, glazed
+   turquoise, warm gold on a sand ground. Warm and alive without any of
+   the urgency a dating app runs on -- nothing counts down, nothing is
+   bright for the sake of it.
    One rule runs through the type: a member's own words are set in the
    serif, the interface speaks in the sans.
    ───────────────────────────────────────────────────────────────────────── */
 :root{
-  --ink:#1b1f2a;          /* text, and the darkest surfaces */
-  --ink-2:#575d6b;        /* secondary text */
-  --ink-3:#8b909c;        /* faintest text */
-  --night:#1b1f2a;
-  --night-2:#262b3a;
-  --night-3:#333a51;
-  --stone:#edefe9;        /* page: pale limestone, cool rather than cream */
-  --surface:#fcfcfa;      /* cards */
-  --surface-2:#f6f6f2;    /* recessed fields */
-  --brass:#9a7b3f;        /* the single accent */
-  --brass-lt:#c9a961;
-  --brass-wash:#f3ecdd;
-  --pine:#2f4f43;         /* settled, verified, open */
-  --pine-wash:#e6ece7;
-  --clay:#8c4a42;         /* needs attention */
-  --clay-wash:#f3e8e6;
-  --line:#dcded6;
-  --line-soft:#e8e9e3;
-  --r-card:14px;
-  --r-field:9px;
-  --lift:0 1px 2px rgba(27,31,42,.04), 0 6px 18px -8px rgba(27,31,42,.10);
+  --ink:#1f3330;          /* text, and the darkest surfaces */
+  --ink-2:#5d706b;        /* secondary text */
+  --ink-3:#93a39e;        /* faintest text */
+  --night:#123a39;
+  --night-2:#17514e;
+  --night-3:#1d6b66;
+  --stone:#fbf5ec;        /* page: warm sand */
+  --surface:#ffffff;      /* cards */
+  --surface-2:#fdf7ee;    /* recessed fields */
+  --brass:#2e8b84;        /* glazed turquoise: the primary accent */
+  --brass-lt:#6cbfb6;
+  --brass-wash:#dcefec;
+  --pine:#1d6b66;         /* settled, verified, open */
+  --pine-wash:#d6ece9;
+  --clay:#b0603f;         /* needs attention */
+  --clay-wash:#fbe9df;
+  --line:#ecdfcb;
+  --line-soft:#f3e9da;
+  --gold:#d9a441;         /* a second accent, used sparingly */
+  --gold-wash:#fcefd6;
+  --r-card:18px;
+  --r-field:11px;
+  --lift:0 1px 2px rgba(31,51,48,.04), 0 8px 22px -10px rgba(31,51,48,.13);
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
@@ -66,14 +69,15 @@ input,textarea,select{font-family:inherit;font-size:15.5px}
   min-height:100vh;display:flex;align-items:center;justify-content:center;
   padding:2rem 1.5rem;position:relative;overflow:hidden;
   background:
-    radial-gradient(900px 560px at 50% 8%, #333a51 0%, transparent 70%),
-    linear-gradient(#1b1f2a, #151822);
+    radial-gradient(760px 520px at 22% 4%, rgba(46,139,132,.42) 0%, transparent 68%),
+    radial-gradient(680px 520px at 82% 96%, rgba(217,164,65,.20) 0%, transparent 66%),
+    linear-gradient(#123a39, #0c2a2a);
 }
 /* The one ornament: a single khatim, not a tiled pattern. */
 .khatim{
   position:absolute;width:min(132vw,860px);height:auto;
   top:50%;left:50%;transform:translate(-50%,-56%);
-  opacity:.055;color:var(--brass-lt);pointer-events:none;
+  opacity:.085;color:#7fd4ca;pointer-events:none;
 }
 .gate-card{width:100%;max-width:372px;text-align:center;position:relative;z-index:1}
 .gate-wordmark{
@@ -115,7 +119,7 @@ input,textarea,select{font-family:inherit;font-size:15.5px}
   border-radius:var(--r-field);padding:.82rem;font-weight:700;font-size:.95rem;
   transition:background .18s;
 }
-.btn-primary:hover{background:#ab8a49}
+.btn-primary:hover{background:#35a099}
 .btn-primary:disabled{opacity:.5;cursor:default}
 .gate-switch{text-align:center;margin-top:1.05rem;font-size:.9rem;color:rgba(255,255,255,.46)}
 .gate-switch button{
@@ -198,7 +202,7 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
   flex:0 0 auto;white-space:nowrap;
 }
 .check input{accent-color:var(--brass);margin:0 .15rem 0 0;flex:none;width:15px;height:15px}
-.check:has(input:checked){border-color:var(--brass);background:var(--brass-wash);color:#6b5321}
+.check:has(input:checked){border-color:var(--brass);background:var(--brass-wash);color:#17514e}
 .scale{display:flex;gap:.4rem;flex-wrap:wrap}
 .scale button{
   flex:1;min-width:48px;background:var(--surface-2);border:1px solid var(--line);
@@ -211,23 +215,27 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
 .jobs{list-style:none;margin:0 0 1.4rem;padding:0}
 .job{
   display:flex;align-items:center;justify-content:space-between;gap:1rem;
-  background:var(--surface);border:1px solid var(--line-soft);border-left:3px solid var(--brass);
-  border-radius:var(--r-field);padding:1rem 1.2rem;margin-bottom:.6rem;
-  box-shadow:var(--lift);cursor:pointer;transition:border-color .15s;
+  background:linear-gradient(100deg,var(--brass-wash) 0%,var(--surface) 62%);
+  border:1px solid var(--line-soft);border-left:4px solid var(--brass);
+  border-radius:var(--r-card);padding:1.15rem 1.3rem;margin-bottom:.7rem;
+  box-shadow:var(--lift);cursor:pointer;
+  transition:transform .16s cubic-bezier(.22,1,.36,1),box-shadow .16s;
 }
-.job:hover{border-color:var(--brass-lt);border-left-color:var(--brass)}
+.job:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(31,51,48,.05),0 14px 28px -12px rgba(31,51,48,.22)}
 .job-text{min-width:0}
 .job-title{font-weight:700;margin:0 0 .1rem;color:var(--ink)}
 .job-sub{margin:0;font-size:.9rem;color:var(--ink-2)}
 .job-go{color:var(--brass);font-weight:700;font-size:.92rem;white-space:nowrap}
 .calm{
-  background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--r-card);
-  padding:2.4rem 1.6rem;text-align:center;box-shadow:var(--lift);margin-bottom:1.4rem;
+  background:linear-gradient(165deg,var(--brass-wash) 0%,var(--surface) 70%);
+  border:1px solid var(--line-soft);border-radius:var(--r-card);
+  padding:2.8rem 1.8rem;text-align:center;box-shadow:var(--lift);margin-bottom:1.4rem;
 }
 .calm p{margin:0;color:var(--ink-2);font-family:'Newsreader',serif;font-size:1.1rem;line-height:1.7}
-.tally{display:flex;gap:2.2rem;flex-wrap:wrap;padding:1.1rem 1.4rem}
+.tally{display:flex;gap:2.2rem;flex-wrap:wrap;padding:1.2rem 1.5rem;
+  background:linear-gradient(100deg,var(--gold-wash) 0%,var(--surface) 58%)}
 .tally div{min-width:0}
-.tally .n{font-family:'Newsreader',serif;font-size:1.7rem;color:var(--ink);line-height:1}
+.tally .n{font-family:'Newsreader',serif;font-size:1.9rem;color:var(--night);line-height:1}
 .tally .l{font-size:.88rem;color:var(--ink-2);margin-top:.15rem}
 .readonly{
   padding:.7rem 0 .4rem;color:var(--ink);font-weight:600;
@@ -244,7 +252,7 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
   background:var(--brass);color:#fff;border:none;border-radius:var(--r-field);
   padding:.64rem 1.2rem;font-size:.92rem;font-weight:700;transition:background .18s;
 }
-.btn-soft:hover{background:#ab8a49}
+.btn-soft:hover{background:#35a099}
 .btn-soft:disabled{opacity:.45;cursor:default}
 .btn-plain{
   background:none;border:none;color:var(--ink-3);
@@ -260,7 +268,7 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
   border-radius:var(--r-field);padding:1.05rem 1.2rem;margin-bottom:1.3rem;
   font-size:.94rem;line-height:1.65;border:1px solid transparent;
 }
-.notice-wait{background:var(--brass-wash);border-color:#e6d9bd;color:#6b5321}
+.notice-wait{background:var(--gold-wash);border-color:#f0dcb0;color:#7a5a12}
 .notice-calm{background:var(--surface);border-color:var(--line-soft);color:var(--ink-2)}
 
 /* An empty screen is an invitation, so it gets room and a serif voice. */
@@ -279,8 +287,8 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
 .match::before{
   content:'';position:absolute;inset:0 auto 0 0;width:3px;background:var(--line);
 }
-.match.is-yours::before{background:var(--brass)}
-.match.is-open::before{background:var(--pine)}
+.match.is-yours::before{background:linear-gradient(var(--brass),var(--brass-lt))}
+.match.is-open::before{background:linear-gradient(var(--pine),var(--brass-lt))}
 .match-top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
 .match-name{
   font-family:'Newsreader',serif;font-weight:400;font-size:1.62rem;
@@ -290,8 +298,8 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
 /* Chips, not a run-on string of dots. */
 .chips{display:flex;flex-wrap:wrap;gap:.4rem;margin:0}
 .chip{
-  background:var(--surface-2);border:1px solid var(--line-soft);
-  border-radius:999px;padding:.2rem .66rem;font-size:.84rem;color:var(--ink-2);
+  background:var(--brass-wash);border:1px solid transparent;
+  border-radius:999px;padding:.24rem .72rem;font-size:.84rem;color:#1d6b66;font-weight:500;
 }
 .match-bio{
   font-family:'Newsreader',Georgia,serif;font-size:1.04rem;line-height:1.7;
@@ -306,7 +314,7 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
   display:inline-block;font-size:.8rem;padding:.26rem .68rem;border-radius:999px;
   font-weight:600;white-space:nowrap;
 }
-.pill-wait{background:var(--brass-wash);color:#6b5321}
+.pill-wait{background:var(--gold-wash);color:#8a6414}
 .pill-open{background:var(--pine-wash);color:var(--pine)}
 .match-actions{margin-top:1.25rem;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
 .match-note{font-size:.88rem;color:var(--ink-3);line-height:1.5}
@@ -325,7 +333,7 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:46vw;
 }
 .unread{
-  display:inline-block;background:var(--brass);color:#fff;border-radius:999px;
+  display:inline-block;background:var(--clay);color:#fff;border-radius:999px;
   font-size:.76rem;font-weight:700;padding:.06rem .46rem;margin-left:.36rem;
   vertical-align:1px;font-family:'Karla',sans-serif;
 }
@@ -340,8 +348,16 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
 .chat-title{font-family:'Newsreader',serif;font-weight:400;font-size:1.5rem;color:var(--ink);margin:0}
 .chat-sub{font-size:.88rem;color:var(--ink-3);margin:.1rem 0 0}
 
+.rules{
+  background:var(--gold-wash);border:1px solid #f0dcb0;border-radius:var(--r-field);
+  padding:.95rem 1.15rem;margin-bottom:1rem;font-size:.9rem;color:#7a5a12;line-height:1.6;
+}
+.rules p{margin:0 0 .5rem}
+.rules strong{color:#5f4609}
+.rules .btn-plain{margin-top:.2rem;padding:.3rem 0;color:#8a6414}
+.rules .btn-plain:hover{color:var(--clay)}
 .supervised{
-  background:var(--brass-wash);border:1px solid #e6d9bd;
+  background:var(--brass-wash);border:1px solid #bfe0dc;
   border-radius:var(--r-field);padding:.8rem 1rem;margin-bottom:1rem;
   font-size:.9rem;color:#6b5321;line-height:1.6;
 }
@@ -357,7 +373,7 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
 .msg-who{font-size:.82rem;color:var(--ink-3);margin-bottom:.26rem;font-weight:600;
   display:flex;align-items:center;gap:.4rem}
 .who-tag{
-  background:var(--brass-wash);color:#6b5321;border-radius:999px;
+  background:var(--brass-wash);color:#17514e;border-radius:999px;
   padding:.04rem .45rem;font-size:.74rem;font-weight:700;
 }
 .msg.mine .msg-who{flex-direction:row-reverse}
@@ -369,7 +385,7 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
 .msg.mine .msg-body{background:var(--ink);color:#fff;border-bottom-right-radius:4px}
 .msg.theirs .msg-body{background:var(--surface-2);border:1px solid var(--line-soft);
   border-bottom-left-radius:4px}
-.msg.staff .msg-body{background:var(--brass-wash);border:1px solid #e6d9bd;color:#5e491d}
+.msg.staff .msg-body{background:var(--brass-wash);border:1px solid #bfe0dc;color:#17514e}
 .msg-time{font-size:.78rem;color:var(--ink-3);margin-top:.24rem}
 
 .composer{display:flex;gap:.6rem;align-items:flex-end}
@@ -399,7 +415,7 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
 
 #loading{
   position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-  background:#1b1f2a;color:var(--brass-lt);z-index:300;
+  background:#123a39;color:var(--brass-lt);z-index:300;
   font-family:'Newsreader',serif;letter-spacing:.26em;
   text-transform:uppercase;font-size:.88rem;
 }
@@ -686,7 +702,8 @@ setTimeout(function(){
     <section class="view" id="view-messages">
       <div class="view-head">
         <h2>Messages</h2>
-        <p>Every conversation here includes a member of our team.</p>
+        <p>Every conversation here includes a member of our team. You talk to one
+           person at a time — end a conversation when you're ready to meet someone else.</p>
       </div>
       <div id="convo-list"></div>
     </section>
@@ -701,6 +718,7 @@ setTimeout(function(){
         </div>
       </div>
       <div class="supervised" id="chat-supervised"></div>
+      <div id="chat-rules"></div>
       <div class="thread" id="thread"></div>
       <div class="composer">
         <textarea id="composer-text" placeholder="Write a message…" rows="1"></textarea>
@@ -794,6 +812,12 @@ function friendly(e){
     return 'That email address doesn\'t look right.';
   if (m.includes('rate limit') || m.includes('too many'))
     return 'Too many attempts. Please wait a moment and try again.';
+  if (m.includes('contact_details'))
+    return 'Phone numbers, emails and social media can\'t be sent here. Ask us and we\'ll arrange the introduction properly.';
+  if (m.includes('already in an open conversation'))
+    return 'One of you is already talking to someone. That conversation has to end first.';
+  if (m.includes('not your conversation'))
+    return 'That isn\'t your conversation.';
   if (m.includes('row-level security') || m.includes('violates'))
     return 'That isn\'t something your account can do.';
   if (m.includes('failed to fetch') || m.includes('networkerror'))
@@ -1122,17 +1146,29 @@ function paintIdCard(){
     ${rejected ? `<p class="match-bio" style="color:var(--rose)">
         <strong>We couldn't accept the last one:</strong> ${esc(PROFILE.id_reason || '')}</p>` : ''}
     <div style="margin-top:1rem">
+      <div class="grid-2">
+        <div class="field">
+          <label>Date of birth</label>
+          <input type="date" id="id-dob" value="${esc(dob)}" max="${new Date().toISOString().slice(0,10)}"/>
+        </div>
+        <div class="field">
+          <label>City</label>
+          <input type="text" id="id-city" value="${esc(PROFILE.city || '')}" placeholder="e.g. Sydney"/>
+        </div>
+      </div>
       <div class="field">
-        <label>Date of birth</label>
-        <input type="date" id="id-dob" value="${esc(dob)}" max="${new Date().toISOString().slice(0,10)}"/>
+        <label>Phone</label>
+        <input type="tel" id="id-phone" value="${esc(PROFILE.phone || '')}" placeholder="e.g. 0400 000 000"/>
+        <div class="hint">Never shown on your profile and never given to a match.
+          We use it only to reach you about your account.</div>
       </div>
       <div class="field">
         <label>Photo of your ID</label>
         <input type="file" id="id-file" accept="image/*,application/pdf"/>
-        <div class="hint">Driver's licence, passport or any government ID showing your date of
-          birth. Only our team ever sees it, it is never shown to other members, and we delete
-          it as soon as we've checked it. Cover anything you don't want us to see apart from
-          your name and date of birth. Max 8MB.</div>
+        <div class="hint">Driver's licence, passport or any government ID showing your name
+          and date of birth. <strong>Only our team ever sees it.</strong> It is never shown on
+          your profile or to a match, and we delete it as soon as we've checked it. Cover
+          anything you'd rather we didn't see apart from your name and date of birth. Max 8MB.</div>
       </div>
       <button class="btn-soft" id="id-submit">${rejected ? 'Send a new photo' : 'Submit for verification'}</button>
     </div>
@@ -1171,8 +1207,16 @@ async function submitId(){
   }
 
   const { error } = await supabase.rpc('submit_id', {
-    p_path: path, p_dob: dob, p_phone: $('p-phone').value.trim() || null
+    p_path: path, p_dob: dob,
+    p_phone: ($('id-phone')?.value || $('p-phone')?.value || '').trim() || null
   });
+  // City isn't part of the verification record, but it's asked for here
+  // because it's one of the four things we check, so save it alongside.
+  const city = $('id-city')?.value.trim();
+  if (city && city !== PROFILE.city) {
+    await supabase.from('profiles').update({ city }).eq('id', ME.id);
+    PROFILE.city = city;
+  }
   if (error) {
     // Don't leave an orphaned document behind if the record didn't update.
     await supabase.storage.from('id-documents').remove([path]);
@@ -1576,8 +1620,37 @@ async function openChat(convo){
 
   const closed = convo.status === 'closed';
   $('chat-supervised').textContent = closed
-    ? 'This conversation has been closed by the Sakinah team. You can still read it, but no new messages can be sent.'
+    ? 'This conversation has been closed. You can still read it, but no new messages can be sent.'
     : 'A member of the Sakinah team is part of this conversation and can see every message. Please keep things respectful and appropriate.';
+
+  $('chat-rules').innerHTML = closed ? '' : `<div class="rules">
+    <p><strong>Contact details stay off the chat.</strong> Phone numbers, emails and
+       social media can't be sent here. When you're both ready to meet, ask us and
+       we'll arrange it.</p>
+    <p><strong>One conversation at a time.</strong> You're talking to
+       ${esc(convo.other_name || 'this person')} only. If you'd like to be introduced
+       to someone else, end this conversation first.</p>
+    <button class="btn-plain" id="end-convo">End this conversation</button>
+  </div>`;
+
+  const endBtn = $('end-convo');
+  if (endBtn) endBtn.onclick = async () => {
+    if (!confirm('End this conversation?\n\nNeither of you will be able to write here again, ' +
+                 'and we\'ll know you\'re ready to be introduced to someone else.')) return;
+    const why = prompt('Anything you\'d like us to know? Only our team sees this.\n\n(You can leave it blank.)');
+    if (why === null) return;
+    endBtn.disabled = true; endBtn.textContent = 'Ending…';
+    const { error } = await supabase.rpc('end_conversation',
+      { p_convo: convo.id, p_reason: why.trim() || null });
+    if (error) {
+      toast(friendly(error));
+      endBtn.disabled = false; endBtn.textContent = 'End this conversation';
+      return;
+    }
+    toast('Conversation ended — we\'ll be in touch');
+    closeChat();
+    showView('messages');
+  };
 
   $('composer-text').disabled = closed;
   $('composer-send').disabled = closed;
