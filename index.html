@@ -4,314 +4,416 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="robots" content="noindex,nofollow"/>
-<title>Sakinah — by Nikkah Pathways</title>
+<title>Sakinah</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..600;1,6..72,200..500&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* ─────────────────────────────────────────────────────────────────────────
+   Sakinah — twilight and lamplight.
+   The hour between maghrib and isha: the calmest part of the day. A
+   matrimonial platform should feel like a quiet room, not a marketplace,
+   so there is no urgency here, nothing that counts down, nothing bright.
+   One rule runs through the type: a member's own words are set in the
+   serif, the interface speaks in the sans.
+   ───────────────────────────────────────────────────────────────────────── */
 :root{
-  --night:#1b2240;        /* deep calm indigo */
-  --night-2:#262f55;
-  --night-3:#39436f;
-  --sand:#d9bc8c;         /* warm champagne */
-  --sand-lt:#ecd9b8;
-  --cream:#faf7f2;
-  --paper:#ffffff;
-  --ink:#232736;
-  --ink-soft:#6b7186;
-  --line:#e6e1d8;
-  --sage:#6f8f6a;
-  --rose:#b4635f;
-  --radius:10px;
+  --ink:#1b1f2a;          /* text, and the darkest surfaces */
+  --ink-2:#575d6b;        /* secondary text */
+  --ink-3:#8b909c;        /* faintest text */
+  --night:#1b1f2a;
+  --night-2:#262b3a;
+  --night-3:#333a51;
+  --stone:#edefe9;        /* page: pale limestone, cool rather than cream */
+  --surface:#fcfcfa;      /* cards */
+  --surface-2:#f6f6f2;    /* recessed fields */
+  --brass:#9a7b3f;        /* the single accent */
+  --brass-lt:#c9a961;
+  --brass-wash:#f3ecdd;
+  --pine:#2f4f43;         /* settled, verified, open */
+  --pine-wash:#e6ece7;
+  --clay:#8c4a42;         /* needs attention */
+  --clay-wash:#f3e8e6;
+  --line:#dcded6;
+  --line-soft:#e8e9e3;
+  --r-card:14px;
+  --r-field:9px;
+  --lift:0 1px 2px rgba(27,31,42,.04), 0 6px 18px -8px rgba(27,31,42,.10);
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{
-  background:var(--cream);
+  background:var(--stone);
   color:var(--ink);
-  font-family:'Inter',system-ui,-apple-system,sans-serif;
-  font-size:15px;line-height:1.65;
+  font-family:'Karla',system-ui,-apple-system,sans-serif;
+  font-size:15.5px;line-height:1.6;
   -webkit-font-smoothing:antialiased;
 }
 button{font-family:inherit;cursor:pointer}
-input,textarea,select{font-family:inherit;font-size:15px}
+input,textarea,select{font-family:inherit;font-size:15.5px}
+:focus-visible{outline:2px solid var(--brass);outline-offset:2px;border-radius:4px}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
 
-/* ── typography ── */
-.display{font-family:'Cormorant Garamond',Georgia,serif;font-weight:300;letter-spacing:.02em}
-.wordmark{font-family:'Cormorant Garamond',serif;font-weight:400;letter-spacing:.34em;text-transform:uppercase}
+/* Members' own writing. Set like writing. */
+.display,.prose{font-family:'Newsreader',Georgia,serif}
+.prose{font-size:1.02rem;line-height:1.72;color:var(--ink)}
+.wordmark{font-family:'Newsreader',serif;font-weight:400;letter-spacing:.22em;text-transform:uppercase}
 
-/* ── auth gate ── */
+/* ── sign-in ───────────────────────────────────────────────────────────── */
 #gate{
   min-height:100vh;display:flex;align-items:center;justify-content:center;
-  padding:1.5rem;
+  padding:2rem 1.5rem;position:relative;overflow:hidden;
   background:
-    radial-gradient(1100px 620px at 50% -12%, var(--night-3) 0%, transparent 62%),
-    var(--night);
+    radial-gradient(900px 560px at 50% 8%, #333a51 0%, transparent 70%),
+    linear-gradient(#1b1f2a, #151822);
 }
-.gate-card{width:100%;max-width:400px;text-align:center}
-.gate-mark{color:var(--sand);font-size:.74rem;margin-bottom:.5rem}
-.gate-title{font-size:2.6rem;color:#fff;margin:0 0 .3rem;line-height:1.1}
+/* The one ornament: a single khatim, not a tiled pattern. */
+.khatim{
+  position:absolute;width:min(132vw,860px);height:auto;
+  top:50%;left:50%;transform:translate(-50%,-56%);
+  opacity:.055;color:var(--brass-lt);pointer-events:none;
+}
+.gate-card{width:100%;max-width:372px;text-align:center;position:relative;z-index:1}
+.gate-wordmark{
+  font-family:'Newsreader',serif;font-weight:300;font-size:3.1rem;
+  color:#fff;margin:0;line-height:1;letter-spacing:.01em;
+}
+.gate-mark{
+  color:var(--brass-lt);font-size:.82rem;margin:.55rem 0 0;
+  letter-spacing:.01em;
+}
 .gate-verse{
-  color:rgba(255,255,255,.52);font-size:.82rem;font-style:italic;
-  margin:0 auto 2.2rem;max-width:300px;line-height:1.7;
+  font-family:'Newsreader',serif;font-style:italic;font-weight:300;
+  font-size:1.26rem;line-height:1.62;color:rgba(255,255,255,.80);
+  margin:2.1rem auto .5rem;max-width:21rem;
+}
+.gate-ref{
+  color:rgba(255,255,255,.34);font-size:.78rem;margin:0 0 2.3rem;
 }
 .gate-box{
-  background:rgba(255,255,255,.055);
-  border:1px solid rgba(217,188,140,.22);
-  border-radius:var(--radius);padding:1.6rem;text-align:left;
-  backdrop-filter:blur(8px);
+  background:rgba(255,255,255,.045);
+  border:1px solid rgba(201,169,97,.18);
+  border-radius:var(--r-card);padding:1.5rem;text-align:left;
+  backdrop-filter:blur(10px);
 }
 .gate-box label{
-  display:block;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
-  color:rgba(255,255,255,.55);margin-bottom:.4rem;
+  display:block;font-size:.84rem;font-weight:600;
+  color:rgba(255,255,255,.62);margin-bottom:.35rem;
 }
 .gate-box input{
-  width:100%;background:rgba(255,255,255,.07);
-  border:1px solid rgba(255,255,255,.14);border-radius:6px;
-  padding:.72rem .85rem;color:#fff;margin-bottom:1rem;outline:none;
-  transition:border-color .18s;
+  width:100%;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.13);border-radius:var(--r-field);
+  padding:.74rem .85rem;color:#fff;margin-bottom:1rem;outline:none;
+  transition:border-color .18s,background .18s;
 }
-.gate-box input:focus{border-color:var(--sand)}
-.gate-box input::placeholder{color:rgba(255,255,255,.3)}
+.gate-box input:focus{border-color:var(--brass-lt);background:rgba(255,255,255,.09)}
+.gate-box input::placeholder{color:rgba(255,255,255,.28)}
 .btn-primary{
-  width:100%;background:var(--sand);color:var(--night);border:none;
-  border-radius:6px;padding:.82rem;font-weight:600;font-size:.82rem;
-  letter-spacing:.1em;text-transform:uppercase;transition:background .18s;
+  width:100%;background:var(--brass);color:#fff;border:none;
+  border-radius:var(--r-field);padding:.82rem;font-weight:700;font-size:.95rem;
+  transition:background .18s;
 }
-.btn-primary:hover{background:var(--sand-lt)}
-.btn-primary:disabled{opacity:.55;cursor:default}
-.gate-switch{
-  text-align:center;margin-top:1.1rem;font-size:.82rem;
-  color:rgba(255,255,255,.5);
-}
+.btn-primary:hover{background:#ab8a49}
+.btn-primary:disabled{opacity:.5;cursor:default}
+.gate-switch{text-align:center;margin-top:1.05rem;font-size:.9rem;color:rgba(255,255,255,.46)}
 .gate-switch button{
-  background:none;border:none;color:var(--sand);
-  text-decoration:underline;padding:0;font-size:.82rem;
+  background:none;border:none;color:var(--brass-lt);
+  text-decoration:underline;text-underline-offset:3px;padding:0;font-size:.9rem;
 }
-.gate-msg{
-  font-size:.8rem;margin-top:.9rem;text-align:center;
-  min-height:1.1rem;color:var(--rose);
-}
-.gate-msg.ok{color:var(--sand-lt)}
-.gate-foot{
-  margin-top:1.7rem;font-size:.7rem;color:rgba(255,255,255,.3);
-  letter-spacing:.08em;
-}
+.gate-msg{font-size:.88rem;margin-top:.85rem;text-align:center;min-height:1.1rem;color:#d79a93}
+.gate-msg.ok{color:var(--brass-lt)}
+.gate-foot{margin-top:1.7rem;font-size:.82rem;color:rgba(255,255,255,.3)}
 
-/* ── app shell ── */
+/* ── shell ─────────────────────────────────────────────────────────────── */
 #app{display:none;min-height:100vh;flex-direction:column}
 .topbar{
-  background:var(--night);color:#fff;
-  padding:0 1.3rem;height:58px;
+  background:var(--night);color:#fff;padding:0 1.3rem;height:60px;
   display:flex;align-items:center;justify-content:space-between;
   position:sticky;top:0;z-index:50;
 }
-.topbar .wordmark{color:var(--sand);font-size:.82rem}
+.topbar .wordmark{color:#fff;font-size:.94rem;letter-spacing:.24em}
 .topbar-right{display:flex;align-items:center;gap:.9rem}
-.who{font-size:.78rem;color:rgba(255,255,255,.6);
+.who{font-size:.88rem;color:rgba(255,255,255,.52);
   max-width:34vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .btn-ghost{
-  background:none;border:1px solid rgba(255,255,255,.22);color:rgba(255,255,255,.8);
-  border-radius:5px;padding:.34rem .7rem;font-size:.72rem;
+  background:none;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.78);
+  border-radius:7px;padding:.36rem .76rem;font-size:.84rem;transition:border-color .15s,color .15s;
 }
-.btn-ghost:hover{border-color:var(--sand);color:var(--sand)}
+.btn-ghost:hover{border-color:var(--brass-lt);color:var(--brass-lt)}
 
 .tabs{
-  display:flex;background:var(--paper);border-bottom:1px solid var(--line);
-  position:sticky;top:58px;z-index:49;
+  display:flex;background:var(--surface);border-bottom:1px solid var(--line);
+  position:sticky;top:60px;z-index:49;
 }
 .tab{
-  flex:1;background:none;border:none;padding:.85rem .5rem;
-  font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--ink-soft);border-bottom:2px solid transparent;
-  transition:color .15s,border-color .15s;
+  flex:1;background:none;border:none;padding:.95rem .5rem .85rem;
+  font-size:.92rem;font-weight:600;color:var(--ink-3);
+  border-bottom:2px solid transparent;transition:color .15s,border-color .15s;
 }
-.tab.active{color:var(--night);border-bottom-color:var(--sand);font-weight:600}
+.tab:hover{color:var(--ink-2)}
+.tab.active{color:var(--ink);border-bottom-color:var(--brass)}
 
-main{flex:1;width:100%;max-width:760px;margin:0 auto;padding:1.6rem 1.1rem 3rem}
+main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem}
 .view{display:none}
 .view.active{display:block}
 
-.view-head{margin-bottom:1.4rem}
+.view-head{margin-bottom:1.7rem}
 .view-head h2{
-  font-family:'Cormorant Garamond',serif;font-weight:400;
-  font-size:1.65rem;margin:0 0 .15rem;color:var(--night);
+  font-family:'Newsreader',serif;font-weight:300;font-size:2.05rem;
+  margin:0 0 .25rem;color:var(--ink);line-height:1.15;letter-spacing:.005em;
 }
-.view-head p{margin:0;color:var(--ink-soft);font-size:.86rem}
+.view-head p{margin:0;color:var(--ink-2);font-size:.96rem;max-width:34rem}
 
+/* Cards differ by what they are, not all one shape. */
 .card{
-  background:var(--paper);border:1px solid var(--line);
-  border-radius:var(--radius);padding:1.3rem;margin-bottom:1rem;
+  background:var(--surface);border:1px solid var(--line-soft);
+  border-radius:var(--r-card);padding:1.5rem;margin-bottom:1.1rem;
+  box-shadow:var(--lift);
 }
-.field{margin-bottom:1rem}
+.field{margin-bottom:1.15rem}
 .field:last-child{margin-bottom:0}
 .field label{
-  display:block;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;
-  color:var(--ink-soft);margin-bottom:.35rem;
+  display:block;font-size:.88rem;font-weight:600;color:var(--ink-2);margin-bottom:.4rem;
 }
 .field input,.field textarea,.field select{
-  width:100%;background:var(--cream);border:1px solid var(--line);
-  border-radius:6px;padding:.64rem .78rem;color:var(--ink);outline:none;
-  transition:border-color .18s;
+  width:100%;background:var(--surface-2);border:1px solid var(--line);
+  border-radius:var(--r-field);padding:.7rem .85rem;color:var(--ink);outline:none;
+  transition:border-color .18s,background .18s;
 }
-.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--sand)}
-.field textarea{resize:vertical;min-height:88px;line-height:1.6}
-.field .hint{font-size:.72rem;color:var(--ink-soft);margin-top:.3rem}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.field input:focus,.field textarea:focus,.field select:focus{
+  border-color:var(--brass);background:#fff;
+}
+.field textarea{resize:vertical;min-height:96px;font-family:'Newsreader',Georgia,serif;
+  font-size:1.02rem;line-height:1.68}
+.field .hint{font-size:.86rem;color:var(--ink-3);margin-top:.4rem;line-height:1.55}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.15rem}
+.checks{display:flex;flex-wrap:wrap;gap:.45rem}
+.check{
+  display:inline-flex;align-items:center;gap:.45rem;cursor:pointer;
+  background:var(--surface-2);border:1px solid var(--line);border-radius:999px;
+  padding:.4rem .9rem;font-size:.92rem;color:var(--ink-2);
+  transition:border-color .15s,background .15s,color .15s;
+  flex:0 0 auto;white-space:nowrap;
+}
+.check input{accent-color:var(--brass);margin:0 .15rem 0 0;flex:none;width:15px;height:15px}
+.check:has(input:checked){border-color:var(--brass);background:var(--brass-wash);color:#6b5321}
+.scale{display:flex;gap:.4rem;flex-wrap:wrap}
+.scale button{
+  flex:1;min-width:48px;background:var(--surface-2);border:1px solid var(--line);
+  border-radius:var(--r-field);padding:.5rem;font-size:.95rem;font-weight:600;
+  color:var(--ink-2);transition:border-color .15s,background .15s,color .15s;
+}
+.scale button.on{border-color:var(--brass);background:var(--brass);color:#fff}
+
+/* home */
+.jobs{list-style:none;margin:0 0 1.4rem;padding:0}
+.job{
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  background:var(--surface);border:1px solid var(--line-soft);border-left:3px solid var(--brass);
+  border-radius:var(--r-field);padding:1rem 1.2rem;margin-bottom:.6rem;
+  box-shadow:var(--lift);cursor:pointer;transition:border-color .15s;
+}
+.job:hover{border-color:var(--brass-lt);border-left-color:var(--brass)}
+.job-text{min-width:0}
+.job-title{font-weight:700;margin:0 0 .1rem;color:var(--ink)}
+.job-sub{margin:0;font-size:.9rem;color:var(--ink-2)}
+.job-go{color:var(--brass);font-weight:700;font-size:.92rem;white-space:nowrap}
+.calm{
+  background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--r-card);
+  padding:2.4rem 1.6rem;text-align:center;box-shadow:var(--lift);margin-bottom:1.4rem;
+}
+.calm p{margin:0;color:var(--ink-2);font-family:'Newsreader',serif;font-size:1.1rem;line-height:1.7}
+.tally{display:flex;gap:2.2rem;flex-wrap:wrap;padding:1.1rem 1.4rem}
+.tally div{min-width:0}
+.tally .n{font-family:'Newsreader',serif;font-size:1.7rem;color:var(--ink);line-height:1}
+.tally .l{font-size:.88rem;color:var(--ink-2);margin-top:.15rem}
 .readonly{
-  background:var(--cream);border:1px solid var(--line);border-radius:6px;
-  padding:.64rem .78rem;color:var(--ink-soft);
+  padding:.7rem 0 .4rem;color:var(--ink);font-weight:600;
+  border-bottom:1px solid var(--line-soft);
 }
 
 .btn-save{
-  background:var(--night);color:#fff;border:none;border-radius:6px;
-  padding:.7rem 1.4rem;font-size:.76rem;letter-spacing:.1em;
-  text-transform:uppercase;font-weight:600;transition:background .18s;
+  background:var(--ink);color:#fff;border:none;border-radius:var(--r-field);
+  padding:.74rem 1.5rem;font-size:.94rem;font-weight:700;transition:background .18s;
 }
 .btn-save:hover{background:var(--night-2)}
-.btn-save:disabled{opacity:.5;cursor:default}
+.btn-save:disabled{opacity:.45;cursor:default}
 .btn-soft{
-  background:var(--sand);color:var(--night);border:none;border-radius:6px;
-  padding:.6rem 1.1rem;font-size:.74rem;letter-spacing:.08em;
-  text-transform:uppercase;font-weight:600;
+  background:var(--brass);color:#fff;border:none;border-radius:var(--r-field);
+  padding:.64rem 1.2rem;font-size:.92rem;font-weight:700;transition:background .18s;
 }
-.btn-soft:hover{background:var(--sand-lt)}
-.btn-soft:disabled{opacity:.5;cursor:default}
+.btn-soft:hover{background:#ab8a49}
+.btn-soft:disabled{opacity:.45;cursor:default}
+.btn-plain{
+  background:none;border:none;color:var(--ink-3);
+  padding:.64rem .35rem;font-size:.92rem;font-weight:600;
+  text-decoration:underline;text-underline-offset:3px;
+  transition:color .15s;
+}
+.btn-plain:hover{color:var(--clay)}
+.btn-plain:disabled{opacity:.45;cursor:default}
 
+/* Notices are quiet: tinted, flat, no shadow. They are not cards. */
 .notice{
-  border-radius:var(--radius);padding:1.1rem 1.25rem;margin-bottom:1.2rem;
-  font-size:.86rem;line-height:1.7;
+  border-radius:var(--r-field);padding:1.05rem 1.2rem;margin-bottom:1.3rem;
+  font-size:.94rem;line-height:1.65;border:1px solid transparent;
 }
-.notice-wait{background:#fdf6e7;border:1px solid #ecd9b8;color:#7a6025}
-.notice-calm{background:var(--paper);border:1px solid var(--line);color:var(--ink-soft)}
+.notice-wait{background:var(--brass-wash);border-color:#e6d9bd;color:#6b5321}
+.notice-calm{background:var(--surface);border-color:var(--line-soft);color:var(--ink-2)}
 
-.empty{
-  text-align:center;padding:3rem 1.2rem;color:var(--ink-soft);
-}
-.empty .display{font-size:1.2rem;color:var(--night);margin-bottom:.4rem}
-.empty p{font-size:.86rem;margin:0;line-height:1.7}
+/* An empty screen is an invitation, so it gets room and a serif voice. */
+.empty{text-align:center;padding:3.4rem 1.2rem;color:var(--ink-2)}
+.empty .display{font-family:'Newsreader',serif;font-weight:300;font-size:1.5rem;
+  color:var(--ink);margin-bottom:.5rem}
+.empty p{font-size:.96rem;margin:0 auto;line-height:1.7;max-width:26rem}
 
-/* ── match card ── */
+/* ── a match ───────────────────────────────────────────────────────────── */
+/* The most important thing on the page, so it gets the most presence. */
 .match{
-  background:var(--paper);border:1px solid var(--line);
-  border-radius:var(--radius);padding:1.25rem;margin-bottom:.9rem;
+  background:var(--surface);border:1px solid var(--line-soft);
+  border-radius:var(--r-card);padding:1.6rem 1.6rem 1.4rem;margin-bottom:1.1rem;
+  box-shadow:var(--lift);position:relative;overflow:hidden;
 }
+.match::before{
+  content:'';position:absolute;inset:0 auto 0 0;width:3px;background:var(--line);
+}
+.match.is-yours::before{background:var(--brass)}
+.match.is-open::before{background:var(--pine)}
 .match-top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
 .match-name{
-  font-family:'Cormorant Garamond',serif;font-size:1.3rem;
-  color:var(--night);margin:0 0 .1rem;
+  font-family:'Newsreader',serif;font-weight:400;font-size:1.62rem;
+  color:var(--ink);margin:0 0 .6rem;line-height:1.2;
 }
-.match-meta{font-size:.8rem;color:var(--ink-soft);margin:0}
+.match-meta{font-size:.9rem;color:var(--ink-2);margin:0}
+/* Chips, not a run-on string of dots. */
+.chips{display:flex;flex-wrap:wrap;gap:.4rem;margin:0}
+.chip{
+  background:var(--surface-2);border:1px solid var(--line-soft);
+  border-radius:999px;padding:.2rem .66rem;font-size:.84rem;color:var(--ink-2);
+}
 .match-bio{
-  font-size:.87rem;color:var(--ink);margin:.8rem 0 0;line-height:1.7;
-  padding-top:.8rem;border-top:1px solid var(--line);
+  font-family:'Newsreader',Georgia,serif;font-size:1.04rem;line-height:1.7;
+  color:var(--ink);margin:1.05rem 0 0;
 }
+/* Only the first one carries the rule, so a card has one division, not three. */
+.chips + .match-bio,.match-meta + .match-bio,
+.match-top + .match-bio{padding-top:1.1rem;border-top:1px solid var(--line-soft)}
+.match-bio .lead{display:block;font-family:'Karla',sans-serif;font-size:.86rem;
+  font-weight:600;color:var(--ink-3);margin-bottom:.25rem}
 .pill{
-  display:inline-block;font-size:.66rem;letter-spacing:.1em;
-  text-transform:uppercase;padding:.25rem .6rem;border-radius:20px;
+  display:inline-block;font-size:.8rem;padding:.26rem .68rem;border-radius:999px;
   font-weight:600;white-space:nowrap;
 }
-.pill-wait{background:#fdf6e7;color:#8a6a20}
-.pill-open{background:#eaf3e8;color:#4a6b45}
-.match-actions{margin-top:1rem;display:flex;align-items:center;gap:.8rem;flex-wrap:wrap}
-.match-note{font-size:.78rem;color:var(--ink-soft)}
+.pill-wait{background:var(--brass-wash);color:#6b5321}
+.pill-open{background:var(--pine-wash);color:var(--pine)}
+.match-actions{margin-top:1.25rem;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.match-note{font-size:.88rem;color:var(--ink-3);line-height:1.5}
 
-/* ── conversations ── */
+/* ── conversations ─────────────────────────────────────────────────────── */
 .convo{
-  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
-  padding:1rem 1.2rem;margin-bottom:.7rem;cursor:pointer;
+  background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--r-card);
+  padding:1.1rem 1.3rem;margin-bottom:.7rem;cursor:pointer;
   display:flex;justify-content:space-between;align-items:center;gap:1rem;
-  transition:border-color .15s;
+  transition:border-color .15s,box-shadow .15s;box-shadow:var(--lift);
 }
-.convo:hover{border-color:var(--sand)}
-.convo-name{font-weight:500;color:var(--night);margin:0 0 .12rem}
+.convo:hover{border-color:var(--brass-lt)}
+.convo-name{font-weight:700;color:var(--ink);margin:0 0 .18rem;font-size:1rem}
 .convo-prev{
-  font-size:.8rem;color:var(--ink-soft);margin:0;
+  font-family:'Newsreader',Georgia,serif;font-size:.97rem;color:var(--ink-2);margin:0;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:46vw;
 }
+.unread{
+  display:inline-block;background:var(--brass);color:#fff;border-radius:999px;
+  font-size:.76rem;font-weight:700;padding:.06rem .46rem;margin-left:.36rem;
+  vertical-align:1px;font-family:'Karla',sans-serif;
+}
 
-/* ── chat ── */
-.chat-head{
-  display:flex;align-items:center;gap:.8rem;margin-bottom:.9rem;
-}
+/* ── chat ──────────────────────────────────────────────────────────────── */
+.chat-head{display:flex;align-items:center;gap:.9rem;margin-bottom:1rem}
 .chat-back{
-  background:none;border:1px solid var(--line);border-radius:5px;
-  padding:.35rem .7rem;font-size:.75rem;color:var(--ink-soft);
+  background:none;border:1px solid var(--line);border-radius:7px;
+  padding:.4rem .78rem;font-size:.88rem;color:var(--ink-2);
 }
-.chat-back:hover{border-color:var(--sand);color:var(--night)}
-.chat-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--night);margin:0}
-.chat-sub{font-size:.76rem;color:var(--ink-soft);margin:0}
+.chat-back:hover{border-color:var(--brass);color:var(--ink)}
+.chat-title{font-family:'Newsreader',serif;font-weight:400;font-size:1.5rem;color:var(--ink);margin:0}
+.chat-sub{font-size:.88rem;color:var(--ink-3);margin:.1rem 0 0}
 
 .supervised{
-  background:var(--paper);border:1px solid var(--line);
-  border-left:3px solid var(--sand);
-  border-radius:6px;padding:.7rem .9rem;margin-bottom:.9rem;
-  font-size:.78rem;color:var(--ink-soft);line-height:1.6;
+  background:var(--brass-wash);border:1px solid #e6d9bd;
+  border-radius:var(--r-field);padding:.8rem 1rem;margin-bottom:1rem;
+  font-size:.9rem;color:#6b5321;line-height:1.6;
 }
 
 .thread{
-  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
-  padding:1.1rem;height:52vh;min-height:300px;overflow-y:auto;margin-bottom:.8rem;
+  background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--r-card);
+  padding:1.3rem;height:52vh;min-height:300px;overflow-y:auto;margin-bottom:.85rem;
+  box-shadow:var(--lift);
 }
-.msg{margin-bottom:1rem;display:flex;flex-direction:column;max-width:78%}
+.msg{margin-bottom:1.15rem;display:flex;flex-direction:column;max-width:80%}
 .msg:last-child{margin-bottom:0}
 .msg.mine{margin-left:auto;align-items:flex-end}
-.msg-who{
-  font-size:.68rem;letter-spacing:.07em;color:var(--ink-soft);
-  margin-bottom:.22rem;
+.msg-who{font-size:.82rem;color:var(--ink-3);margin-bottom:.26rem;font-weight:600;
+  display:flex;align-items:center;gap:.4rem}
+.who-tag{
+  background:var(--brass-wash);color:#6b5321;border-radius:999px;
+  padding:.04rem .45rem;font-size:.74rem;font-weight:700;
 }
+.msg.mine .msg-who{flex-direction:row-reverse}
 .msg-body{
-  padding:.6rem .85rem;border-radius:10px;font-size:.88rem;line-height:1.6;
+  padding:.68rem .95rem;border-radius:13px;font-size:1.01rem;line-height:1.62;
   white-space:pre-wrap;word-break:break-word;
+  font-family:'Newsreader',Georgia,serif;
 }
-.msg.mine .msg-body{background:var(--night);color:#fff;border-bottom-right-radius:3px}
-.msg.theirs .msg-body{background:var(--cream);border:1px solid var(--line);border-bottom-left-radius:3px}
-.msg.staff .msg-body{background:#fdf6e7;border:1px solid #ecd9b8;color:#6d561f}
-.msg-time{font-size:.66rem;color:var(--ink-soft);margin-top:.2rem}
+.msg.mine .msg-body{background:var(--ink);color:#fff;border-bottom-right-radius:4px}
+.msg.theirs .msg-body{background:var(--surface-2);border:1px solid var(--line-soft);
+  border-bottom-left-radius:4px}
+.msg.staff .msg-body{background:var(--brass-wash);border:1px solid #e6d9bd;color:#5e491d}
+.msg-time{font-size:.78rem;color:var(--ink-3);margin-top:.24rem}
 
 .composer{display:flex;gap:.6rem;align-items:flex-end}
 .composer textarea{
-  flex:1;background:var(--paper);border:1px solid var(--line);border-radius:8px;
-  padding:.7rem .85rem;resize:none;min-height:46px;max-height:140px;
-  outline:none;line-height:1.5;
+  flex:1;background:var(--surface);border:1px solid var(--line);border-radius:11px;
+  padding:.76rem .9rem;resize:none;min-height:48px;max-height:140px;
+  outline:none;line-height:1.55;font-family:'Newsreader',Georgia,serif;font-size:1.01rem;
+  transition:border-color .18s;
 }
-.composer textarea:focus{border-color:var(--sand)}
+.composer textarea:focus{border-color:var(--brass)}
 .composer button{
-  background:var(--night);color:#fff;border:none;border-radius:8px;
-  padding:.72rem 1.2rem;font-size:.76rem;letter-spacing:.08em;
-  text-transform:uppercase;font-weight:600;flex-shrink:0;
+  background:var(--ink);color:#fff;border:none;border-radius:11px;
+  padding:.78rem 1.3rem;font-size:.92rem;font-weight:700;flex-shrink:0;
+  transition:background .18s;
 }
-.composer button:disabled{opacity:.45;cursor:default}
+.composer button:hover{background:var(--night-2)}
+.composer button:disabled{opacity:.4;cursor:default}
 
-.btn-plain{background:none;border:1px solid var(--line);color:var(--ink-soft);
-  border-radius:6px;padding:.6rem 1rem;font-size:.74rem;letter-spacing:.06em;
-  text-transform:uppercase;font-weight:600}
-.btn-plain:hover{border-color:var(--rose);color:var(--rose)}
-.btn-plain:disabled{opacity:.5;cursor:default}
-.unread{display:inline-block;background:var(--rose);color:#fff;border-radius:9px;
-  font-size:.66rem;font-weight:600;padding:.05rem .4rem;margin-left:.3rem;vertical-align:1px}
 .toast{
-  position:fixed;left:50%;bottom:1.6rem;transform:translateX(-50%) translateY(140%);
-  background:var(--night);color:#fff;padding:.75rem 1.3rem;border-radius:7px;
-  font-size:.84rem;box-shadow:0 10px 30px rgba(27,34,64,.28);
-  transition:transform .3s cubic-bezier(.3,1.2,.5,1);z-index:200;
+  position:fixed;left:50%;bottom:1.7rem;transform:translateX(-50%) translateY(150%);
+  background:var(--ink);color:#fff;padding:.8rem 1.35rem;border-radius:10px;
+  font-size:.94rem;box-shadow:0 14px 36px rgba(27,31,42,.3);
+  transition:transform .32s cubic-bezier(.22,1,.36,1);z-index:200;
   max-width:88vw;text-align:center;
 }
 .toast.show{transform:translateX(-50%) translateY(0)}
 
 #loading{
   position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-  background:var(--night);color:var(--sand);z-index:300;
-  font-family:'Cormorant Garamond',serif;letter-spacing:.3em;
-  text-transform:uppercase;font-size:.78rem;
+  background:#1b1f2a;color:var(--brass-lt);z-index:300;
+  font-family:'Newsreader',serif;letter-spacing:.26em;
+  text-transform:uppercase;font-size:.88rem;
 }
 
 @media(max-width:560px){
   .grid-2{grid-template-columns:1fr}
-  .gate-title{font-size:2.1rem}
-  main{padding:1.2rem .9rem 2.4rem}
-  .msg{max-width:88%}
-  .convo-prev{max-width:40vw}
+  .gate-wordmark{font-size:2.6rem}
+  .gate-verse{font-size:1.14rem}
+  main{padding:1.6rem .95rem 3rem}
+  .view-head h2{font-size:1.8rem}
+  .match{padding:1.3rem 1.3rem 1.15rem}
+  .match-name{font-size:1.45rem}
+  .msg{max-width:90%}
+  .convo-prev{max-width:42vw}
 }
 </style>
 </head>
@@ -337,17 +439,27 @@ setTimeout(function(){
     'Sakinah couldn\'t finish loading.<br>' +
     'Check your internet connection and refresh the page.<br><br>' +
     '<span style="opacity:.6;font-size:.86rem">If it keeps happening, a network ' +
-    'or browser extension may be blocking cdn.jsdelivr.net. Message the Nikkah ' +
-    'Pathways team and we\'ll help.</span></div>';
+    'or browser extension may be blocking cdn.jsdelivr.net. Message the Sakinah ' +
+    'team and we\'ll help.</span></div>';
 }, 8000);
 </script>
 
 <!-- ───────── AUTH GATE ───────── -->
 <div id="gate" style="display:none">
+  <svg class="khatim" viewBox="0 0 200 200" aria-hidden="true" fill="none"
+       stroke="currentColor" stroke-width="1.1">
+    <g transform="translate(100,100)">
+      <rect x="-62" y="-62" width="124" height="124"/>
+      <rect x="-62" y="-62" width="124" height="124" transform="rotate(45)"/>
+      <rect x="-44" y="-44" width="88" height="88" transform="rotate(22.5)"/>
+      <rect x="-44" y="-44" width="88" height="88" transform="rotate(67.5)"/>
+      <circle r="88"/><circle r="62"/><circle r="30"/>
+    </g>
+  </svg>
   <div class="gate-card">
-    <div class="wordmark gate-mark">Nikkah Pathways</div>
-    <h1 class="display gate-title">Sakinah</h1>
+    <h1 class="gate-wordmark">Sakinah</h1>
     <p class="gate-verse">“And He placed between you affection and mercy.”</p>
+    <p class="gate-ref">Qur'an 30:21</p>
 
     <div class="gate-box">
       <div id="signup-name-wrap" style="display:none">
@@ -370,7 +482,7 @@ setTimeout(function(){
         <button id="g-reset" style="color:rgba(255,255,255,.45)">Forgot password?</button>
       </div>
     </div>
-    <div class="gate-foot">A halal, supervised path to marriage</div>
+    <p class="gate-foot">A halal, supervised path to marriage</p>
   </div>
 </div>
 
@@ -385,21 +497,31 @@ setTimeout(function(){
   </div>
 
   <div class="tabs">
-    <button class="tab active" data-view="profile">Profile</button>
+    <button class="tab active" data-view="home">Home</button>
+    <button class="tab" data-view="profile">Profile</button>
     <button class="tab" data-view="matches">Matches</button>
     <button class="tab" data-view="messages">Messages</button>
   </div>
 
   <main>
+    <!-- HOME -->
+    <section class="view active" id="view-home">
+      <div class="view-head">
+        <h2 id="home-greeting">Assalamu alaykum</h2>
+        <p id="home-sub"></p>
+      </div>
+      <div id="home-jobs"></div>
+      <div id="home-summary"></div>
+    </section>
+
     <!-- PROFILE -->
-    <section class="view active" id="view-profile">
+    <section class="view" id="view-profile">
       <div class="view-head">
         <h2>Your profile</h2>
         <p>This is what we share with someone once you've both been matched.</p>
       </div>
       <div id="verify-notice"></div>
       <div id="id-card"></div>
-      <div id="pause-card"></div>
       <div class="card">
         <div class="grid-2">
           <div class="field">
@@ -456,7 +578,99 @@ setTimeout(function(){
         </div>
         <button class="btn-save" id="p-save">Save changes</button>
       </div>
-      <p class="match-note">Name, age and the details from your questionnaire are managed by the Nikkah Pathways team. Message us if any of it needs correcting.</p>
+      <p class="match-note">Name, age and the details from your questionnaire are managed by the Sakinah team. Message us if any of it needs correcting.</p>
+
+      <div class="view-head" style="margin-top:2.6rem">
+        <h2>What you're looking for</h2>
+        <p>Only our team sees these. They're used to find you better matches — the
+           person you're matched with never sees your criteria.</p>
+      </div>
+      <div class="card">
+        <div class="grid-2">
+          <div class="field">
+            <label>Age from</label>
+            <input type="number" id="pf-agemin" min="18" max="99" placeholder="e.g. 25"/>
+          </div>
+          <div class="field">
+            <label>Age to</label>
+            <input type="number" id="pf-agemax" min="18" max="99" placeholder="e.g. 35"/>
+          </div>
+        </div>
+        <div class="field">
+          <label>Cities you'd consider</label>
+          <div class="checks" id="pf-cities"></div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Would you move for the right person?</label>
+            <select id="pf-relocate">
+              <option value="">Prefer not to say</option>
+              <option value="yes">Yes</option>
+              <option value="maybe">Possibly</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Open to someone with children?</label>
+            <select id="pf-children">
+              <option value="">Prefer not to say</option>
+              <option value="yes">Yes</option>
+              <option value="maybe">Possibly</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Marital history you'd consider</label>
+          <div class="checks" id="pf-marital"></div>
+        </div>
+        <div class="field">
+          <label>How much does their residency status matter?</label>
+          <div class="scale" id="pf-residency"></div>
+          <div class="hint">1 means it doesn't matter to you, 5 means they must be a
+            citizen or permanent resident.</div>
+        </div>
+
+        <div class="view-head" style="margin:2rem 0 1.1rem">
+          <h2 style="font-size:1.35rem">About you</h2>
+          <p>So we can match you with people whose criteria you meet too.</p>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Your marital history</label>
+            <select id="pf-mystatus">
+              <option value="">Prefer not to say</option>
+              <option value="never_married">Never married</option>
+              <option value="divorced">Divorced</option>
+              <option value="widowed">Widowed</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Your residency status</label>
+            <select id="pf-myresidency">
+              <option value="">Prefer not to say</option>
+              <option value="citizen">Citizen</option>
+              <option value="permanent">Permanent resident</option>
+              <option value="temporary">Temporary visa</option>
+              <option value="student">Student visa</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Do you have children?</label>
+          <select id="pf-mykids">
+            <option value="">Prefer not to say</option>
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Anything else we should know</label>
+          <textarea id="pf-notes" placeholder="Anything that matters to you that the questions above don't cover."></textarea>
+        </div>
+        <button class="btn-save" id="pf-save">Save preferences</button>
+      </div>
+      <div id="pause-card"></div>
     </section>
 
     <!-- MATCHES -->
@@ -689,6 +903,7 @@ function showView(name){
   document.querySelectorAll('.tab').forEach(t =>
     t.classList.toggle('active', t.dataset.view === lit));
   window.scrollTo(0, 0);
+  if (name === 'home')     loadHome();
   if (name === 'matches')  loadMatches();
   if (name === 'messages') loadConversations();
 }
@@ -779,7 +994,8 @@ async function route(session, force){
 
   $('who').textContent = PROFILE.name || ME.email;
   fillProfile();
-  showView('profile');
+  fillPreferences();
+  showView('home');
 }
 
 (async () => {
@@ -992,6 +1208,151 @@ $('p-save').onclick = async () => {
   btn.disabled = false; btn.textContent = 'Save changes';
 };
 
+// ───────── HOME ─────────
+// The first thing they see. It should answer one question: is there
+// anything for me to do? When there isn't, say so plainly rather than
+// inventing activity.
+const CITIES  = ['Sydney','Melbourne','Brisbane','Perth','Adelaide','Canberra'];
+const MARITAL = [['never_married','Never married'],['divorced','Divorced'],['widowed','Widowed']];
+
+async function loadHome(){
+  const first = (PROFILE.name || '').trim().split(/\s+/)[0];
+  $('home-greeting').textContent = first ? `Assalamu alaykum, ${first}` : 'Assalamu alaykum';
+
+  const jobs = [];
+  if (!PROFILE.verified) {
+    jobs.push({ t:'Your account is being verified',
+                s:"We check each account against our registrations. Nothing to do \u2014 we'll be in touch.",
+                go:null });
+  }
+  if ((PROFILE.id_status || 'none') !== 'approved') {
+    const rejected = PROFILE.id_status === 'rejected';
+    const pending  = PROFILE.id_status === 'pending';
+    jobs.push({
+      t: rejected ? 'Send a clearer photo of your ID'
+         : pending ? "We're checking your ID"
+         : 'Verify your age',
+      s: rejected ? PROFILE.id_reason || 'We couldn\'t read the last one.'
+         : pending ? "Usually a day or two. We'll email you."
+         : 'We confirm everyone\'s age before matching begins.',
+      go: pending ? null : 'profile' });
+  }
+  if (!PROFILE.bio || !PROFILE.looking_for) {
+    jobs.push({ t:'Finish your profile',
+                s:'A match sees your own words before anything else.', go:'profile' });
+  }
+  if (!PROFILE.pref_age_min && !PROFILE.pref_age_max && !(PROFILE.pref_cities||[]).length) {
+    jobs.push({ t:'Tell us what you\'re looking for',
+                s:'The more we know, the better we can match you.', go:'profile' });
+  }
+
+  let matches = [], convos = [];
+  if (PROFILE.verified) {
+    const [m, c] = await Promise.all([
+      supabase.rpc('my_matches'), supabase.rpc('my_conversations')]);
+    matches = m.data || []; convos = c.data || [];
+  }
+  const toAnswer = matches.filter(m => !m.i_requested && m.status !== 'conversation_open').length;
+  const unread   = convos.reduce((n,c) => n + Number(c.unread || 0), 0);
+
+  if (toAnswer) jobs.unshift({
+    t: toAnswer === 1 ? 'You have a new match' : `You have ${toAnswer} new matches`,
+    s: 'Have a look and let us know if you\'d like an introduction.', go:'matches' });
+  if (unread) jobs.unshift({
+    t: unread === 1 ? 'You have an unread message' : `You have ${unread} unread messages`,
+    s: 'Someone is waiting to hear back from you.', go:'messages' });
+
+  $('home-sub').textContent = PROFILE.self_paused
+    ? 'Your profile is paused, so we won\'t put you forward for new matches.'
+    : (jobs.length ? 'Here\'s what needs you.' : '');
+
+  $('home-jobs').innerHTML = jobs.length
+    ? `<ul class="jobs">${jobs.map((j,i) => `<li class="job" ${j.go ? `data-go="${esc(j.go)}"` : 'style="cursor:default;border-left-color:var(--line)"'}>
+         <div class="job-text">
+           <p class="job-title">${esc(j.t)}</p>
+           <p class="job-sub">${esc(j.s)}</p>
+         </div>
+         ${j.go ? '<span class="job-go">Open</span>' : ''}
+       </li>`).join('')}</ul>`
+    : `<div class="calm"><p>Nothing needs you right now.<br>
+         We'll let you know the moment there's someone to meet, inshAllah.</p></div>`;
+
+  $('home-jobs').querySelectorAll('[data-go]').forEach(el =>
+    el.onclick = () => showView(el.dataset.go));
+
+  $('home-summary').innerHTML = (matches.length || convos.length)
+    ? `<div class="card tally">
+         <div><div class="n">${matches.length}</div><div class="l">${matches.length === 1 ? 'match' : 'matches'}</div></div>
+         <div><div class="n">${convos.length}</div><div class="l">${convos.length === 1 ? 'conversation' : 'conversations'}</div></div>
+       </div>` : '';
+}
+
+// ───────── PREFERENCES ─────────
+function fillPreferences(){
+  $('pf-cities').innerHTML = CITIES.map(c =>
+    `<label class="check"><input type="checkbox" value="${esc(c)}"
+      ${(PROFILE.pref_cities || []).includes(c) ? 'checked' : ''}/>${esc(c)}</label>`).join('');
+  $('pf-marital').innerHTML = MARITAL.map(([v,l]) =>
+    `<label class="check"><input type="checkbox" value="${esc(v)}"
+      ${(PROFILE.pref_marital || []).includes(v) ? 'checked' : ''}/>${esc(l)}</label>`).join('');
+  $('pf-residency').innerHTML = [1,2,3,4,5].map(n =>
+    `<button type="button" data-scale="${n}">${n}</button>`).join('');
+  $('pf-residency').querySelectorAll('[data-scale]').forEach(b => b.onclick = () => {
+    const n = Number(b.dataset.scale);
+    PROFILE.pref_residency_importance = PROFILE.pref_residency_importance === n ? null : n;
+    // Only repaint the scale. Re-rendering the whole form here would wipe
+    // every other answer they had typed but not yet saved.
+    paintScale();
+  });
+  paintScale();
+
+  $('pf-agemin').value    = PROFILE.pref_age_min || '';
+  $('pf-agemax').value    = PROFILE.pref_age_max || '';
+  $('pf-relocate').value  = PROFILE.pref_relocate || '';
+  $('pf-children').value  = PROFILE.pref_children || '';
+  $('pf-mystatus').value  = PROFILE.marital_status || '';
+  $('pf-myresidency').value = PROFILE.residency || '';
+  $('pf-mykids').value    = PROFILE.has_children === true ? 'yes'
+                          : PROFILE.has_children === false ? 'no' : '';
+  $('pf-notes').value     = PROFILE.pref_notes || '';
+}
+
+function paintScale(){
+  $('pf-residency').querySelectorAll('[data-scale]').forEach(b =>
+    b.classList.toggle('on', Number(b.dataset.scale) === PROFILE.pref_residency_importance));
+}
+
+$('pf-save').onclick = async () => {
+  const btn = $('pf-save');
+  const num = v => v === '' ? null : Number(v);
+  const lo = num($('pf-agemin').value), hi = num($('pf-agemax').value);
+  if (lo !== null && hi !== null && lo > hi)
+    return toast('The lower age should be smaller than the upper one.');
+  if ((lo !== null && lo < 18) || (hi !== null && hi < 18))
+    return toast('Everyone on Sakinah is 18 or over.');
+
+  const picked = sel => [...$(sel).querySelectorAll('input:checked')].map(i => i.value);
+  const kids = $('pf-mykids').value;
+  const patch = {
+    pref_age_min: lo, pref_age_max: hi,
+    pref_cities:  picked('pf-cities'),
+    pref_marital: picked('pf-marital'),
+    pref_relocate: $('pf-relocate').value || null,
+    pref_children: $('pf-children').value || null,
+    pref_residency_importance: PROFILE.pref_residency_importance ?? null,
+    marital_status: $('pf-mystatus').value || null,
+    residency:      $('pf-myresidency').value || null,
+    has_children:   kids === '' ? null : kids === 'yes',
+    pref_notes:     $('pf-notes').value.trim() || null
+  };
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const { error } = await supabase.from('profiles').update(patch).eq('id', ME.id);
+  btn.disabled = false; btn.textContent = 'Save preferences';
+  if (error) return toast('Could not save: ' + friendly(error));
+  Object.assign(PROFILE, patch);
+  toast('✓ Preferences saved');
+};
+
 // ───────── MATCHES ─────────
 async function loadMatches(){
   const el = $('matches-list');
@@ -1041,20 +1402,27 @@ async function loadMatches(){
       note   = 'Nothing is shared with them until you ask.';
     }
 
-    const meta = [r.other_age, r.other_city, r.other_occupation,
-                  r.other_education, r.other_languages]
-      .filter(Boolean).map(esc).join(' · ');
+    // Facts as chips rather than one dot-joined run-on, so they can be
+    // scanned rather than read.
+    const facts = [
+      r.other_age ? r.other_age + ' years' : null,
+      r.other_city, r.other_occupation, r.other_education, r.other_languages
+    ].filter(Boolean);
+    const chips = facts.length
+      ? `<div class="chips">${facts.map(f => `<span class="chip">${esc(f)}</span>`).join('')}</div>`
+      : '<p class="match-meta">Details shared on introduction</p>';
 
-    return `<div class="match">
+    const edge = open ? ' is-open' : (r.i_requested ? '' : ' is-yours');
+    return `<div class="match${edge}">
       <div class="match-top">
-        <div>
+        <div style="min-width:0">
           <h3 class="match-name">${esc(r.other_name || 'A member')}</h3>
-          <p class="match-meta">${meta || 'Details shared on introduction'}</p>
+          ${chips}
         </div>
         ${pill}
       </div>
-      ${r.other_bio ? `<p class="match-bio">${esc(r.other_bio)}</p>` : ''}
-      ${r.other_looking_for ? `<p class="match-bio"><em>Looking for:</em> ${esc(r.other_looking_for)}</p>` : ''}
+      ${r.other_bio ? `<p class="match-bio"><span class="lead">About them</span>${esc(r.other_bio)}</p>` : ''}
+      ${r.other_looking_for ? `<p class="match-bio"><span class="lead">What they're looking for</span>${esc(r.other_looking_for)}</p>` : ''}
       <div class="match-actions">
         ${action}
         <span class="match-note">${note}</span>
@@ -1154,10 +1522,16 @@ function renderThread(){
     const mine  = m.sender_id === ME.id;
     const staff = m.sender_role === 'admin' || m.sender_role === 'wali';
     const cls   = mine ? 'mine' : (staff ? 'theirs staff' : 'theirs');
-    const tag   = staff && !mine
-      ? ' · ' + esc(m.sender_role === 'wali' ? 'Wali' : 'Nikkah Pathways') : '';
+    const who   = mine ? 'You' : (m.sender_name || 'Member');
+    // Only tag the role when it actually tells you something the name
+    // doesn't -- otherwise the team's messages read "Sakinah team,
+    // Sakinah team".
+    const role  = staff && !mine
+      ? (m.sender_role === 'wali' ? 'Wali' : 'Sakinah team') : '';
+    const tag   = role && role.toLowerCase() !== who.toLowerCase()
+      ? `<span class="who-tag">${esc(role)}</span>` : '';
     return `<div class="msg ${cls}">
-      <span class="msg-who">${mine ? 'You' : esc(m.sender_name || 'Member')}${tag}</span>
+      <span class="msg-who">${esc(who)}${tag}</span>
       <div class="msg-body">${esc(m.body)}</div>
       <span class="msg-time">${fmtTime(m.created_at)}</span>
     </div>`;
@@ -1202,8 +1576,8 @@ async function openChat(convo){
 
   const closed = convo.status === 'closed';
   $('chat-supervised').textContent = closed
-    ? 'This conversation has been closed by the Nikkah Pathways team. You can still read it, but no new messages can be sent.'
-    : 'A member of the Nikkah Pathways team is part of this conversation and can see every message. Please keep things respectful and appropriate.';
+    ? 'This conversation has been closed by the Sakinah team. You can still read it, but no new messages can be sent.'
+    : 'A member of the Sakinah team is part of this conversation and can see every message. Please keep things respectful and appropriate.';
 
   $('composer-text').disabled = closed;
   $('composer-send').disabled = closed;
