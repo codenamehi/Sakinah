@@ -283,6 +283,13 @@ main{flex:1;width:100%;max-width:760px;margin:0 auto;padding:1.6rem 1.1rem 3rem}
 }
 .composer button:disabled{opacity:.45;cursor:default}
 
+.btn-plain{background:none;border:1px solid var(--line);color:var(--ink-soft);
+  border-radius:6px;padding:.6rem 1rem;font-size:.74rem;letter-spacing:.06em;
+  text-transform:uppercase;font-weight:600}
+.btn-plain:hover{border-color:var(--rose);color:var(--rose)}
+.btn-plain:disabled{opacity:.5;cursor:default}
+.unread{display:inline-block;background:var(--rose);color:#fff;border-radius:9px;
+  font-size:.66rem;font-weight:600;padding:.05rem .4rem;margin-left:.3rem;vertical-align:1px}
 .toast{
   position:fixed;left:50%;bottom:1.6rem;transform:translateX(-50%) translateY(140%);
   background:var(--night);color:#fff;padding:.75rem 1.3rem;border-radius:7px;
@@ -392,6 +399,7 @@ setTimeout(function(){
       </div>
       <div id="verify-notice"></div>
       <div id="id-card"></div>
+      <div id="pause-card"></div>
       <div class="card">
         <div class="grid-2">
           <div class="field">
@@ -815,6 +823,42 @@ function fillProfile(){
        </div>`;
 
   paintIdCard();
+  paintPauseCard();
+}
+
+// ───────── pausing ─────────
+// People get engaged, or simply need a break. Deleting the account is the
+// wrong answer, and so is leaving them with no way to stop.
+function paintPauseCard(){
+  const paused = !!PROFILE.self_paused;
+  $('pause-card').innerHTML = `<div class="card">
+    <div class="match-top">
+      <div>
+        <h3 class="match-name" style="font-size:1.1rem">${paused ? 'Your profile is paused' : 'Taking a break?'}</h3>
+        <p class="match-meta">${paused
+          ? 'You won\'t be put forward for new matches. Any conversation you\'re already in carries on as normal.'
+          : 'You can pause any time. We stop putting you forward for new matches, and nothing is deleted.'}</p>
+      </div>
+      ${paused ? '<span class="pill pill-wait">Paused</span>' : ''}
+    </div>
+    <div class="match-actions">
+      <button class="btn ${paused ? 'btn-soft' : ''}" id="pause-btn"
+        style="${paused ? '' : 'background:none;border:1px solid var(--line);color:var(--ink-soft);border-radius:6px;padding:.5rem .9rem;font-size:.76rem'}">
+        ${paused ? 'Resume my profile' : 'Pause my profile'}</button>
+    </div>
+  </div>`;
+
+  $('pause-btn').onclick = async () => {
+    const next = !paused;
+    if (next && !confirm('Pause your profile? You won\'t be put forward for new matches until you resume.')) return;
+    const btn = $('pause-btn'); btn.disabled = true;
+    const { error } = await supabase.from('profiles')
+      .update({ self_paused: next }).eq('id', ME.id);
+    if (error) { toast(friendly(error)); btn.disabled = false; return; }
+    PROFILE.self_paused = next;
+    toast(next ? 'Your profile is paused' : 'Welcome back — your profile is active again');
+    fillProfile();
+  };
 }
 
 // ───────── ID / age verification ─────────
@@ -992,7 +1036,8 @@ async function loadMatches(){
         ? 'You\'ve both asked — we\'re setting up your conversation inshAllah.'
         : 'We\'ve passed your request on. We\'ll set things up once they\'ve responded too.';
     } else {
-      action = `<button class="btn-soft" data-intro="${esc(r.match_id)}">Request introduction</button>`;
+      action = `<button class="btn-soft" data-intro="${esc(r.match_id)}">Request introduction</button>
+                <button class="btn-plain" data-decline="${esc(r.match_id)}">Not for me</button>`;
       note   = 'Nothing is shared with them until you ask.';
     }
 
@@ -1016,6 +1061,26 @@ async function loadMatches(){
       </div>
     </div>`;
   }).join('');
+
+  el.querySelectorAll('[data-decline]').forEach(btn => {
+    btn.onclick = async () => {
+      if (!confirm('Let us know this one isn\'t right for you?\n\n' +
+                   'They are never told that you declined, or that a match existed at all.')) return;
+      const why = prompt('Anything you\'d like us to know? This is private — only our team sees it, ' +
+                         'and it helps us match you better next time.\n\n(You can leave this blank.)');
+      if (why === null) return;
+      btn.disabled = true; btn.textContent = 'Sending…';
+      const { error } = await supabase.rpc('decline_match',
+        { p_match_id: btn.dataset.decline, p_reason: why.trim() || null });
+      if (error) {
+        toast('Could not send: ' + friendly(error));
+        btn.disabled = false; btn.textContent = 'Not for me';
+      } else {
+        toast('Thank you — we\'ll keep looking');
+        loadMatches();
+      }
+    };
+  });
 
   el.querySelectorAll('[data-intro]').forEach(btn => {
     btn.onclick = async () => {
@@ -1060,8 +1125,10 @@ async function loadConversations(){
   el.innerHTML = rows.map(c => `
     <div class="convo" data-convo="${esc(c.id)}">
       <div style="min-width:0">
-        <p class="convo-name">${esc(c.other_name || 'Conversation')}</p>
-        <p class="convo-prev">${esc(c.last_message_preview || 'No messages yet')}</p>
+        <p class="convo-name">${esc(c.other_name || 'Conversation')}${
+          Number(c.unread) > 0 ? ` <span class="unread">${c.unread}</span>` : ''}</p>
+        <p class="convo-prev"${Number(c.unread) > 0 ? ' style="color:var(--ink);font-weight:500"' : ''}>${
+          esc(c.last_message_preview || 'No messages yet')}</p>
       </div>
       ${c.status === 'closed'
         ? '<span class="pill pill-wait">Closed</span>'
@@ -1177,6 +1244,23 @@ async function openChat(convo){
     if (currentConvo?.id === convoId) fetchMessages();
   }, 12000);
 }
+
+// ───────── hidden admin entrance ─────────
+// Five taps on the wordmark. This is convenience, not security -- the admin
+// panel is protected by the admins table, so anyone who simply types the
+// address still gets turned away.
+(function(){
+  let taps = 0, timer = null;
+  document.querySelectorAll('.wordmark').forEach(mark => {
+    mark.style.cursor = 'default';
+    mark.addEventListener('click', () => {
+      taps++;
+      clearTimeout(timer);
+      timer = setTimeout(() => { taps = 0; }, 1500);
+      if (taps >= 5) { taps = 0; location.href = 'admin.html'; }
+    });
+  });
+})();
 
 const composer = $('composer-text');
 composer.addEventListener('input', () => {
