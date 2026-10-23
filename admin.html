@@ -282,6 +282,7 @@ setTimeout(function(){
           <label>Private note (only you see this)</label>
           <input type="text" id="new-note" placeholder="e.g. both Sydney, similar age, compatible on relocation"/>
         </div>
+        <div id="fit"></div>
         <button class="btn btn-key" id="new-match">Create match</button>
       </div>
       <div id="match-stats"></div>
@@ -317,7 +318,7 @@ setTimeout(function(){
       </div>
       <div class="thread" id="thread"></div>
       <div class="composer">
-        <textarea id="composer-text" placeholder="Write as the Nikkah Pathways team…" rows="1"></textarea>
+        <textarea id="composer-text" placeholder="Write as the Sakinah team…" rows="1"></textarea>
         <button id="composer-send">Send</button>
       </div>
     </section>
@@ -424,7 +425,7 @@ function makeDemoClient(){
       { conversation_id:'d-c1', user_id:'d-wali',  role:'wali',   last_read:ago(50), last_notified_at:null },
     ],
     messages: [
-      { id:'d-x1', conversation_id:'d-c1', sender_id:'demo-admin', sender_name:'Nikkah Pathways',
+      { id:'d-x1', conversation_id:'d-c1', sender_id:'demo-admin', sender_name:'Sakinah team',
         sender_role:'admin', body:'Assalamu alaykum both. I\'ll be here throughout, and Omar\'s wali Abu Yusuf is in the conversation too. Please keep things respectful and let me know if you need anything.',
         created_at:ago(120) },
       { id:'d-x2', conversation_id:'d-c1', sender_id:'d-omar', sender_name:'Omar Siddiqui',
@@ -791,6 +792,9 @@ function paintMembers(){
           <dt>Looking for</dt><dd>${esc(m.looking_for || '—')}</dd>
           <dt>Joined</dt><dd>${fmt(m.created_at)}</dd>
           <dt>Phone</dt><dd>${esc(m.phone || '—')}</dd>
+          <dt>Looking for</dt><dd>${esc(prefSummary(m))}</dd>
+          <dt>Their own details</dt><dd>${esc(selfSummary(m))}</dd>
+          ${m.pref_notes ? `<dt>They added</dt><dd>${esc(m.pref_notes)}</dd>` : ''}
         </dl>
         <div class="field" style="margin-top:.9rem;margin-bottom:0">
           <label>Private note — they never see this</label>
@@ -850,6 +854,31 @@ function paintMembers(){
     toast(`${m.name} is now ${next}`);
     paintMembers();
   });
+}
+
+const PREF_LABEL = { never_married:'never married', divorced:'divorced', widowed:'widowed',
+  citizen:'citizen', permanent:'permanent resident', temporary:'temporary visa',
+  student:'student visa', yes:'yes', no:'no', maybe:'possibly' };
+
+function prefSummary(m){
+  const bits = [];
+  if (m.pref_age_min || m.pref_age_max)
+    bits.push(`aged ${m.pref_age_min ?? 'any'}–${m.pref_age_max ?? 'any'}`);
+  if ((m.pref_cities || []).length) bits.push(`in ${m.pref_cities.join(', ')}`);
+  if ((m.pref_marital || []).length)
+    bits.push(m.pref_marital.map(x => PREF_LABEL[x] || x).join(' or '));
+  if (m.pref_relocate) bits.push(`would move: ${PREF_LABEL[m.pref_relocate]}`);
+  if (m.pref_children) bits.push(`children ok: ${PREF_LABEL[m.pref_children]}`);
+  if (m.pref_residency_importance) bits.push(`residency matters ${m.pref_residency_importance}/5`);
+  return bits.length ? bits.join(' · ') : 'Not set yet';
+}
+function selfSummary(m){
+  const bits = [];
+  if (m.marital_status) bits.push(PREF_LABEL[m.marital_status] || m.marital_status);
+  if (m.residency)      bits.push(PREF_LABEL[m.residency] || m.residency);
+  if (m.has_children === true)  bits.push('has children');
+  if (m.has_children === false) bits.push('no children');
+  return bits.length ? bits.join(' · ') : 'Not set yet';
 }
 
 // ───────── ID checks ─────────
@@ -964,6 +993,84 @@ function paintPickers(){
   }
 }
 
+// ───────── do these two actually fit? ─────────
+// Preferences are only worth collecting if they are in front of you at the
+// moment you decide. This checks both directions -- it is no good if he
+// suits her and she falls outside his criteria.
+const AGE = m => {
+  if (!m?.date_of_birth) return m?.age ?? null;
+  const b = new Date(m.date_of_birth), t = new Date();
+  let a = t.getFullYear() - b.getFullYear();
+  const mo = t.getMonth() - b.getMonth();
+  if (mo < 0 || (mo === 0 && t.getDate() < b.getDate())) a--;
+  return a;
+};
+const LABEL = { never_married:'never married', divorced:'divorced', widowed:'widowed',
+                citizen:'a citizen', permanent:'a permanent resident',
+                temporary:'on a temporary visa', student:'on a student visa' };
+
+function checkFit(a, b){
+  const notes = [];
+  const oneWay = (x, y, xn, yn) => {
+    const age = AGE(y);
+    if (age !== null && (x.pref_age_min || x.pref_age_max)) {
+      const lo = x.pref_age_min ?? 0, hi = x.pref_age_max ?? 999;
+      if (age < lo || age > hi)
+        notes.push({ bad:true, t:`${yn} is ${age}; ${xn} is looking for ${lo}–${hi}.` });
+    }
+    const cities = x.pref_cities || [];
+    if (cities.length && y.city && !cities.includes(y.city)) {
+      const moves = y.pref_relocate === 'yes' || y.pref_relocate === 'maybe';
+      notes.push({ bad:!moves,
+        t:`${yn} is in ${y.city}; ${xn} listed ${cities.join(', ')}.` +
+          (moves ? ` ${yn} would consider moving.` : '') });
+    }
+    const wants = x.pref_marital || [];
+    if (wants.length && y.marital_status && !wants.includes(y.marital_status))
+      notes.push({ bad:true,
+        t:`${yn} is ${LABEL[y.marital_status] || y.marital_status}; ${xn} didn't list that.` });
+    if (x.pref_children === 'no' && y.has_children === true)
+      notes.push({ bad:true, t:`${yn} has children; ${xn} said no.` });
+    if ((x.pref_residency_importance ?? 0) >= 4 &&
+        y.residency && !['citizen','permanent'].includes(y.residency))
+      notes.push({ bad:true,
+        t:`${yn} is ${LABEL[y.residency] || y.residency}; ${xn} rated residency ${x.pref_residency_importance}/5.` });
+  };
+  const an = (a.name || 'They').split(' ')[0], bn = (b.name || 'They').split(' ')[0];
+  oneWay(a, b, an, bn);
+  oneWay(b, a, bn, an);
+  if (a.gender && b.gender && a.gender === b.gender)
+    notes.unshift({ bad:true, t:`Both are listed as ${a.gender}.` });
+  return notes;
+}
+
+function paintFit(){
+  const a = byId($('new-a').value), b = byId($('new-b').value);
+  const box = $('fit');
+  if (!a || !b || a.id === b.id) { box.innerHTML = ''; return; }
+  const notes = checkFit(a, b);
+  const blocking = notes.some(n => n.bad);
+  box.innerHTML = notes.length
+    ? `<div class="card" style="box-shadow:none;margin-bottom:1rem;padding:1rem 1.2rem;
+             background:${blocking ? 'var(--rose-bg)' : 'var(--amber-bg)'};
+             border-color:${blocking ? '#f0d6d4' : '#ecd9b8'}">
+         <p class="meta" style="margin:0 0 .4rem;font-weight:600;
+            color:${blocking ? 'var(--rose)' : 'var(--amber)'}">
+           ${blocking ? 'Worth a second look' : 'Minor differences'}</p>
+         <ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:var(--ink-soft);line-height:1.7">
+           ${notes.map(n => `<li>${esc(n.t)}</li>`).join('')}
+         </ul>
+       </div>`
+    : `<div class="card" style="box-shadow:none;margin-bottom:1rem;padding:.8rem 1.2rem;
+             background:var(--sage-bg);border-color:#cfe0cb">
+         <p class="meta" style="margin:0;color:#4a6b45;font-weight:600">
+           They fit each other's stated criteria.</p>
+       </div>`;
+}
+
+$('new-a').onchange = paintFit;
+$('new-b').onchange = paintFit;
+
 $('new-match').onclick = async () => {
   const a = $('new-a').value, b = $('new-b').value;
   if (!a || !b)  return toast('Choose two members.', true);
@@ -974,7 +1081,7 @@ $('new-match').onclick = async () => {
   });
   btn.disabled = false;
   if (error) return toast(friendly(error), true);
-  $('new-note').value = ''; $('new-a').value = ''; $('new-b').value = '';
+  $('new-note').value = ''; $('new-a').value = ''; $('new-b').value = ''; $('fit').innerHTML = '';
   toast('✓ Match created — both will be told they have a new match');
   await loadAll(); paintMatches();
 };
@@ -1171,7 +1278,7 @@ async function openChat(c){
   $('composer-text').disabled = closed;
   $('composer-send').disabled = closed;
   $('composer-text').placeholder = closed
-    ? 'Reopen the conversation to write.' : 'Write as the Nikkah Pathways team…';
+    ? 'Reopen the conversation to write.' : 'Write as the Sakinah team…';
 
   $('thread').innerHTML = '<div class="empty"><p>Loading…</p></div>';
   MSGS = [];
@@ -1235,7 +1342,7 @@ $('composer-send').onclick = async () => {
   // participants table, so what's sent here is only a fallback.
   const { data, error } = await supabase.from('messages').insert({
     conversation_id: currentConvo.id, sender_id: ME.id,
-    sender_name: 'Nikkah Pathways', sender_role: 'admin', body: text
+    sender_name: 'Sakinah team', sender_role: 'admin', body: text
   }).select().maybeSingle();
   b.disabled = false;
   if (error) return toast('Could not send: ' + friendly(error), true);
