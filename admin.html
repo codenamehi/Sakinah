@@ -484,6 +484,7 @@ function makeDemoClient(){
 
       if (b._patch) {
         const list = table === 'profiles' ? S.members
+                   : table === 'matches' ? S.matches
                    : table === 'conversations' ? S.conversations
                    : table === 'conversation_participants' ? S.participants : [];
         list.filter(match).forEach(r => Object.assign(r, b._patch));
@@ -622,6 +623,12 @@ function friendly(e){
   if (m.includes('duplicate key') || m.includes('matches_unique_pair'))
     return 'Those two are already matched with each other.';
   if (m.includes('only an admin')) return 'Your account isn\'t an admin.';
+  if (m.includes('already in an open conversation'))
+    return 'One of them is already talking to someone. That conversation has to end first.';
+  if (m.includes('re-check both'))
+    return 'Confirm you have re-checked both members first.';
+  if (m.includes('contact_details'))
+    return 'That message contains contact details.';
   if (m.includes('different_people')) return 'Pick two different people.';
   if (m.includes('failed to fetch')) return 'Network problem — check your connection.';
   return e.message || 'Something went wrong.';
@@ -1113,8 +1120,12 @@ function paintMatches(){
       action = `<button class="btn" data-goconvo="${esc(m.conversation_id)}">Open conversation</button>`;
     } else if (both) {
       pill = '<span class="pill pill-wait">Both asked</span>';
-      note = 'Both have requested an introduction.';
-      action = `<button class="btn btn-key" data-openconvo="${esc(m.id)}">Open conversation</button>`;
+      note = m.verified_both
+        ? 'Both re-checked. Ready to open.'
+        : 'Both have requested an introduction. Re-check them before opening anything.';
+      action = m.verified_both
+        ? `<button class="btn btn-key" data-openconvo="${esc(m.id)}">Open conversation</button>`
+        : `<button class="btn btn-key" data-dblcheck="${esc(m.id)}">Confirm both re-checked</button>`;
     } else if (asked === 1) {
       pill = '<span class="pill pill-wait">One asked</span>';
       note = `${esc(nameOf(m.intro_requested_by[0]))} has asked. Waiting on the other.`;
@@ -1158,10 +1169,40 @@ function paintMatches(){
                    placeholder="Optional"/>
           </div>
         </div>
-        <button class="btn" style="margin-top:.6rem" data-saveout="${esc(m.id)}">Save outcome</button>
+        <div class="grid-2" style="margin-top:.8rem">
+          <div class="field" style="margin-bottom:0">
+            <label>1-on-1 meeting</label>
+            <input type="date" data-meeting="${esc(m.id)}"
+                   value="${m.meeting_at ? String(m.meeting_at).slice(0,10) : ''}"/>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label>Where / who is attending</label>
+            <input type="text" data-meetnote="${esc(m.id)}" value="${esc(m.meeting_note || '')}"
+                   placeholder="e.g. Sydney venue, wali attending"/>
+          </div>
+        </div>
+        <button class="btn" style="margin-top:.6rem" data-saveout="${esc(m.id)}">Save</button>
       </div>
     </div>`;
   }).join('');
+
+  $('matches-list').querySelectorAll('[data-dblcheck]').forEach(b => b.onclick = async () => {
+    const m = MATCHES.find(x => x.id === b.dataset.dblcheck);
+    const a = byId(m?.member_a), c = byId(m?.member_b);
+    if (!confirm(
+      'Second check before anything opens between them.\n\n' +
+      `• ${a?.name || '?'} — ID ${a?.id_status || 'not submitted'}, ` +
+        `${a?.verified ? 'verified' : 'NOT VERIFIED'}\n` +
+      `• ${c?.name || '?'} — ID ${c?.id_status || 'not submitted'}, ` +
+        `${c?.verified ? 'verified' : 'NOT VERIFIED'}\n\n` +
+      'Confirm you have re-checked both?')) return;
+    b.disabled = true;
+    const { error } = await supabase.from('matches')
+      .update({ verified_both:true, verified_both_at:new Date().toISOString() }).eq('id', m.id);
+    if (error) { toast(friendly(error), true); b.disabled = false; return; }
+    toast('✓ Re-checked — you can open the conversation now');
+    await loadAll(); paintMatches();
+  });
 
   $('matches-list').querySelectorAll('[data-openconvo]').forEach(b => b.onclick = async () => {
     b.disabled = true; b.textContent = 'Opening…';
@@ -1182,10 +1223,14 @@ function paintMatches(){
     const id = b.dataset.saveout;
     const outcome = $('matches-list').querySelector(`[data-outcome="${id}"]`).value || null;
     const outnote = $('matches-list').querySelector(`[data-outnote="${id}"]`).value.trim() || null;
+    const meetVal = $('matches-list').querySelector(`[data-meeting="${id}"]`)?.value || '';
+    const meetNote = $('matches-list').querySelector(`[data-meetnote="${id}"]`)?.value.trim() || null;
     b.disabled = true; b.textContent = 'Saving…';
     const { error } = await supabase.from('matches')
-      .update({ outcome, outcome_note: outnote }).eq('id', id);
-    b.disabled = false; b.textContent = 'Save outcome';
+      .update({ outcome, outcome_note: outnote,
+                meeting_at: meetVal ? new Date(meetVal + 'T12:00:00').toISOString() : null,
+                meeting_note: meetNote }).eq('id', id);
+    b.disabled = false; b.textContent = 'Save';
     if (error) return toast(friendly(error), true);
     toast(outcome === 'married' ? '✓ Recorded — mabrook!' : '✓ Outcome saved');
     await loadAll();
