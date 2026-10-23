@@ -284,6 +284,7 @@ setTimeout(function(){
         </div>
         <button class="btn btn-key" id="new-match">Create match</button>
       </div>
+      <div id="match-stats"></div>
       <div id="matches-list"></div>
     </section>
 
@@ -369,7 +370,8 @@ function makeDemoClient(){
         languages:'English, Urdu', bio:'Community pharmacist in the inner west. I like long walks and I am a terrible cook, which I am working on.',
         looking_for:'Patience, good character, and someone who prays on time.',
         verified:true, status:'active', kind:'member', date_of_birth:dob(28),
-        id_status:'approved', id_file_path:null, created_at:day(21), match_count:2 },
+        id_status:'approved', id_file_path:null, created_at:day(21), match_count:2,
+        self_paused:false },
       { id:'d-yusuf', name:'Yusuf Ahmed', email:'yusuf@example.com', phone:'0400 555 666',
         gender:'male', city:'Sydney', occupation:'Civil engineer', education:"Master of Engineering",
         languages:'English, Arabic', bio:'Revert of six years alhamdulillah. I work on bridges, which is less exciting than it sounds.',
@@ -381,7 +383,8 @@ function makeDemoClient(){
         languages:'English', bio:'Quiet, close to my parents, and I run most mornings.',
         looking_for:'Someone family-oriented who does not mind an early riser.',
         verified:true, status:'active', kind:'member', date_of_birth:dob(31),
-        id_status:'approved', id_file_path:null, created_at:day(30), match_count:1 },
+        id_status:'approved', id_file_path:null, created_at:day(30), match_count:1,
+        admin_note:'Spoke on the phone — very serious, family are supportive.' },
       { id:'d-fatima', name:'Fatima Noor', email:'fatima@example.com', phone:'',
         gender:'female', city:'Melbourne', occupation:'Accountant', education:"Bachelor of Commerce",
         languages:'English, Somali', bio:'', looking_for:'',
@@ -399,7 +402,12 @@ function makeDemoClient(){
         created_at:day(4) },
       { id:'d-m2', member_a:'d-aisha', member_b:'d-omar', status:'conversation_open',
         intro_requested_by:['d-aisha','d-omar'], conversation_id:'d-c1',
-        note:'', created_at:day(12) },
+        note:'', outcome:'talking', outcome_note:'Families have spoken once.',
+        created_at:day(12) },
+      { id:'d-m4', member_a:'d-yusuf', member_b:'d-fatima', status:'declined',
+        intro_requested_by:[], conversation_id:null, declined_by:['d-fatima'],
+        decline_reason:'Looking for someone closer to Melbourne.',
+        note:'', created_at:day(8) },
       { id:'d-m3', member_a:'d-yusuf', member_b:'d-hana', status:'proposed',
         intro_requested_by:[], conversation_id:null,
         note:'Different cities — worth asking how they both feel about that.',
@@ -750,7 +758,8 @@ function paintMembers(){
     const wali = m.kind === 'wali';
     const pill = wali ? '<span class="pill pill-off">Wali / guardian</span>'
       : !m.verified ? '<span class="pill pill-wait">Unverified</span>'
-      : m.status === 'paused' ? '<span class="pill pill-off">Paused</span>'
+      : m.self_paused ? '<span class="pill pill-off">Paused by them</span>'
+      : m.status === 'paused' ? '<span class="pill pill-off">Paused by you</span>'
       : '<span class="pill pill-ok">Active</span>';
     const meta = [m.age, m.gender, m.city, m.occupation].filter(Boolean).map(esc).join(' · ');
     const idTag = m.kind === 'wali' ? ''
@@ -781,7 +790,14 @@ function paintMembers(){
           <dt>About</dt><dd>${esc(m.bio || '—')}</dd>
           <dt>Looking for</dt><dd>${esc(m.looking_for || '—')}</dd>
           <dt>Joined</dt><dd>${fmt(m.created_at)}</dd>
+          <dt>Phone</dt><dd>${esc(m.phone || '—')}</dd>
         </dl>
+        <div class="field" style="margin-top:.9rem;margin-bottom:0">
+          <label>Private note — they never see this</label>
+          <textarea data-note="${esc(m.id)}" rows="2"
+            placeholder="Anything worth remembering: what they're after, who they've met, how a call went.">${esc(m.admin_note || '')}</textarea>
+          <button class="btn" style="margin-top:.5rem" data-savenote="${esc(m.id)}">Save note</button>
+        </div>
       </div>
     </div>`;
   }).join('');
@@ -798,6 +814,17 @@ function paintMembers(){
     m.verified = !m.verified;
     toast(m.verified ? `✓ ${m.name} verified` : `${m.name} is no longer verified`);
     paintCounts(); paintMembers();
+  });
+
+  $('members-list').querySelectorAll('[data-savenote]').forEach(b => b.onclick = async () => {
+    const id = b.dataset.savenote;
+    const text = $('members-list').querySelector(`[data-note="${id}"]`).value.trim();
+    b.disabled = true; b.textContent = 'Saving…';
+    const { error } = await supabase.from('profiles').update({ admin_note: text }).eq('id', id);
+    b.disabled = false; b.textContent = 'Save note';
+    if (error) return toast(friendly(error), true);
+    const m = byId(id); if (m) m.admin_note = text;
+    toast('✓ Note saved');
   });
 
   $('members-list').querySelectorAll('[data-kind]').forEach(b => b.onclick = async () => {
@@ -922,7 +949,10 @@ function ageFrom(dob){
 function paintPickers(){
   // Only verified, active members can be matched — that is the whole point
   // of verifying.
-  const pool = MEMBERS.filter(m => m.verified && m.status !== 'paused' && m.kind !== 'wali');
+  // Someone who has paused themselves is not available to be matched, and
+  // offering them would mean proposing a match they have opted out of.
+  const pool = MEMBERS.filter(m =>
+    m.verified && m.status !== 'paused' && !m.self_paused && m.kind !== 'wali');
   const opts = sel => '<option value="">— choose —</option>' + pool.map(m =>
     `<option value="${esc(m.id)}">${esc(m.name || m.email)}${m.city ? ' (' + esc(m.city) + ')' : ''}</option>`).join('');
   const a = $('new-a'), b = $('new-b');
@@ -950,6 +980,17 @@ $('new-match').onclick = async () => {
 };
 
 function paintMatches(){
+  const married = MATCHES.filter(m => m.outcome === 'married').length;
+  const talking = MATCHES.filter(m => m.outcome === 'talking').length;
+  const open    = MATCHES.filter(m => m.conversation_id && !m.outcome).length;
+  $('match-stats').innerHTML = MATCHES.length
+    ? `<div class="card" style="display:flex;gap:2rem;flex-wrap:wrap;padding:1rem 1.2rem">
+         <span class="meta"><strong style="color:var(--night);font-size:1.1rem">${MATCHES.length}</strong> matches made</span>
+         <span class="meta"><strong style="color:var(--night);font-size:1.1rem">${open}</strong> in conversation</span>
+         <span class="meta"><strong style="color:var(--night);font-size:1.1rem">${talking}</strong> still talking</span>
+         <span class="meta"><strong style="color:var(--sage);font-size:1.1rem">${married}</strong> married</span>
+       </div>` : '';
+
   if (!MATCHES.length) {
     $('matches-list').innerHTML = `<div class="empty"><div class="display">No matches yet</div>
       <p>Create one above once you have two verified members.</p></div>`;
@@ -970,10 +1011,17 @@ function paintMatches(){
     } else if (asked === 1) {
       pill = '<span class="pill pill-wait">One asked</span>';
       note = `${esc(nameOf(m.intro_requested_by[0]))} has asked. Waiting on the other.`;
+    } else if (m.status === 'declined') {
+      pill = '<span class="pill pill-no">Declined</span>';
+      const who = (m.declined_by || []).map(nameOf).join(', ');
+      note = `Declined by ${esc(who || 'a member')}.` +
+             (m.decline_reason ? ` They said: <em>${esc(m.decline_reason)}</em>` : '');
     } else {
       pill = '<span class="pill pill-off">Proposed</span>';
       note = 'Neither has responded yet.';
     }
+
+    const outcome = m.outcome || '';
     return `<div class="card">
       <div class="row">
         <div style="min-width:0">
@@ -983,8 +1031,27 @@ function paintMatches(){
       </div>
       <div class="actions">
         ${action}
-        <button class="btn btn-bad" data-decline="${esc(m.id)}">Remove</button>
+        <button class="btn btn-bad" data-remove="${esc(m.id)}">Remove</button>
         <span class="meta">${fmt(m.created_at)}</span>
+      </div>
+      <div class="detail open" style="border-top:1px solid var(--line);margin-top:.9rem">
+        <div class="grid-2" style="align-items:end">
+          <div class="field" style="margin-bottom:0">
+            <label>Where did it get to?</label>
+            <select data-outcome="${esc(m.id)}">
+              <option value=""        ${outcome===''        ?'selected':''}>Not recorded</option>
+              <option value="talking" ${outcome==='talking' ?'selected':''}>Still talking</option>
+              <option value="married" ${outcome==='married' ?'selected':''}>Married alhamdulillah</option>
+              <option value="ended"   ${outcome==='ended'   ?'selected':''}>Didn't proceed</option>
+            </select>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label>Note</label>
+            <input type="text" data-outnote="${esc(m.id)}" value="${esc(m.outcome_note || '')}"
+                   placeholder="Optional"/>
+          </div>
+        </div>
+        <button class="btn" style="margin-top:.6rem" data-saveout="${esc(m.id)}">Save outcome</button>
       </div>
     </div>`;
   }).join('');
@@ -1004,10 +1071,23 @@ function paintMatches(){
     if (c) { showView('convos'); openChat(c); } else toast('That conversation has been deleted.', true);
   });
 
-  $('matches-list').querySelectorAll('[data-decline]').forEach(b => b.onclick = async () => {
+  $('matches-list').querySelectorAll('[data-saveout]').forEach(b => b.onclick = async () => {
+    const id = b.dataset.saveout;
+    const outcome = $('matches-list').querySelector(`[data-outcome="${id}"]`).value || null;
+    const outnote = $('matches-list').querySelector(`[data-outnote="${id}"]`).value.trim() || null;
+    b.disabled = true; b.textContent = 'Saving…';
+    const { error } = await supabase.from('matches')
+      .update({ outcome, outcome_note: outnote }).eq('id', id);
+    b.disabled = false; b.textContent = 'Save outcome';
+    if (error) return toast(friendly(error), true);
+    toast(outcome === 'married' ? '✓ Recorded — mabrook!' : '✓ Outcome saved');
+    await loadAll();
+  });
+
+  $('matches-list').querySelectorAll('[data-remove]').forEach(b => b.onclick = async () => {
     if (!confirm('Remove this match? They will no longer see each other.')) return;
     b.disabled = true;
-    const { error } = await supabase.from('matches').delete().eq('id', b.dataset.decline);
+    const { error } = await supabase.from('matches').delete().eq('id', b.dataset.remove);
     if (error) { toast(friendly(error), true); b.disabled = false; return; }
     toast('Match removed');
     await loadAll(); paintMatches();
