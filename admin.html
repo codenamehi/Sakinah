@@ -595,19 +595,20 @@ function makeDemoClient(){
     ],
     matches: [
       { id:'d-m1', member_a:'d-aisha', member_b:'d-yusuf', status:'intro_requested',
-        intro_requested_by:['d-aisha','d-yusuf'], conversation_id:null,
+        chat_requested_by:['d-aisha','d-yusuf'], conversation_id:null,
         note:'Both Sydney, close in age, both said relocation is not a dealbreaker.',
         created_at:day(4) },
       { id:'d-m2', member_a:'d-aisha', member_b:'d-omar', status:'conversation_open',
-        intro_requested_by:['d-aisha','d-omar'], conversation_id:'d-c1',
+        chat_requested_by:['d-aisha','d-omar'],
+        meeting_requested_by:['d-aisha','d-omar'], conversation_id:'d-c1',
         note:'', outcome:'talking', outcome_note:'Families have spoken once.',
         created_at:day(12) },
       { id:'d-m4', member_a:'d-yusuf', member_b:'d-fatima', status:'declined',
-        intro_requested_by:[], conversation_id:null, declined_by:['d-fatima'],
+        chat_requested_by:[], conversation_id:null, declined_by:['d-fatima'],
         decline_reason:'Looking for someone closer to Melbourne.',
         note:'', created_at:day(8) },
       { id:'d-m3', member_a:'d-yusuf', member_b:'d-hana', status:'proposed',
-        intro_requested_by:[], conversation_id:null,
+        chat_requested_by:[], conversation_id:null,
         note:'Different cities — worth asking how they both feel about that.',
         created_at:day(1) },
     ],
@@ -711,7 +712,7 @@ function makeDemoClient(){
           const clash = S.matches.some(m =>
             [m.member_a, m.member_b].sort().join() === [b._row.member_a, b._row.member_b].sort().join());
           if (clash) return { data:null, error:{ message:'duplicate key value violates matches_unique_pair' } };
-          S.matches.unshift({ id:'d-m' + Date.now(), status:'proposed', intro_requested_by:[],
+          S.matches.unshift({ id:'d-m' + Date.now(), status:'proposed', chat_requested_by:[], meeting_requested_by:[],
             conversation_id:null, created_at:new Date().toISOString(), note:'', ...b._row });
           return { data:null, error:null };
         }
@@ -778,6 +779,19 @@ function makeDemoClient(){
         const c = S.conversations.find(x => x.id === args.p_convo);
         if (c) { c.last_message_at = new Date().toISOString();
                  c.last_message_preview = String(args.p_preview || '').slice(0,80); }
+        return { data:null, error:null };
+      }
+      if (name === 'arrange_meeting') {
+        const m = S.matches.find(x => x.id === args.p_match_id);
+        if (!m) return { data:null, error:{ message:'No such match' } };
+        m.meeting_at = args.p_when;
+        m.meeting_note = args.p_note || null;
+        m.outcome = m.outcome || 'talking';
+        return { data:null, error:null };
+      }
+      if (name === 'request_chat' || name === 'request_intro') {
+        const m = S.matches.find(x => x.id === args.p_match_id);
+        if (m && !m.chat_requested_by.includes('demo-admin')) m.chat_requested_by.push('demo-admin');
         return { data:null, error:null };
       }
       if (name === 'admin_reports') {
@@ -992,10 +1006,11 @@ const nameOf = id => byId(id)?.name || 'Unknown';
 function paintCounts(){
   // Walis aren't candidates, so they never belong in the verification queue.
   const unver = MEMBERS.filter(m => !m.verified && m.kind !== 'wali').length;
-  const ready = MATCHES.filter(m => (m.intro_requested_by||[]).length >= 2 && !m.conversation_id).length;
+  const ready = MATCHES.filter(m => (m.chat_requested_by||[]).length >= 2 && !m.conversation_id).length;
+  const meets = MATCHES.filter(m => (m.meeting_requested_by||[]).length >= 2 && !m.meeting_at).length;
   const ids   = MEMBERS.filter(m => m.id_status === 'pending').length;
   $('c-members').innerHTML = unver  ? `<span class="count">${unver}</span>` : '';
-  $('c-matches').innerHTML = ready  ? `<span class="count">${ready}</span>` : '';
+  $('c-matches').innerHTML = (ready + meets) ? `<span class="count">${ready + meets}</span>` : '';
   $('c-id').innerHTML      = ids    ? `<span class="count">${ids}</span>` : '';
   $('c-reports').innerHTML = OPEN_REPORTS ? `<span class="count">${OPEN_REPORTS}</span>` : '';
 
@@ -1005,7 +1020,10 @@ function paintCounts(){
   if (OPEN_REPORTS) jobs.push(`<li><a data-jump="reports">${OPEN_REPORTS} report${OPEN_REPORTS>1?'s':''} waiting for a moderator</a></li>`);
   if (unver) jobs.push(`<li><a data-jump="members">${unver} member${unver>1?'s':''} waiting to be verified</a></li>`);
   if (ids)   jobs.push(`<li><a data-jump="idchecks">${ids} ID check${ids>1?'s':''} waiting to be reviewed</a></li>`);
-  if (ready) jobs.push(`<li><a data-jump="matches">${ready} match${ready>1?'es':''} where both sides have asked for an introduction</a></li>`);
+  if (ready) jobs.push(`<li><a data-jump="matches">${ready} match${ready>1?'es':''} where both have asked to message</a></li>`);
+  // The introduction is the one with a person waiting on a date, so it goes
+  // above the ones that are only waiting on a conversation being opened.
+  if (meets) jobs.push(`<li><a data-jump="matches">${meets} introduction${meets>1?'s':''} to arrange — both sides have asked to meet</a></li>`);
   $('queue').innerHTML = jobs.length
     ? `<div class="queue"><h3>Needs you</h3><ul>${jobs.join('')}</ul></div>` : '';
   $('queue').querySelectorAll('[data-jump]').forEach(a => a.onclick = () => showView(a.dataset.jump));
@@ -1529,24 +1547,45 @@ function paintMatches(){
     return;
   }
   $('matches-list').innerHTML = MATCHES.map(m => {
-    const asked = (m.intro_requested_by || []).length;
+    const asked = (m.chat_requested_by || []).length;
     const both  = asked >= 2;
+    const met   = (m.meeting_requested_by || []).length;
+    const bothMeet = met >= 2;
     let pill, note, action = '';
     if (m.conversation_id) {
-      pill = '<span class="pill pill-ok">Conversation open</span>';
-      note = 'Talking now.';
-      action = `<button class="btn" data-goconvo="${esc(m.conversation_id)}">Open conversation</button>`;
+      // Once they're talking, the thing that needs you is the introduction.
+      if (m.meeting_at) {
+        pill = '<span class="pill pill-ok">Introduction set</span>';
+        note = `Meeting ${esc(fmt(m.meeting_at))}.` +
+               (m.meeting_note ? ` <em>${esc(m.meeting_note)}</em>` : '');
+        action = `<button class="btn" data-goconvo="${esc(m.conversation_id)}">Open conversation</button>
+                  <button class="btn" data-arrange="${esc(m.id)}">Change it</button>`;
+      } else if (bothMeet) {
+        pill = '<span class="pill pill-wait">Introduction asked</span>';
+        note = 'Both have asked to meet. Arrange it and tell them the time.';
+        action = `<button class="btn btn-key" data-arrange="${esc(m.id)}">Arrange the introduction</button>
+                  <button class="btn" data-goconvo="${esc(m.conversation_id)}">Open conversation</button>`;
+      } else if (met === 1) {
+        pill = '<span class="pill pill-ok">Messaging</span>';
+        note = `${esc(nameOf(m.meeting_requested_by[0]))} has asked to meet. ` +
+               'The other hasn\'t, and has not been told.';
+        action = `<button class="btn" data-goconvo="${esc(m.conversation_id)}">Open conversation</button>`;
+      } else {
+        pill = '<span class="pill pill-ok">Messaging</span>';
+        note = 'Talking now.';
+        action = `<button class="btn" data-goconvo="${esc(m.conversation_id)}">Open conversation</button>`;
+      }
     } else if (both) {
-      pill = '<span class="pill pill-wait">Both asked</span>';
+      pill = '<span class="pill pill-wait">Both asked to message</span>';
       note = m.verified_both
         ? 'Both re-checked. Ready to open.'
-        : 'Both have requested an introduction. Re-check them before opening anything.';
+        : 'Both have asked to message. Re-check them before opening anything.';
       action = m.verified_both
         ? `<button class="btn btn-key" data-openconvo="${esc(m.id)}">Open conversation</button>`
         : `<button class="btn btn-key" data-dblcheck="${esc(m.id)}">Confirm both re-checked</button>`;
     } else if (asked === 1) {
       pill = '<span class="pill pill-wait">One asked</span>';
-      note = `${esc(nameOf(m.intro_requested_by[0]))} has asked. Waiting on the other.`;
+      note = `${esc(nameOf(m.chat_requested_by[0]))} has asked to message. Waiting on the other.`;
     } else if (m.status === 'declined') {
       pill = '<span class="pill pill-no">Declined</span>';
       const who = (m.declined_by || []).map(nameOf).join(', ');
@@ -1570,6 +1609,7 @@ function paintMatches(){
         <button class="btn btn-bad" data-remove="${esc(m.id)}">Remove</button>
         <span class="meta">${fmt(m.created_at)}</span>
       </div>
+      <div id="arr-${esc(m.id)}"></div>
       <div class="detail open" style="border-top:1px solid var(--line);margin-top:.9rem">
         <div class="grid-2" style="align-items:end">
           <div class="field" style="margin-bottom:0">
@@ -1635,6 +1675,40 @@ function paintMatches(){
   $('matches-list').querySelectorAll('[data-goconvo]').forEach(b => b.onclick = () => {
     const c = CONVOS.find(c => c.id === b.dataset.goconvo);
     if (c) { showView('convos'); openChat(c); } else toast('That conversation has been deleted.', true);
+  });
+
+  // Arranging the introduction. The date goes through arrange_meeting()
+  // rather than a direct update so the member app's view of it comes from
+  // one place, and so a member can never set their own meeting time.
+  $('matches-list').querySelectorAll('[data-arrange]').forEach(b => b.onclick = () => {
+    const id = b.dataset.arrange;
+    const m  = MATCHES.find(x => x.id === id);
+    askInline('arr-' + id, {
+      label: 'When is it? Both of them will see this time',
+      quick: ['Saturday afternoon', 'Sunday after Dhuhr', 'A weekday evening'],
+      placeholder: 'e.g. 2026-11-08 14:00 — the community hall, with Sr Mariam there',
+      go: 'Save the introduction',
+      required: true,
+      requiredMsg: 'Put a date and time in, so we can tell them something real.',
+      onGo: async text => {
+        // A date at the front, the arrangement after it. Anything the
+        // browser can't read as a date is kept as the note instead, so a
+        // typo never silently becomes "no meeting".
+        const firstBit = text.split('—')[0].split('-—')[0].trim();
+        const when = new Date(firstBit.replace(' ', 'T'));
+        if (isNaN(when.getTime())) {
+          return 'Start with a date and time we can read, e.g. 2026-11-08 14:00';
+        }
+        const { error } = await supabase.rpc('arrange_meeting', {
+          p_match_id: id, p_when: when.toISOString(),
+          p_note: text.slice(firstBit.length).replace(/^[\s—-]+/, '').trim() || null
+        });
+        if (error) return friendly(error);
+        toast(`Introduction set for ${nameOf(m?.member_a)} and ${nameOf(m?.member_b)}`);
+        await loadAll();
+        paintMatches();
+      }
+    });
   });
 
   $('matches-list').querySelectorAll('[data-saveout]').forEach(b => b.onclick = async () => {
