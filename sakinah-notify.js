@@ -1,4 +1,4 @@
-// Vercel Serverless Function — Sakinah email notifications.
+// Vercel Serverless Function — Halal Bridge email notifications.
 //
 // Supabase calls this whenever something happens that a person should hear
 // about. It sits beside send-email.js and reuses the same Gmail credentials,
@@ -20,7 +20,7 @@
 //                              belongs here on the server and NEVER in a web page.
 //   SAKINAH_WEBHOOK_SECRET     any long random string; paste the same value into
 //                              the webhook header in Supabase
-//   SAKINAH_APP_URL            (optional) where sakinah.html is hosted
+//   SAKINAH_APP_URL            (optional) where the member app is hosted
 //
 // GMAIL_USER and GMAIL_APP_PASSWORD are already set for send-email.js.
 
@@ -29,7 +29,7 @@ const crypto = require('crypto');
 const SB_URL     = process.env.SUPABASE_URL;
 const SB_KEY     = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const SECRET     = process.env.SAKINAH_WEBHOOK_SECRET;
-const APP_URL    = process.env.SAKINAH_APP_URL || 'https://nikkahpathways.com.au/sakinah.html';
+const APP_URL    = process.env.SAKINAH_APP_URL || 'https://sakinah-nine-gamma.vercel.app';
 const ADMIN_EMAIL = process.env.GMAIL_USER || 'admin@nikkahpathways.com.au';
 
 // Don't email someone twice about the same conversation inside this window.
@@ -83,7 +83,7 @@ function shell(heading, lines, cta) {
   return `<meta charset="utf-8">
 <div style="font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:auto;color:#232736;font-size:15px;line-height:1.7">
   <div style="background:#1b2240;padding:30px;text-align:center;border-radius:8px 8px 0 0">
-    <h1 style="color:#fff;margin:0;font-size:20px;letter-spacing:.3em;font-weight:400">SAKINAH</h1>
+    <h1 style="color:#fff;margin:0;font-size:20px;letter-spacing:.3em;font-weight:400">HALAL BRIDGE</h1>
     <p style="color:#d9bc8c;margin:8px 0 0;font-size:13px;font-style:italic">by Nikkah Pathways</p>
   </div>
   <div style="background:#fff;padding:30px;border:1px solid #e6e1d8">
@@ -103,7 +103,7 @@ function shell(heading, lines, cta) {
 async function send(to, subject, html) {
   if (!to) return false;
   await getTransporter().sendMail({
-    from: `"Sakinah — Nikkah Pathways" <${ADMIN_EMAIL}>`,
+    from: `"Halal Bridge — Nikkah Pathways" <${ADMIN_EMAIL}>`,
     to, replyTo: ADMIN_EMAIL, subject, html,
   });
   console.log('sakinah-notify ->', subject, to);
@@ -120,10 +120,10 @@ async function onNewMatch(rec) {
   for (const id of [rec.member_a, rec.member_b]) {
     const p = await profileOf(id);
     if (!p?.email) continue;
-    const ok = await send(p.email, 'You have a new match on Sakinah',
+    const ok = await send(p.email, 'You have a new match on Halal Bridge',
       shell(`Assalamu alaykum ${p.name || ''},`.trim(),
         ['We\'ve found someone we believe you may be genuinely compatible with, based on your questionnaire.',
-         'Sign in to Sakinah to see their profile. If you\'d like us to introduce you, let us know there &mdash; nothing is shared with them until you do.'],
+         'Sign in to Halal Bridge to see their profile. If you\'d like us to introduce you, let us know there &mdash; nothing is shared with them until you do.'],
         'View your match'));
     if (ok) sent++;
   }
@@ -138,13 +138,41 @@ async function onBothRequested(rec, old) {
   if (!(before < 2 && after >= 2)) return 'intro count unchanged — nothing to do';
 
   const [a, b] = await Promise.all([profileOf(rec.member_a), profileOf(rec.member_b)]);
-  await send(ADMIN_EMAIL, 'Sakinah: two members are ready to be introduced',
+  await send(ADMIN_EMAIL, 'Halal Bridge: two members are ready to be introduced',
     shell('Both sides have asked for an introduction',
       [`<strong>${a?.name || rec.member_a}</strong> and <strong>${b?.name || rec.member_b}</strong> have both requested an introduction.`,
        'They are waiting on you to open a supervised conversation for them.',
        `<span style="color:#6b7186;font-size:13px">Match ID: ${rec.id}</span>`],
-      'Open Sakinah'));
+      'Open Halal Bridge'));
   return 'admin notified: ready to introduce';
+}
+
+// A member has reported someone. This one is always for the team, never for
+// either member — the person reported is not told, and the reporter gets a
+// moderator rather than an automated reply.
+async function onReport(rec) {
+  const [who, them] = await Promise.all([
+    profileOf(rec.reporter), rec.reported ? profileOf(rec.reported) : null
+  ]);
+  const urgent = rec.severity === 'urgent';
+  await send(ADMIN_EMAIL,
+    (urgent ? 'URGENT — ' : '') + 'Halal Bridge: a member has been reported',
+    shell(urgent ? 'A report that needs looking at today' : 'A new report',
+      [`<strong>${them?.name || 'A member'}</strong> was reported by ` +
+       `<strong>${who?.name || 'a member'}</strong>.`,
+       rec.reason ? `Reason given: <strong>${escapeHtml(rec.reason)}</strong>` : 'No reason was given.',
+       rec.note ? `In their words: &ldquo;${escapeHtml(rec.note)}&rdquo;` : '',
+       'Open the Reports tab to read the conversation alongside it.',
+       `<span style="color:#6b7186;font-size:13px">Report ID: ${rec.id}</span>`].filter(Boolean),
+      'Open the moderator queue'));
+  return `admin notified of ${rec.severity} report`;
+}
+
+// Report text is written by a member, so it is escaped before it goes into
+// an HTML email rather than trusted.
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => (
+    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
 // Someone was added to a conversation.
@@ -152,9 +180,9 @@ async function onParticipantAdded(rec) {
   if (rec.role !== 'member') return `role ${rec.role} — no email`;
   const p = await profileOf(rec.user_id);
   if (!p?.email) return 'no email on file';
-  await send(p.email, 'Your Sakinah conversation is open',
+  await send(p.email, 'Your Halal Bridge conversation is open',
     shell(`Assalamu alaykum ${p.name || ''},`.trim(),
-      ['Your conversation has been opened. You can now message each other in Sakinah.',
+      ['Your conversation has been opened. You can now message each other in Halal Bridge.',
        'A member of our team is part of the conversation and can see every message, as always.'],
       'Open your conversation'));
   return 'participant notified';
@@ -169,11 +197,11 @@ async function onIdReviewed(rec, old) {
 
   const name = `Assalamu alaykum ${rec.name || ''}`.trim() + ',';
   if (rec.id_status === 'approved') {
-    await send(rec.email, 'Your Sakinah ID check is complete',
+    await send(rec.email, 'Your Halal Bridge ID check is complete',
       shell(name,
         ['Your age has been verified. Your document has been deleted now that we\'ve checked it.',
          'If you haven\'t finished your profile yet, that\'s the next step.'],
-        'Open Sakinah'));
+        'Open Halal Bridge'));
     return 'approval emailed';
   }
   await send(rec.email, 'We need a clearer copy of your ID',
@@ -215,9 +243,9 @@ async function onNewMessage(rec) {
     const who = await profileOf(p.user_id);
     if (!who?.email) continue;
 
-    await send(who.email, 'You have a new message on Sakinah',
+    await send(who.email, 'You have a new message on Halal Bridge',
       shell(`Assalamu alaykum ${who.name || ''},`.trim(),
-        [`<strong>${sender?.name || 'Someone'}</strong> has sent you a message in your Sakinah conversation.`,
+        [`<strong>${sender?.name || 'Someone'}</strong> has sent you a message in your Halal Bridge conversation.`,
          'Sign in to read and reply.'],
         'Read your message'));
 
@@ -254,6 +282,7 @@ module.exports = async (req, res) => {
     else if (table === 'conversation_participants' && type === 'INSERT') result = await onParticipantAdded(record);
     else if (table === 'messages' && type === 'INSERT')             result = await onNewMessage(record);
     else if (table === 'profiles' && type === 'UPDATE')             result = await onIdReviewed(record, old_record);
+    else if (table === 'reports' && type === 'INSERT')              result = await onReport(record);
     else result = `ignored ${type} on ${table}`;
 
     res.status(200).json({ status: 'ok', result });
