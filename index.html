@@ -1076,6 +1076,7 @@ setTimeout(function(){
       </div>
       <div class="supervised" id="chat-supervised"></div>
       <div id="chat-rules"></div>
+      <div id="chat-meeting"></div>
       <div class="thread" id="thread"></div>
       <div class="composer">
         <textarea id="composer-text" placeholder="Write a message…" rows="1"></textarea>
@@ -1265,6 +1266,88 @@ $('sheet-go').onclick = async () => {
   }
   closeSheet();
 };
+
+/* ───────── asking for the introduction ─────────
+   The second of the two asks, and the one that leads somewhere real: meeting
+   in person, with us there. It lives inside the conversation because that is
+   where the decision is actually made, and like the first ask it is silent --
+   the other person is not told until they have asked for it themselves. */
+function paintMeeting(convo, closed){
+  const box = $('chat-meeting');
+  if (!box) return;
+
+  if (closed || !convo.match_id) { box.innerHTML = ''; return; }
+
+  // Already arranged. Nothing to ask for, and the details are the team's to
+  // give -- the time shows here, the rest comes from us.
+  if (convo.meeting_at) {
+    box.innerHTML = `<div class="notice notice-calm" style="border-color:var(--pine-line)">
+      <strong>Your introduction is arranged.</strong><br>
+      ${esc(fmtTime(convo.meeting_at))} — we'll be in touch with everything else,
+      and we'll be there with you.
+    </div>`;
+    return;
+  }
+
+  if (convo.both_asked_to_meet) {
+    box.innerHTML = `<div class="notice notice-wait">
+      <strong>You've both asked for an introduction.</strong><br>
+      We're arranging it now — we'll check in with both of you and come back
+      with a time inshAllah.
+    </div>`;
+    return;
+  }
+
+  if (convo.i_asked_to_meet) {
+    box.innerHTML = `<div class="notice notice-wait">
+      <strong>You've asked for an introduction.</strong><br>
+      We've noted it. Nothing happens until they ask too, and they aren't told
+      that you did — so take your time here.
+    </div>`;
+    return;
+  }
+
+  box.innerHTML = `<div class="notice notice-calm">
+    <strong>Ready to meet?</strong><br>
+    When you'd like to meet ${esc(convo.other_name || 'them')} in person, ask us and
+    we'll arrange a supervised introduction. They aren't told you asked unless
+    they ask as well.
+    <div style="margin-top:.8rem">
+      <button class="btn-soft" id="ask-meet">Ask for an introduction</button>
+    </div>
+  </div>`;
+
+  $('ask-meet').onclick = () => openSheet({
+    title: 'Ask for an introduction',
+    sub: 'We arrange a supervised meeting — a time and place we set, with one of '
+       + 'our team there. Your wali is welcome. Nothing happens until '
+       + (convo.other_name || 'they') + ' asks for one too, and they are not told '
+       + 'that you have.',
+    reasonLabel: 'Anything we should know? (optional)',
+    reasons: ['Sooner rather than later', 'I\'d like my wali there',
+              'A weekend would suit me better', 'No rush'],
+    noteLabel: 'Anything else? (optional)',
+    hint: 'Only our team reads this.',
+    go: 'Ask for an introduction',
+    onGo: async ({ reason, note }) => {
+      const { error } = await supabase.rpc('request_meeting', { p_convo: convo.id });
+      if (error) return friendly(error);
+      // The note is for us, so it goes to the team as a message in the
+      // conversation they are already watching rather than somewhere new.
+      const extra = [reason, note].filter(Boolean).join(' — ');
+      if (extra) {
+        await supabase.from('messages').insert({
+          conversation_id: convo.id,
+          body: 'I\'d like to ask about an introduction. ' + extra
+        }).then(() => {}, () => {});
+      }
+      toast('Sent — we\'ll take it from here');
+      await loadConversations();
+      const fresh = CONVOS.find(c => c.id === convo.id);
+      if (fresh) paintMeeting(fresh, fresh.status !== 'open');
+    }
+  });
+}
 
 function fmtTime(ts){
   if (!ts) return '';
@@ -1800,7 +1883,7 @@ async function loadHome(){
       supabase.rpc('my_matches'), supabase.rpc('my_conversations')]);
     matches = m.data || []; convos = c.data || [];
   }
-  const toAnswer = matches.filter(m => !m.i_requested && m.status !== 'conversation_open').length;
+  const toAnswer = matches.filter(m => !m.i_asked_to_chat && m.status !== 'conversation_open').length;
   const unread   = convos.reduce((n,c) => n + Number(c.unread || 0), 0);
 
   if (toAnswer) jobs.unshift({
@@ -2133,20 +2216,22 @@ async function loadMatches(){
     const open = r.status === 'conversation_open';
     let pill = '', action = '', note = '';
 
+    // Two asks, in order: first to message, and later -- from inside the
+    // conversation -- for the introduction itself.
     if (open) {
-      pill = '<span class="pill pill-open">Conversation open</span>';
-      note = 'Your conversation is in Messages.';
-    } else if (r.i_requested) {
-      pill = '<span class="pill pill-wait">Introduction requested</span>';
-      note = r.both_requested
-        ? 'You\'ve both asked — we\'re setting up your conversation inshAllah.'
-        : 'We\'ve passed your request on. We\'ll set things up once they\'ve responded too.';
+      pill = '<span class="pill pill-open">Messaging</span>';
+      note = 'Your conversation is in Messages. You can ask about an introduction from there.';
+    } else if (r.i_asked_to_chat) {
+      pill = '<span class="pill pill-wait">You asked to message</span>';
+      note = r.both_asked_to_chat
+        ? 'You\'ve both asked — we\'re opening your conversation inshAllah.'
+        : 'We\'ve passed it on. We\'ll open the conversation once they\'ve asked too.';
     } else {
       // Two real choices, shown as a pair. The decline is not a dismissive
       // little link in the corner -- passing is a legitimate answer.
-      action = `<button class="btn-soft" data-intro="${esc(r.match_id)}">Request introduction</button>
+      action = `<button class="btn-soft" data-intro="${esc(r.match_id)}">Ask to message them</button>
                 <button class="btn-quiet" data-decline="${esc(r.match_id)}">Not for me</button>`;
-      note   = 'Nothing is shared with them until you ask.';
+      note   = 'Nothing is shared with them until you ask, and they aren\'t told unless they ask too.';
     }
 
     // Facts as chips rather than one dot-joined run-on, so they can be
@@ -2157,9 +2242,9 @@ async function loadMatches(){
     ].filter(Boolean);
     const chips = facts.length
       ? `<div class="chips">${facts.map(f => `<span class="chip">${esc(f)}</span>`).join('')}</div>`
-      : '<p class="match-meta">Details shared on introduction</p>';
+      : '<p class="match-meta">More once you are both messaging</p>';
 
-    const edge = open ? ' is-open' : (r.i_requested ? '' : ' is-yours');
+    const edge = open ? ' is-open' : (r.i_asked_to_chat ? '' : ' is-yours');
     return `<div class="match${edge}">
       <div class="match-top">
         <div style="min-width:0">
@@ -2209,12 +2294,12 @@ async function loadMatches(){
       btn.disabled = true; btn.textContent = 'Sending…';
       // Members have no write access to matches at all; the request goes
       // through an RPC that can only ever add the caller.
-      const { error } = await supabase.rpc('request_intro', { p_match_id: btn.dataset.intro });
+      const { error } = await supabase.rpc('request_chat', { p_match_id: btn.dataset.intro });
       if (error) {
         toast('Could not send: ' + friendly(error));
-        btn.disabled = false; btn.textContent = 'Request introduction';
+        btn.disabled = false; btn.textContent = 'Ask to message them';
       } else {
-        toast('✓ Request sent — we\'ll be in touch');
+        toast('✓ Sent — we\'ll open the conversation once they\'ve asked too');
         loadMatches();
       }
     };
@@ -2335,13 +2420,15 @@ async function openChat(convo){
 
   $('chat-rules').innerHTML = closed ? '' : `<div class="rules">
     <p><strong>Contact details stay off the chat.</strong> Phone numbers, emails and
-       social media can't be sent here. When you're both ready to meet, ask us and
-       we'll arrange it.</p>
+       social media can't be sent here. When you're both ready to meet, ask for the
+       introduction below and we'll arrange it.</p>
     <p><strong>One conversation at a time.</strong> You're talking to
        ${esc(convo.other_name || 'this person')} only. If you'd like to be introduced
        to someone else, end this conversation first.</p>
     <button class="btn-plain" id="end-convo">End this conversation</button>
   </div>`;
+
+  paintMeeting(convo, closed);
 
   const endBtn = $('end-convo');
   if (endBtn) endBtn.onclick = () => openSheet({
