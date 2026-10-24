@@ -4,70 +4,180 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="robots" content="noindex,nofollow"/>
-<title>Sakinah Admin</title>
+<title>Halal Bridge Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
+/* Halal Bridge admin — the same two lights as the member app, run tighter:
+   smaller type, more on screen, nothing decorative. */
+
+/* ── LIGHT, the default ─────────────────────────────────────────────────── */
 :root{
-  --night:#1b2240;--night-2:#262f55;--night-3:#39436f;
-  --sand:#d9bc8c;--sand-lt:#ecd9b8;--cream:#faf7f2;--paper:#fff;
-  --ink:#232736;--ink-soft:#6b7186;--line:#e6e1d8;
-  --sage:#6f8f6a;--sage-bg:#eaf3e8;--rose:#b4635f;--rose-bg:#fbeceb;
-  --amber:#8a6a20;--amber-bg:#fdf6e7;--radius:10px;
+  color-scheme:light;
+  --night:#0f2a24;--night-2:#143229;--night-3:#1b4238;
+  --sand:#9b7430;          /* gold as a fill, dark enough for pale text */
+  --sand-hi:#b0853c;       /* the lit top edge of a gold button */
+  --sand-lt:#7a5a22;       /* gold as text on a pale ground */
+  --sand-line:#c2a265;
+  --on-sand:#fffaf0;
+  --cream:#f5efe3;         /* page */
+  --paper:#ffffff;         /* cards */
+  --paper-hi:#fffdf8;
+  --sunk:#f7f1e5;          /* fields */
+  --ink:#15322b;--ink-soft:#5c7168;--ink-faint:#8b9f96;
+  --line:#e6dac4;
+  --sage:#1d6b66;--sage-bg:#dcefec;--sage-line:#bfe0dc;
+  --rose:#a85435;--rose-bg:#fbe6dc;--rose-line:#efc9b8;--on-rose:#fff5ef;
+  --amber:#7a5a12;--amber-bg:#fbf0d8;--amber-line:#ecd9b8;
+  --glow-a:rgba(46,139,132,.10);
+  --glow-b:rgba(201,164,92,.16);
+  --grain:.038;
+  --hair:rgba(255,255,255,.9);
+  --dip:rgba(31,51,48,.055);
+  --lift:0 1px 2px rgba(31,51,48,.05), 0 8px 20px -12px rgba(31,51,48,.2),
+         inset 0 1px 0 var(--hair);
+  --scrim:rgba(40,30,15,.44);
+  --radius:10px;
 }
+
+/* ── DARK ───────────────────────────────────────────────────────────────── */
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --night:#0a1f1a;--night-2:#143229;--night-3:#1b4238;
+    --sand:#c9a45c;--sand-hi:#dcbb7c;--sand-lt:#e2c68e;--sand-line:#b8934a;
+    --on-sand:#11261f;
+    --cream:#0f2a24;--paper:#163a32;--paper-hi:#1b4339;--sunk:#11302a;
+    --ink:#f4efe6;--ink-soft:#a9bdb4;--ink-faint:#7b918a;
+    --line:#27463e;
+    --sage:#6fc3a4;--sage-bg:#153f36;--sage-line:#2a5b4f;
+    --rose:#e29070;--rose-bg:#3b241c;--rose-line:#5a3328;--on-rose:#2b160f;
+    --amber:#e8c98e;--amber-bg:#332c19;--amber-line:#5a4a28;
+    --glow-a:rgba(32,100,86,.42);
+    --glow-b:rgba(201,164,92,.11);
+    --grain:.055;
+    --hair:rgba(255,255,255,.055);
+    --dip:rgba(0,0,0,.26);
+    --lift:0 1px 2px rgba(0,0,0,.28), 0 10px 24px -14px rgba(0,0,0,.62),
+           inset 0 1px 0 var(--hair);
+    --scrim:rgba(4,14,11,.74);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --night:#0a1f1a;--night-2:#143229;--night-3:#1b4238;
+  --sand:#c9a45c;--sand-hi:#dcbb7c;--sand-lt:#e2c68e;--sand-line:#b8934a;
+  --on-sand:#11261f;
+  --cream:#0f2a24;--paper:#163a32;--paper-hi:#1b4339;--sunk:#11302a;
+  --ink:#f4efe6;--ink-soft:#a9bdb4;--ink-faint:#7b918a;
+  --line:#27463e;
+  --sage:#6fc3a4;--sage-bg:#153f36;--sage-line:#2a5b4f;
+  --rose:#e29070;--rose-bg:#3b241c;--rose-line:#5a3328;--on-rose:#2b160f;
+  --amber:#e8c98e;--amber-bg:#332c19;--amber-line:#5a4a28;
+  --glow-a:rgba(32,100,86,.42);
+  --glow-b:rgba(201,164,92,.11);
+  --grain:.055;
+  --hair:rgba(255,255,255,.055);
+  --dip:rgba(0,0,0,.26);
+  --lift:0 1px 2px rgba(0,0,0,.28), 0 10px 24px -14px rgba(0,0,0,.62),
+         inset 0 1px 0 var(--hair);
+  --scrim:rgba(4,14,11,.74);
+}
+
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
-body{background:var(--cream);color:var(--ink);
+body{
+  background:
+    radial-gradient(900px 600px at 10% -6%, var(--glow-a) 0%, transparent 66%),
+    radial-gradient(800px 580px at 94% 100%, var(--glow-b) 0%, transparent 64%),
+    var(--cream);
+  background-attachment:fixed;
+  color:var(--ink);
   font-family:'Inter',system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.6;
-  -webkit-font-smoothing:antialiased}
+  -webkit-font-smoothing:antialiased;min-height:100vh}
+body::after{
+  content:'';position:fixed;inset:0;z-index:999;pointer-events:none;
+  opacity:var(--grain);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
 button{font-family:inherit;cursor:pointer}
 input,textarea,select{font-family:inherit;font-size:15px}
 .display{font-family:'Cormorant Garamond',Georgia,serif;font-weight:300}
 .wordmark{font-family:'Cormorant Garamond',serif;font-weight:400;letter-spacing:.34em;text-transform:uppercase}
 
-/* gate */
+/* gate — the dark hero in both themes, same as the member app */
 #gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem;
-  background:radial-gradient(1100px 620px at 50% -12%,var(--night-3) 0%,transparent 62%),var(--night)}
+  background:radial-gradient(1100px 620px at 50% -12%,#1b4238 0%,transparent 62%),#071711}
 .gate-card{width:100%;max-width:390px;text-align:center}
-.gate-mark{color:var(--sand);font-size:.72rem;margin-bottom:.5rem}
-.gate-title{font-size:2.3rem;color:#fff;margin:0 0 1.8rem;line-height:1.1}
-.gate-box{background:rgba(255,255,255,.055);border:1px solid rgba(217,188,140,.22);
-  border-radius:var(--radius);padding:1.6rem;text-align:left;backdrop-filter:blur(8px)}
+.gate-mark{color:#c9a45c;font-size:.72rem;margin-bottom:.5rem}
+.gate-title{font-size:2.3rem;color:#f4efe6;margin:0 0 1.8rem;line-height:1.1}
+.gate-box{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03));
+  border:1px solid rgba(184,147,74,.26);
+  border-radius:var(--radius);padding:1.6rem;text-align:left;backdrop-filter:blur(8px);
+  box-shadow:0 20px 44px -22px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.07)}
 .gate-box label{display:block;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
-  color:rgba(255,255,255,.55);margin-bottom:.4rem}
-.gate-box input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);
-  border-radius:6px;padding:.72rem .85rem;color:#fff;margin-bottom:1rem;outline:none}
-.gate-box input:focus{border-color:var(--sand)}
-.btn-primary{width:100%;background:var(--sand);color:var(--night);border:none;border-radius:6px;
-  padding:.82rem;font-weight:600;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase}
-.btn-primary:hover{background:var(--sand-lt)}
-.btn-primary:disabled{opacity:.55;cursor:default}
-.gate-msg{font-size:.8rem;margin-top:.9rem;text-align:center;min-height:1.1rem;color:var(--rose)}
+  color:rgba(244,239,230,.55);margin-bottom:.4rem}
+.gate-box input{width:100%;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.14);
+  border-radius:6px;padding:.72rem .85rem;color:#f4efe6;margin-bottom:1rem;outline:none;
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.3)}
+.gate-box input:focus{border-color:#c9a45c}
+.btn-primary{width:100%;background:linear-gradient(180deg,#dcbb7c,#c9a45c);
+  color:#11261f;border:1px solid #b8934a;border-radius:6px;
+  padding:.82rem;font-weight:600;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;
+  box-shadow:0 2px 5px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.32);
+  transition:filter .18s}
+.btn-primary:hover{filter:brightness(1.07)}
+.btn-primary:disabled{opacity:.55;cursor:default;box-shadow:none}
+.gate-msg{font-size:.8rem;margin-top:.9rem;text-align:center;min-height:1.1rem;color:#e29070}
 
 /* shell */
-#app{display:none;min-height:100vh;flex-direction:column}
-.topbar{background:var(--night);color:#fff;padding:0 1.3rem;height:58px;display:flex;
-  align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
-.topbar .wordmark{color:var(--sand);font-size:.8rem}
+#app{display:none;min-height:100vh;flex-direction:column;position:relative}
+.topbar{background:linear-gradient(180deg,var(--night-2),var(--night));
+  color:#f4efe6;padding:0 1.3rem;height:58px;display:flex;
+  align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;
+  box-shadow:0 1px 0 rgba(0,0,0,.25), 0 8px 20px -14px rgba(0,0,0,.6),
+             inset 0 1px 0 rgba(255,255,255,.05)}
+.topbar .wordmark{color:#c9a45c;font-size:.8rem}
 .topbar .tag{font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--night);background:var(--sand);padding:.16rem .5rem;border-radius:3px;
+  color:#11261f;background:linear-gradient(180deg,#dcbb7c,#c9a45c);
+  padding:.16rem .5rem;border-radius:3px;
   margin-left:.7rem;font-weight:600;font-family:'Inter',sans-serif}
-.topbar-right{display:flex;align-items:center;gap:.9rem}
-.who{font-size:.76rem;color:rgba(255,255,255,.6);max-width:30vw;overflow:hidden;
+.topbar-right{display:flex;align-items:center;gap:.7rem}
+.who{font-size:.76rem;color:rgba(244,239,230,.6);max-width:26vw;overflow:hidden;
   text-overflow:ellipsis;white-space:nowrap}
-.btn-ghost{background:none;border:1px solid rgba(255,255,255,.22);color:rgba(255,255,255,.8);
-  border-radius:5px;padding:.34rem .7rem;font-size:.72rem}
-.btn-ghost:hover{border-color:var(--sand);color:var(--sand)}
+.btn-ghost{background:rgba(255,255,255,.04);border:1px solid rgba(244,239,230,.22);
+  color:rgba(244,239,230,.8);border-radius:5px;padding:.34rem .7rem;font-size:.72rem;
+  transition:border-color .15s,color .15s,background .15s}
+.btn-ghost:hover{border-color:#c9a45c;color:#e2c68e;background:rgba(255,255,255,.08)}
+.btn-theme{background:rgba(255,255,255,.04);border:1px solid rgba(244,239,230,.22);
+  color:rgba(244,239,230,.82);border-radius:5px;width:29px;height:27px;
+  display:inline-flex;align-items:center;justify-content:center;padding:0;flex:none;
+  transition:border-color .15s,color .15s,background .15s}
+.btn-theme:hover{border-color:#c9a45c;color:#e2c68e;background:rgba(255,255,255,.08)}
+/* `.btn-theme svg` is a class plus an element, so it outranks a bare
+   `.icon-sun` and both icons showed at once. Every rule that decides which
+   icon is visible is scoped to the button for that reason. */
+.btn-theme svg{width:14px;height:14px}
+.btn-theme .icon-sun{display:none}
+.btn-theme .icon-moon{display:block}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .btn-theme .icon-sun{display:block}
+  :root:not([data-theme="light"]) .btn-theme .icon-moon{display:none}
+}
+:root[data-theme="dark"] .btn-theme .icon-sun{display:block}
+:root[data-theme="dark"] .btn-theme .icon-moon{display:none}
 
 .tabs{display:flex;background:var(--paper);border-bottom:1px solid var(--line);
-  position:sticky;top:58px;z-index:49;overflow-x:auto}
+  position:sticky;top:58px;z-index:49;overflow-x:auto;
+  box-shadow:0 6px 16px -14px rgba(0,0,0,.5)}
 .tab{flex:1;min-width:112px;background:none;border:none;padding:.85rem .5rem;font-size:.7rem;
   letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);
   border-bottom:2px solid transparent;white-space:nowrap}
-.tab.active{color:var(--night);border-bottom-color:var(--sand);font-weight:600}
-.tab .count{display:inline-block;background:var(--rose);color:#fff;border-radius:9px;
-  font-size:.62rem;padding:0 .36rem;margin-left:.3rem;vertical-align:1px}
+.tab.active{color:var(--ink);border-bottom-color:var(--sand);font-weight:600}
+.tab .count{display:inline-block;background:var(--rose);color:var(--on-rose);border-radius:9px;
+  font-size:.62rem;padding:0 .36rem;margin-left:.3rem;vertical-align:1px;font-weight:700;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
 
 main{flex:1;width:100%;max-width:980px;margin:0 auto;padding:1.5rem 1.1rem 3rem}
 .view{display:none}
@@ -75,39 +185,50 @@ main{flex:1;width:100%;max-width:980px;margin:0 auto;padding:1.5rem 1.1rem 3rem}
 .view-head{margin-bottom:1.2rem;display:flex;justify-content:space-between;
   align-items:flex-end;gap:1rem;flex-wrap:wrap}
 .view-head h2{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:1.6rem;
-  margin:0 0 .1rem;color:var(--night)}
+  margin:0 0 .1rem;color:var(--ink)}
 .view-head p{margin:0;color:var(--ink-soft);font-size:.84rem}
 
 /* action queue */
-.queue{background:var(--amber-bg);border:1px solid #ecd9b8;border-left:3px solid var(--sand);
-  border-radius:var(--radius);padding:1rem 1.2rem;margin-bottom:1.3rem}
+.queue{background:var(--amber-bg);border:1px solid var(--amber-line);border-left:3px solid var(--sand);
+  border-radius:var(--radius);padding:1rem 1.2rem;margin-bottom:1.3rem;
+  box-shadow:0 1px 2px var(--dip)}
 .queue h3{margin:0 0 .5rem;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
-.queue ul{margin:0;padding-left:1.1rem;font-size:.86rem;color:#6d561f}
+.queue ul{margin:0;padding-left:1.1rem;font-size:.86rem;color:var(--amber)}
 .queue li{margin-bottom:.25rem}
-.queue a{color:#6d561f;cursor:pointer;text-decoration:underline}
+.queue a{color:var(--sand-lt);cursor:pointer;text-decoration:underline}
 
-.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
-  padding:1.2rem;margin-bottom:.9rem}
+.card{background:linear-gradient(180deg,var(--paper-hi),var(--paper));
+  border:1px solid var(--line);border-radius:var(--radius);
+  padding:1.2rem;margin-bottom:.9rem;box-shadow:var(--lift)}
+.card.flag{border-color:var(--rose);border-left:3px solid var(--rose)}
 .row{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
-.name{font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:var(--night);margin:0 0 .1rem}
+.name{font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:var(--ink);margin:0 0 .1rem}
 .meta{font-size:.8rem;color:var(--ink-soft);margin:0}
 .pill{display:inline-block;font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;
-  padding:.24rem .58rem;border-radius:20px;font-weight:600;white-space:nowrap}
-.pill-ok{background:var(--sage-bg);color:#4a6b45}
-.pill-wait{background:var(--amber-bg);color:var(--amber)}
-.pill-off{background:#eee;color:#777}
-.pill-no{background:var(--rose-bg);color:var(--rose)}
+  padding:.24rem .58rem;border-radius:20px;font-weight:600;white-space:nowrap;
+  border:1px solid transparent}
+.pill-ok{background:var(--sage-bg);color:var(--sage);border-color:var(--sage-line)}
+.pill-wait{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-line)}
+.pill-off{background:var(--sunk);color:var(--ink-faint);border-color:var(--line)}
+.pill-no{background:var(--rose-bg);color:var(--rose);border-color:var(--rose-line)}
 .actions{margin-top:.9rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
-.btn{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:6px;
-  padding:.46rem .85rem;font-size:.75rem;font-weight:500}
+.btn{border:1px solid var(--line);
+  background:linear-gradient(180deg,var(--paper),var(--sunk));
+  color:var(--ink);border-radius:6px;
+  padding:.46rem .85rem;font-size:.75rem;font-weight:500;
+  box-shadow:0 1px 2px var(--dip);transition:border-color .15s,filter .15s,transform .1s}
 .btn:hover{border-color:var(--sand)}
-.btn-go{background:var(--night);color:#fff;border-color:var(--night)}
-.btn-go:hover{background:var(--night-2);border-color:var(--night-2)}
-.btn-key{background:var(--sand);color:var(--night);border-color:var(--sand);font-weight:600}
-.btn-key:hover{background:var(--sand-lt);border-color:var(--sand-lt)}
-.btn-bad{color:var(--rose);border-color:#f0d6d4}
+.btn:active{transform:translateY(1px)}
+.btn-go{background:linear-gradient(180deg,var(--night-3),var(--night-2));
+  color:#f4efe6;border-color:var(--night-3)}
+.btn-go:hover{border-color:var(--sand);filter:brightness(1.12)}
+.btn-key{background:linear-gradient(180deg,var(--sand-hi),var(--sand));
+  color:var(--on-sand);border-color:var(--sand-line);font-weight:600;
+  box-shadow:0 2px 4px var(--dip), inset 0 1px 0 rgba(255,255,255,.3)}
+.btn-key:hover{filter:brightness(1.07)}
+.btn-bad{color:var(--rose);border-color:var(--rose-line)}
 .btn-bad:hover{background:var(--rose-bg);border-color:var(--rose)}
-.btn:disabled{opacity:.45;cursor:default}
+.btn:disabled{opacity:.45;cursor:default;box-shadow:none}
 .detail{margin-top:.9rem;padding-top:.9rem;border-top:1px solid var(--line);
   font-size:.86rem;display:none}
 .detail.open{display:block}
@@ -118,55 +239,75 @@ main{flex:1;width:100%;max-width:980px;margin:0 auto;padding:1.5rem 1.1rem 3rem}
 .field{margin-bottom:.9rem}
 .field label{display:block;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
   color:var(--ink-soft);margin-bottom:.32rem}
-.field input,.field select,.field textarea{width:100%;background:var(--cream);
-  border:1px solid var(--line);border-radius:6px;padding:.6rem .75rem;color:var(--ink);outline:none}
+.field input,.field select,.field textarea{width:100%;background:var(--sunk);
+  border:1px solid var(--line);border-radius:6px;padding:.6rem .75rem;color:var(--ink);outline:none;
+  box-shadow:inset 0 2px 4px var(--dip);transition:border-color .15s}
+.field input::placeholder,.field textarea::placeholder{color:var(--ink-faint)}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--sand)}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
-.search{width:100%;background:var(--paper);border:1px solid var(--line);border-radius:8px;
-  padding:.65rem .9rem;margin-bottom:1rem;outline:none}
+.search{width:100%;background:var(--sunk);border:1px solid var(--line);border-radius:8px;
+  padding:.65rem .9rem;margin-bottom:1rem;outline:none;color:var(--ink);
+  box-shadow:inset 0 2px 4px var(--dip)}
+.search::placeholder{color:var(--ink-faint)}
 .search:focus{border-color:var(--sand)}
 .empty{text-align:center;padding:2.6rem 1.2rem;color:var(--ink-soft)}
-.empty .display{font-size:1.15rem;color:var(--night);margin-bottom:.3rem}
+.empty .display{font-size:1.15rem;color:var(--ink);margin-bottom:.3rem}
 .empty p{font-size:.85rem;margin:0}
 
-/* chat */
-.thread{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
-  padding:1.1rem;height:46vh;min-height:260px;overflow-y:auto;margin-bottom:.8rem}
+/* chat — a well sunk into the page, not a card raised off it */
+.thread{background:var(--sunk);border:1px solid var(--line);border-radius:var(--radius);
+  padding:1.1rem;height:46vh;min-height:260px;overflow-y:auto;margin-bottom:.8rem;
+  box-shadow:inset 0 2px 8px var(--dip)}
+.thread.log{height:auto;max-height:42vh}
 .msg{margin-bottom:1rem;display:flex;flex-direction:column;max-width:78%}
 .msg.mine{margin-left:auto;align-items:flex-end}
 .msg-who{font-size:.67rem;letter-spacing:.06em;color:var(--ink-soft);margin-bottom:.2rem}
 .msg-body{padding:.58rem .82rem;border-radius:10px;font-size:.87rem;line-height:1.6;
-  white-space:pre-wrap;word-break:break-word}
-.msg.mine .msg-body{background:var(--night);color:#fff;border-bottom-right-radius:3px}
-.msg.theirs .msg-body{background:var(--cream);border:1px solid var(--line);border-bottom-left-radius:3px}
-.msg.wali .msg-body{background:var(--amber-bg);border:1px solid #ecd9b8;color:#6d561f}
-.msg-time{font-size:.65rem;color:var(--ink-soft);margin-top:.18rem}
+  white-space:pre-wrap;word-break:break-word;
+  box-shadow:0 1px 2px var(--dip), inset 0 1px 0 var(--hair)}
+.msg.mine .msg-body{background:var(--sage-bg);border:1px solid var(--sage-line);color:var(--ink);
+  border-bottom-right-radius:3px}
+.msg.theirs .msg-body{background:var(--paper);border:1px solid var(--line);border-bottom-left-radius:3px}
+.msg.wali .msg-body{background:var(--amber-bg);border:1px solid var(--amber-line);color:var(--amber)}
+.msg-time{font-size:.65rem;color:var(--ink-faint);margin-top:.18rem}
 .composer{display:flex;gap:.6rem;align-items:flex-end}
-.composer textarea{flex:1;background:var(--paper);border:1px solid var(--line);border-radius:8px;
-  padding:.68rem .82rem;resize:none;min-height:46px;max-height:140px;outline:none;line-height:1.5}
+.composer textarea{flex:1;background:var(--sunk);border:1px solid var(--line);border-radius:8px;
+  padding:.68rem .82rem;resize:none;min-height:46px;max-height:140px;outline:none;line-height:1.5;
+  color:var(--ink);box-shadow:inset 0 2px 4px var(--dip)}
+.composer textarea::placeholder{color:var(--ink-faint)}
 .composer textarea:focus{border-color:var(--sand)}
-.composer button{background:var(--night);color:#fff;border:none;border-radius:8px;
+.composer button{background:linear-gradient(180deg,var(--sand-hi),var(--sand));
+  color:var(--on-sand);border:1px solid var(--sand-line);border-radius:8px;
   padding:.72rem 1.2rem;font-size:.75rem;letter-spacing:.07em;text-transform:uppercase;
-  font-weight:600;flex-shrink:0}
-.composer button:disabled{opacity:.45;cursor:default}
-.back{background:none;border:1px solid var(--line);border-radius:5px;padding:.34rem .7rem;
-  font-size:.74rem;color:var(--ink-soft);margin-bottom:.9rem}
-.back:hover{border-color:var(--sand);color:var(--night)}
+  font-weight:600;flex-shrink:0;
+  box-shadow:0 2px 5px var(--dip), inset 0 1px 0 rgba(255,255,255,.3);
+  transition:filter .18s,transform .1s}
+.composer button:hover{filter:brightness(1.07)}
+.composer button:active{transform:translateY(1px)}
+.composer button:disabled{opacity:.45;cursor:default;box-shadow:none;transform:none}
+.back{background:linear-gradient(180deg,var(--paper),var(--sunk));
+  border:1px solid var(--line);border-radius:5px;padding:.34rem .7rem;
+  font-size:.74rem;color:var(--ink-soft);margin-bottom:.9rem;box-shadow:0 1px 2px var(--dip)}
+.back:hover{border-color:var(--sand);color:var(--ink)}
 
-#demo-bar{background:var(--sand);color:var(--night);text-align:center;
-  padding:.5rem 1rem;font-size:.8rem;position:sticky;top:0;z-index:60}
+#demo-bar{background:linear-gradient(180deg,var(--sand-hi),var(--sand));
+  color:var(--on-sand);text-align:center;
+  padding:.5rem 1rem;font-size:.8rem;position:sticky;top:0;z-index:60;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
 #demo-bar strong{letter-spacing:.1em;text-transform:uppercase;font-size:.72rem}
-#demo-bar a{margin-left:.6rem;text-decoration:underline}
+#demo-bar a{margin-left:.6rem;text-decoration:underline;color:var(--on-sand)}
 body.demo .topbar{top:33px}
 body.demo .tabs{top:91px}
 .toast{position:fixed;left:50%;bottom:1.6rem;transform:translateX(-50%) translateY(140%);
-  background:var(--night);color:#fff;padding:.75rem 1.3rem;border-radius:7px;font-size:.84rem;
-  box-shadow:0 10px 30px rgba(27,34,64,.28);transition:transform .3s cubic-bezier(.3,1.2,.5,1);
-  z-index:200;max-width:88vw;text-align:center}
-.toast.show{transform:translateX(-50%) translateY(0)}
-.toast.bad{background:var(--rose)}
+  background:var(--night);color:#f4efe6;border:1px solid var(--line);
+  padding:.75rem 1.3rem;border-radius:7px;font-size:.84rem;
+  box-shadow:0 14px 34px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.07);
+  transition:transform .3s cubic-bezier(.3,1.2,.5,1);
+  z-index:1000;max-width:88vw;text-align:center;visibility:hidden}
+.toast.show{transform:translateX(-50%) translateY(0);visibility:visible}
+.toast.bad{background:var(--rose);color:var(--on-rose);border-color:var(--rose)}
 #loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-  background:var(--night);color:var(--sand);z-index:300;font-family:'Cormorant Garamond',serif;
+  background:var(--cream);color:var(--sand-lt);z-index:300;font-family:'Cormorant Garamond',serif;
   letter-spacing:.3em;text-transform:uppercase;font-size:.78rem}
 @media(max-width:600px){
   .grid-2{grid-template-columns:1fr}
@@ -177,10 +318,19 @@ body.demo .tabs{top:91px}
   .who{display:none}
 }
 </style>
+<script>
+/* Set the theme before the first paint so there's no flash of the wrong one. */
+(function(){
+  try {
+    var t = localStorage.getItem('hb-theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+})();
+</script>
 </head>
 <body>
 
-<div id="loading">Sakinah Admin</div>
+<div id="loading">Halal Bridge Admin</div>
 
 <script>
 window.__sakinahBoot = false;
@@ -189,7 +339,7 @@ setTimeout(function(){
   var el = document.getElementById('loading');
   if (!el || el.style.display === 'none') return;
   el.innerHTML = '<div style="max-width:400px;text-align:center;line-height:2;letter-spacing:normal;'
-    + 'text-transform:none;font-size:.95rem"><strong style="letter-spacing:.2em">SAKINAH ADMIN</strong>'
+    + 'text-transform:none;font-size:.95rem"><strong style="letter-spacing:.2em">HALAL BRIDGE ADMIN</strong>'
     + '<br><br>This page couldn\'t finish loading.<br>Check your connection and refresh.</div>';
 }, 8000);
 </script>
@@ -197,7 +347,7 @@ setTimeout(function(){
 <!-- ───────── GATE ───────── -->
 <div id="gate" style="display:none">
   <div class="gate-card">
-    <div class="wordmark gate-mark">Sakinah</div>
+    <div class="wordmark gate-mark">Halal Bridge</div>
     <h1 class="display gate-title">Admin</h1>
     <div class="gate-box">
       <label>Email</label>
@@ -217,9 +367,21 @@ setTimeout(function(){
     <a href="?" style="color:inherit">Leave demo</a>
   </div>
   <div class="topbar">
-    <span><span class="wordmark">Sakinah</span><span class="tag">Admin</span></span>
+    <span><span class="wordmark">Halal Bridge</span><span class="tag">Admin</span></span>
     <div class="topbar-right">
       <span class="who" id="who"></span>
+      <button class="btn-theme" id="btn-theme" title="Switch between light and dark"
+              aria-label="Switch between light and dark">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+        </svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+        </svg>
+      </button>
       <button class="btn-ghost" id="btn-signout">Sign out</button>
     </div>
   </div>
@@ -229,6 +391,7 @@ setTimeout(function(){
     <button class="tab" data-view="idchecks">ID checks <span id="c-id"></span></button>
     <button class="tab" data-view="matches">Matches <span id="c-matches"></span></button>
     <button class="tab" data-view="convos">Conversations</button>
+    <button class="tab" data-view="reports">Reports <span id="c-reports"></span></button>
   </div>
 
   <main>
@@ -251,8 +414,8 @@ setTimeout(function(){
           <p>Confirm the date of birth matches the document, then approve.</p>
         </div>
       </div>
-      <div class="card" style="background:var(--amber-bg);border-color:#ecd9b8">
-        <p class="meta" style="color:#6d561f;margin:0">
+      <div class="card" style="background:var(--amber-bg);border-color:var(--amber-line)">
+        <p class="meta" style="color:var(--amber);margin:0">
           These are identity documents. Open one only when you're reviewing it, and don't
           save copies anywhere. The file is deleted the moment you approve or reject.
         </p>
@@ -282,6 +445,7 @@ setTimeout(function(){
           <label>Private note (only you see this)</label>
           <input type="text" id="new-note" placeholder="e.g. both Sydney, similar age, compatible on relocation"/>
         </div>
+        <div id="suggested"></div>
         <div id="fit"></div>
         <button class="btn btn-key" id="new-match">Create match</button>
       </div>
@@ -297,6 +461,23 @@ setTimeout(function(){
         </div>
       </div>
       <div id="convos-list"></div>
+    </section>
+
+    <section class="view" id="view-reports">
+      <div class="view-head">
+        <div>
+          <h2>Reports</h2>
+          <p>Oldest first, with anything urgent on top. Read the messages before
+             you decide — the report is one side of it.</p>
+        </div>
+        <div class="actions" style="margin-top:0">
+          <button class="btn btn-key" data-rfilter="open">Open</button>
+          <button class="btn" data-rfilter="actioned">Actioned</button>
+          <button class="btn" data-rfilter="dismissed">Dismissed</button>
+          <button class="btn" data-rfilter="all">All</button>
+        </div>
+      </div>
+      <div id="reports-list"></div>
     </section>
 
     <section class="view" id="view-chat">
@@ -318,7 +499,7 @@ setTimeout(function(){
       </div>
       <div class="thread" id="thread"></div>
       <div class="composer">
-        <textarea id="composer-text" placeholder="Write as the Sakinah team…" rows="1"></textarea>
+        <textarea id="composer-text" placeholder="Write as the Halal Bridge team…" rows="1"></textarea>
         <button id="composer-send">Send</button>
       </div>
     </section>
@@ -425,7 +606,7 @@ function makeDemoClient(){
       { conversation_id:'d-c1', user_id:'d-wali',  role:'wali',   last_read:ago(50), last_notified_at:null },
     ],
     messages: [
-      { id:'d-x1', conversation_id:'d-c1', sender_id:'demo-admin', sender_name:'Sakinah team',
+      { id:'d-x1', conversation_id:'d-c1', sender_id:'demo-admin', sender_name:'Halal Bridge team',
         sender_role:'admin', body:'Assalamu alaykum both. I\'ll be here throughout, and Omar\'s wali Abu Yusuf is in the conversation too. Please keep things respectful and let me know if you need anything.',
         created_at:ago(120) },
       { id:'d-x2', conversation_id:'d-c1', sender_id:'d-omar', sender_name:'Omar Siddiqui',
@@ -436,6 +617,20 @@ function makeDemoClient(){
         sender_role:'wali', body:'Assalamu alaykum, I am Omar\'s wali and will be following along.', created_at:ago(60) },
       { id:'d-x5', conversation_id:'d-c1', sender_id:'d-aisha', sender_name:'Aisha Rahman',
         sender_role:'member', body:'That sounds good, jazakAllah khair.', created_at:ago(42) },
+    ],
+    // Two reports so the queue shows both ends of it: one urgent and open,
+    // one already dealt with.
+    reports: [
+      { id:'d-r1', reporter:'d-aisha', reported:'d-omar', conversation_id:'d-c1',
+        match_id:'d-m1', reason:'They asked for my contact details',
+        note:'He asked for my number twice after I said we should keep it here.',
+        severity:'urgent', status:'open', outcome_note:null,
+        handled_by:null, handled_at:null, created_at:ago(20) },
+      { id:'d-r2', reporter:'d-hana', reported:'d-yusuf', conversation_id:null,
+        match_id:null, reason:'They don\'t seem genuine', note:null,
+        severity:'normal', status:'actioned',
+        outcome_note:'Spoke to him. Nothing in it — crossed wires about the event date.',
+        handled_by:'demo-admin', handled_at:ago(300), created_at:ago(960) },
     ],
   };
 
@@ -459,7 +654,7 @@ function makeDemoClient(){
             text-anchor="middle">a real submission would be a photo of their ID</text>
     </svg>`);
 
-  const session = { access_token:'demo', user:{ id:'demo-admin', email:'demo@sakinah (sample data)' } };
+  const session = { access_token:'demo', user:{ id:'demo-admin', email:'demo@halalbridge (sample data)' } };
   const member = id => S.members.find(m => m.id === id);
 
   function build(table){
@@ -546,7 +741,7 @@ function makeDemoClient(){
       }
       if (name === 'add_participant') {
         const who = S.members.find(x => (x.email||'').toLowerCase() === String(args.p_email||'').trim().toLowerCase());
-        if (!who) return { data:null, error:{ message:'No Sakinah account with that email. They need to sign up first.' } };
+        if (!who) return { data:null, error:{ message:'No Halal Bridge account with that email. They need to sign up first.' } };
         const existing = S.participants.find(p => p.conversation_id === args.p_convo && p.user_id === who.id);
         if (existing) existing.role = args.p_role;
         else S.participants.push({ conversation_id:args.p_convo, user_id:who.id, role:args.p_role });
@@ -567,6 +762,55 @@ function makeDemoClient(){
         const c = S.conversations.find(x => x.id === args.p_convo);
         if (c) { c.last_message_at = new Date().toISOString();
                  c.last_message_preview = String(args.p_preview || '').slice(0,80); }
+        return { data:null, error:null };
+      }
+      if (name === 'admin_reports') {
+        const want = args.p_status;
+        const rows = S.reports
+          .filter(r => !want || want === 'all' || r.status === want)
+          .map(r => {
+            const rep = member(r.reporter), rd = member(r.reported);
+            const c   = S.conversations.find(x => x.id === r.conversation_id);
+            return { ...r,
+              reporter_id: r.reporter, reporter_name: rep?.name,
+              reported_id: r.reported, reported_name: rd?.name,
+              reported_status: rd?.status, reported_verified: rd?.verified,
+              reported_prior_reports: S.reports.filter(
+                x => x.reported === r.reported && x.id !== r.id).length,
+              conversation_status: c?.status || null,
+              message_count: S.messages.filter(m => m.conversation_id === r.conversation_id).length,
+              handled_by_name: r.handled_by ? 'You' : null };
+          })
+          // Same order as the real function: urgent first, then oldest first.
+          .sort((a,b) => (b.severity === 'urgent') - (a.severity === 'urgent')
+                      || String(a.created_at).localeCompare(String(b.created_at)));
+        return { data: rows, error:null };
+      }
+      if (name === 'report_log') {
+        const r = S.reports.find(x => x.id === args.p_report);
+        if (!r) return { data:[], error:null };
+        return { data: S.messages
+          .filter(m => m.conversation_id === r.conversation_id)
+          .sort((a,b) => String(a.created_at).localeCompare(String(b.created_at))),
+          error:null };
+      }
+      if (name === 'resolve_report') {
+        if (!['open','actioned','dismissed'].includes(args.p_action))
+          return { data:null, error:{ message:'Unknown action: ' + args.p_action } };
+        const r = S.reports.find(x => x.id === args.p_report);
+        if (!r) return { data:null, error:{ message:'No such report' } };
+        r.status = args.p_action;
+        if (args.p_note) r.outcome_note = [r.outcome_note, args.p_note].filter(Boolean).join(' | ');
+        r.handled_by = args.p_action === 'open' ? null : 'demo-admin';
+        r.handled_at = args.p_action === 'open' ? null : new Date().toISOString();
+        return { data:null, error:null };
+      }
+      if (name === 'set_member_status') {
+        if (!['active','paused','removed'].includes(args.p_status))
+          return { data:null, error:{ message:'Unknown status: ' + args.p_status } };
+        const who = member(args.p_user);
+        if (!who) return { data:null, error:{ message:'No such member' } };
+        who.status = args.p_status;
         return { data:null, error:null };
       }
       return { data:null, error:null };
@@ -599,6 +843,7 @@ const supabase = DEMO ? makeDemoClient() : createClient(SUPABASE_URL, SUPABASE_K
 });
 
 let ME = null, MEMBERS = [], MATCHES = [], CONVOS = [], PARTS = [];
+let REPORTS = [], OPEN_REPORTS = 0, REPORT_FILTER = 'open';
 let currentConvo = null, msgChannel = null, pollTimer = null, MSGS = [];
 
 function toast(msg, bad){
@@ -648,6 +893,20 @@ $('g-btn').onclick = async () => {
 $('g-pass').addEventListener('keydown', e => { if (e.key === 'Enter') $('g-btn').click(); });
 $('btn-signout').onclick = async () => { teardown(); await supabase.auth.signOut(); };
 
+/* Light and dark. Nothing stored means follow the device; choosing here
+   pins it and is remembered, separately from the member app's own choice
+   only in the sense that they share one key -- same browser, same answer. */
+$('btn-theme').onclick = () => {
+  const root = document.documentElement;
+  const systemDark = window.matchMedia
+    && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const now  = root.getAttribute('data-theme') || (systemDark ? 'dark' : 'light');
+  const next = now === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  try { localStorage.setItem('hb-theme', next); } catch (e) {}
+  toast(next === 'dark' ? 'Dark' : 'Light');
+};
+
 let routedUid;
 supabase.auth.onAuthStateChange((ev, s) => {
   if (ev === 'TOKEN_REFRESHED') { if (s) supabase.realtime.setAuth(s.access_token); return; }
@@ -695,15 +954,19 @@ async function route(session){
 
 // ───────── data ─────────
 async function loadAll(){
-  const [m, mt, cv, pt] = await Promise.all([
+  const [m, mt, cv, pt, rp] = await Promise.all([
     supabase.rpc('admin_members'),
     supabase.from('matches').select('*').order('created_at', { ascending:false }),
     supabase.from('conversations').select('*').order('last_message_at', { ascending:false, nullsFirst:false }),
-    supabase.from('conversation_participants').select('*')
+    supabase.from('conversation_participants').select('*'),
+    supabase.rpc('admin_reports', { p_status: 'open' })
   ]);
   if (m.error)  { toast('Could not load members: ' + friendly(m.error), true); return; }
   MEMBERS = m.data || []; MATCHES = mt.data || [];
   CONVOS  = cv.data || []; PARTS  = pt.data || [];
+  // An older database won't have admin_reports() yet. That's a reason to show
+  // an empty queue, not to fail the whole panel to a blank screen.
+  OPEN_REPORTS = rp.error ? 0 : (rp.data || []).length;
   paintCounts();
 }
 
@@ -718,8 +981,12 @@ function paintCounts(){
   $('c-members').innerHTML = unver  ? `<span class="count">${unver}</span>` : '';
   $('c-matches').innerHTML = ready  ? `<span class="count">${ready}</span>` : '';
   $('c-id').innerHTML      = ids    ? `<span class="count">${ids}</span>` : '';
+  $('c-reports').innerHTML = OPEN_REPORTS ? `<span class="count">${OPEN_REPORTS}</span>` : '';
 
   const jobs = [];
+  // Reports go first. Someone is waiting on this one in a way they are not
+  // waiting on a verification.
+  if (OPEN_REPORTS) jobs.push(`<li><a data-jump="reports">${OPEN_REPORTS} report${OPEN_REPORTS>1?'s':''} waiting for a moderator</a></li>`);
   if (unver) jobs.push(`<li><a data-jump="members">${unver} member${unver>1?'s':''} waiting to be verified</a></li>`);
   if (ids)   jobs.push(`<li><a data-jump="idchecks">${ids} ID check${ids>1?'s':''} waiting to be reviewed</a></li>`);
   if (ready) jobs.push(`<li><a data-jump="matches">${ready} match${ready>1?'es':''} where both sides have asked for an introduction</a></li>`);
@@ -740,6 +1007,7 @@ function showView(name){
   if (name === 'idchecks') paintIdChecks();
   if (name === 'matches') { paintPickers(); paintMatches(); }
   if (name === 'convos')  paintConvos();
+  if (name === 'reports') loadReports();
 }
 function teardown(){
   if (msgChannel) { supabase.removeChannel(msgChannel); msgChannel = null; }
@@ -771,10 +1039,13 @@ function paintMembers(){
       : '<span class="pill pill-ok">Active</span>';
     const meta = [m.age, m.gender, m.city, m.occupation].filter(Boolean).map(esc).join(' · ');
     const idTag = m.kind === 'wali' ? ''
-      : m.id_status === 'approved' ? '<span class="meta" style="color:#4a6b45">Age verified</span>'
+      : m.id_status === 'approved' ? '<span class="meta" style="color:var(--sage)">Age verified</span>'
       : m.id_status === 'pending'  ? '<span class="meta" style="color:var(--amber)">ID awaiting review</span>'
       : m.id_status === 'rejected' ? '<span class="meta" style="color:var(--rose)">ID rejected</span>'
       : '<span class="meta">Age not verified</span>';
+    const qTag = m.kind === 'wali' ? ''
+      : m.questionnaire_done ? '<span class="meta" style="color:var(--sage)">Questionnaire done</span>'
+      : '<span class="meta" style="color:var(--amber)">Questionnaire unfinished</span>';
     return `<div class="card">
       <div class="row">
         <div style="min-width:0">
@@ -790,6 +1061,7 @@ function paintMembers(){
         <button class="btn" data-kind="${esc(m.id)}">${wali ? 'Treat as member' : 'Mark as wali'}</button>
         ${wali ? '' : `<span class="meta">${m.match_count || 0} match${m.match_count === 1 ? '' : 'es'}</span>`}
         ${idTag}
+        ${qTag}
       </div>
       <div class="detail" id="d-${esc(m.id)}">
         <dl>
@@ -1060,7 +1332,7 @@ function paintFit(){
   box.innerHTML = notes.length
     ? `<div class="card" style="box-shadow:none;margin-bottom:1rem;padding:1rem 1.2rem;
              background:${blocking ? 'var(--rose-bg)' : 'var(--amber-bg)'};
-             border-color:${blocking ? '#f0d6d4' : '#ecd9b8'}">
+             border-color:${blocking ? 'var(--rose)' : 'var(--amber-line)'}">
          <p class="meta" style="margin:0 0 .4rem;font-weight:600;
             color:${blocking ? 'var(--rose)' : 'var(--amber)'}">
            ${blocking ? 'Worth a second look' : 'Minor differences'}</p>
@@ -1069,13 +1341,65 @@ function paintFit(){
          </ul>
        </div>`
     : `<div class="card" style="box-shadow:none;margin-bottom:1rem;padding:.8rem 1.2rem;
-             background:var(--sage-bg);border-color:#cfe0cb">
-         <p class="meta" style="margin:0;color:#4a6b45;font-weight:600">
+             background:var(--sage-bg);border-color:var(--line)">
+         <p class="meta" style="margin:0;color:var(--sage);font-weight:600">
            They fit each other's stated criteria.</p>
        </div>`;
 }
 
-$('new-a').onchange = paintFit;
+// Picking the first person is enough: the engine ranks everyone they could
+// be matched with, so you choose from a shortlist rather than guessing.
+async function paintSuggestions(){
+  const id = $('new-a').value;
+  const box = $('suggested');
+  if (!id) { box.innerHTML = ''; return; }
+
+  box.innerHTML = '<p class="meta" style="margin:0 0 1rem">Working out who suits them…</p>';
+  const { data, error } = await supabase.rpc('suggest_matches', { p_user:id, p_limit:10 });
+  if (error) { box.innerHTML = `<p class="meta" style="margin:0 0 1rem;color:var(--rose)">${esc(friendly(error))}</p>`; return; }
+
+  const who = byId(id)?.name || 'them';
+  if (!data || !data.length) {
+    box.innerHTML = `<div class="card" style="box-shadow:none;margin-bottom:1rem;padding:1rem 1.2rem;
+        background:var(--amber-bg);border-color:var(--amber-line)">
+      <p class="meta" style="margin:0;color:var(--amber)">
+        Nobody is eligible for ${esc(who)} right now. Usually that means the other
+        person hasn't finished their questionnaire, isn't verified, is already
+        in a conversation, or a dealbreaker rules them out.</p></div>`;
+    return;
+  }
+
+  box.innerHTML = `<div class="card" style="box-shadow:none;margin-bottom:1rem;padding:1rem 1.2rem">
+    <p class="meta" style="margin:0 0 .7rem;font-weight:600;color:var(--night)">
+      Best matches for ${esc(who)}</p>
+    ${data.map(r => `
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;
+                  padding:.55rem 0;border-top:1px solid var(--line)">
+        <div style="min-width:0">
+          <strong>${esc(r.name || 'Unnamed')}</strong>
+          <span class="meta"> ${[r.age, r.city, r.occupation].filter(Boolean).map(esc).join(' · ')}</span>
+          ${r.one_way_to_them !== r.one_way_to_me ? `<div class="meta" style="font-size:.76rem">
+             ${esc(who)} scores them ${r.one_way_to_them}, they score ${esc(who)} ${r.one_way_to_me}
+             — the lower one counts</div>` : ''}
+        </div>
+        <div style="display:flex;align-items:center;gap:.7rem;flex-shrink:0">
+          <span class="pill ${r.score >= 75 ? 'pill-ok' : r.score >= 50 ? 'pill-wait' : 'pill-off'}">${r.score}%</span>
+          <button class="btn" data-pick="${esc(r.candidate)}">Choose</button>
+        </div>
+      </div>`).join('')}
+    <p class="meta" style="margin:.8rem 0 0;font-size:.76rem">
+      Members never see a score. It's here so you can judge quickly, not so it
+      can be shown to them.</p>
+  </div>`;
+
+  box.querySelectorAll('[data-pick]').forEach(b => b.onclick = () => {
+    $('new-b').value = b.dataset.pick;
+    paintFit();
+    $('new-b').scrollIntoView({ block:'center', behavior:'smooth' });
+  });
+}
+
+$('new-a').onchange = () => { paintFit(); paintSuggestions(); };
 $('new-b').onchange = paintFit;
 
 $('new-match').onclick = async () => {
@@ -1088,7 +1412,8 @@ $('new-match').onclick = async () => {
   });
   btn.disabled = false;
   if (error) return toast(friendly(error), true);
-  $('new-note').value = ''; $('new-a').value = ''; $('new-b').value = ''; $('fit').innerHTML = '';
+  $('new-note').value = ''; $('new-a').value = ''; $('new-b').value = '';
+  $('fit').innerHTML = ''; $('suggested').innerHTML = '';
   toast('✓ Match created — both will be told they have a new match');
   await loadAll(); paintMatches();
 };
@@ -1323,7 +1648,7 @@ async function openChat(c){
   $('composer-text').disabled = closed;
   $('composer-send').disabled = closed;
   $('composer-text').placeholder = closed
-    ? 'Reopen the conversation to write.' : 'Write as the Sakinah team…';
+    ? 'Reopen the conversation to write.' : 'Write as the Halal Bridge team…';
 
   $('thread').innerHTML = '<div class="empty"><p>Loading…</p></div>';
   MSGS = [];
@@ -1387,7 +1712,7 @@ $('composer-send').onclick = async () => {
   // participants table, so what's sent here is only a fallback.
   const { data, error } = await supabase.from('messages').insert({
     conversation_id: currentConvo.id, sender_id: ME.id,
-    sender_name: 'Sakinah team', sender_role: 'admin', body: text
+    sender_name: 'Halal Bridge team', sender_role: 'admin', body: text
   }).select().maybeSingle();
   b.disabled = false;
   if (error) return toast('Could not send: ' + friendly(error), true);
@@ -1396,6 +1721,168 @@ $('composer-send').onclick = async () => {
   supabase.rpc('touch_conversation', { p_convo: currentConvo.id, p_preview: text })
     .then(() => {}, () => {});
 };
+
+// ───────── reports ─────────
+// The queue a moderator works through. A report is one side of a story, so
+// the chat log loads underneath it rather than in a separate screen -- the
+// decision gets made with the messages in view, not from the summary.
+
+document.querySelectorAll('[data-rfilter]').forEach(b => b.onclick = () => {
+  REPORT_FILTER = b.dataset.rfilter;
+  document.querySelectorAll('[data-rfilter]').forEach(x =>
+    x.classList.toggle('btn-key', x.dataset.rfilter === REPORT_FILTER));
+  loadReports();
+});
+
+async function loadReports(){
+  $('reports-list').innerHTML = '<div class="empty"><p>Loading…</p></div>';
+  const { data, error } = await supabase.rpc('admin_reports', { p_status: REPORT_FILTER });
+  if (error) {
+    $('reports-list').innerHTML =
+      `<div class="empty"><div class="display">Couldn't load reports</div>
+       <p>${esc(friendly(error))}</p>
+       <p style="margin-top:.6rem">If this says the function is missing, run the
+          latest schema in the SQL editor.</p></div>`;
+    return;
+  }
+  REPORTS = data || [];
+  if (REPORT_FILTER === 'open') { OPEN_REPORTS = REPORTS.length; paintCounts(); }
+  paintReports();
+}
+
+function paintReports(){
+  if (!REPORTS.length) {
+    $('reports-list').innerHTML = `<div class="empty">
+      <div class="display">Nothing here</div>
+      <p>${REPORT_FILTER === 'open'
+          ? 'No open reports. '
+          : 'No reports with that status. '}</p></div>`;
+    return;
+  }
+
+  $('reports-list').innerHTML = REPORTS.map(r => {
+    const urgent = r.severity === 'urgent';
+    const open   = r.status === 'open';
+    const repeat = Number(r.reported_prior_reports || 0);
+
+    const pill = open
+      ? (urgent ? '<span class="pill pill-no">Urgent</span>'
+                : '<span class="pill pill-wait">Open</span>')
+      : (r.status === 'actioned' ? '<span class="pill pill-ok">Actioned</span>'
+                                 : '<span class="pill pill-off">Dismissed</span>');
+
+    return `<div class="card${urgent && open ? ' flag' : ''}">
+      <div class="row">
+        <div style="min-width:0">
+          <p class="name">${esc(r.reported_name || 'Unknown')}</p>
+          <p class="meta">reported by ${esc(r.reporter_name || 'a member')}
+             · ${esc(fmt(r.created_at))}</p>
+        </div>
+        ${pill}
+      </div>
+
+      <div class="detail open" style="display:block">
+        <dl>
+          <dt>Reason</dt><dd>${esc(r.reason || '—')}</dd>
+          ${r.note ? `<dt>In their words</dt><dd>${esc(r.note)}</dd>` : ''}
+          <dt>Conversation</dt>
+          <dd>${esc(r.conversation_status || 'gone')} ·
+              ${esc(String(r.message_count || 0))} message${r.message_count == 1 ? '' : 's'}</dd>
+          <dt>About them</dt>
+          <dd>${r.reported_verified ? 'verified' : 'not verified'}
+              · ${esc(r.reported_status || 'active')}
+              ${repeat ? ` · <strong>${repeat} other report${repeat>1?'s':''}</strong>` : ''}</dd>
+          ${r.outcome_note ? `<dt>Your note</dt><dd>${esc(r.outcome_note)}</dd>` : ''}
+          ${r.handled_by_name ? `<dt>Handled by</dt>
+             <dd>${esc(r.handled_by_name)} · ${esc(fmt(r.handled_at))}</dd>` : ''}
+        </dl>
+      </div>
+
+      <div id="rlog-${esc(r.id)}"></div>
+
+      <div class="actions">
+        <button class="btn" data-rlog="${esc(r.id)}">Read the messages</button>
+        ${r.conversation_id
+          ? `<button class="btn" data-ropen="${esc(r.conversation_id)}">Open the conversation</button>` : ''}
+        ${open ? `
+          <button class="btn btn-key" data-raction="actioned" data-rid="${esc(r.id)}">Actioned</button>
+          <button class="btn" data-raction="dismissed" data-rid="${esc(r.id)}">Dismiss</button>
+          ${r.reported_id && r.reported_status !== 'paused'
+            ? `<button class="btn btn-bad" data-rpause="${esc(r.reported_id)}">Pause them</button>` : ''}
+          ${r.reported_status === 'paused'
+            ? `<button class="btn" data-runpause="${esc(r.reported_id)}">Un-pause them</button>` : ''}
+        ` : `<button class="btn" data-raction="open" data-rid="${esc(r.id)}">Reopen</button>`}
+      </div>
+    </div>`;
+  }).join('');
+
+  const list = $('reports-list');
+
+  list.querySelectorAll('[data-rlog]').forEach(b => b.onclick = async () => {
+    const box = $('rlog-' + b.dataset.rlog);
+    if (box.innerHTML) { box.innerHTML = ''; b.textContent = 'Read the messages'; return; }
+    b.disabled = true; b.textContent = 'Loading…';
+    const { data, error } = await supabase.rpc('report_log', { p_report: b.dataset.rlog });
+    b.disabled = false; b.textContent = 'Hide the messages';
+    if (error) { b.textContent = 'Read the messages'; return toast(friendly(error), true); }
+    if (!data || !data.length) {
+      box.innerHTML = '<p class="meta" style="margin-top:.8rem">No messages in that conversation.</p>';
+      return;
+    }
+    // The reporter's own messages sit on the right, so the shape of the
+    // exchange is readable at a glance -- who pushed and who backed away.
+    box.innerHTML = `<div class="thread log" style="margin-top:.9rem">` + data.map(m => {
+      const mine = m.sender_id && m.sender_id === currentReportReporter(b.dataset.rlog);
+      // A wali's messages are tinted here exactly as they are in the live
+      // chat, so the log reads the same way the conversation did.
+      const side = m.sender_role === 'wali' ? 'wali' : (mine ? 'mine' : 'theirs');
+      return `<div class="msg ${side}">
+        <div class="msg-who">${esc(m.sender_name || 'Someone')}${
+          m.sender_role && m.sender_role !== 'member' ? ' · ' + esc(m.sender_role) : ''}</div>
+        <div class="msg-body">${esc(m.body)}</div>
+        <div class="msg-time">${esc(fmt(m.created_at))}</div>
+      </div>`;
+    }).join('') + '</div>';
+  });
+
+  list.querySelectorAll('[data-ropen]').forEach(b => b.onclick = () => {
+    const c = CONVOS.find(x => x.id === b.dataset.ropen);
+    if (!c) return toast('That conversation is no longer here.', true);
+    openChat(c);
+  });
+
+  list.querySelectorAll('[data-raction]').forEach(b => b.onclick = async () => {
+    const action = b.dataset.raction;
+    const note = action === 'open' ? null : window.prompt(
+      action === 'actioned'
+        ? 'What did you do? Only the team ever reads this.'
+        : 'Why are you dismissing it? Only the team ever reads this.');
+    if (note === null && action !== 'open') return;
+    b.disabled = true;
+    const { error } = await supabase.rpc('resolve_report',
+      { p_report: b.dataset.rid, p_action: action, p_note: (note || '').trim() || null });
+    b.disabled = false;
+    if (error) return toast(friendly(error), true);
+    toast(action === 'open' ? 'Reopened' : 'Closed');
+    loadReports();
+  });
+
+  list.querySelectorAll('[data-rpause],[data-runpause]').forEach(b => b.onclick = async () => {
+    const pausing = !!b.dataset.rpause;
+    const who = b.dataset.rpause || b.dataset.runpause;
+    b.disabled = true;
+    const { error } = await supabase.rpc('set_member_status',
+      { p_user: who, p_status: pausing ? 'paused' : 'active' });
+    b.disabled = false;
+    if (error) return toast(friendly(error), true);
+    toast(pausing ? 'Paused — they won\'t be matched with anyone'
+                  : 'Back in the pool');
+    await loadAll();
+    loadReports();
+  });
+}
+
+const currentReportReporter = id => REPORTS.find(r => r.id === id)?.reporter_id || null;
 </script>
 </body>
 </html>
