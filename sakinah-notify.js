@@ -133,18 +133,36 @@ async function onNewMatch(rec) {
 // Both sides have said yes. This one is for you, not them — it's the point
 // where a human has to step in and open the conversation.
 async function onBothRequested(rec, old) {
-  const before = (old?.intro_requested_by || []).length;
-  const after  = (rec.intro_requested_by  || []).length;
-  if (!(before < 2 && after >= 2)) return 'intro count unchanged — nothing to do';
+  // Two separate rungs, and the email for each says what is actually waiting
+  // on you: opening a conversation, or arranging a meeting.
+  const chatBefore = (old?.chat_requested_by || []).length;
+  const chatAfter  = (rec.chat_requested_by  || []).length;
+  const meetBefore = (old?.meeting_requested_by || []).length;
+  const meetAfter  = (rec.meeting_requested_by  || []).length;
 
-  const [a, b] = await Promise.all([profileOf(rec.member_a), profileOf(rec.member_b)]);
-  await send(ADMIN_EMAIL, 'Halal Bridge: two members are ready to be introduced',
-    shell('Both sides have asked for an introduction',
-      [`<strong>${a?.name || rec.member_a}</strong> and <strong>${b?.name || rec.member_b}</strong> have both requested an introduction.`,
-       'They are waiting on you to open a supervised conversation for them.',
-       `<span style="color:#6b7186;font-size:13px">Match ID: ${rec.id}</span>`],
-      'Open Halal Bridge'));
-  return 'admin notified: ready to introduce';
+  if (meetBefore < 2 && meetAfter >= 2) {
+    const [a, b] = await Promise.all([profileOf(rec.member_a), profileOf(rec.member_b)]);
+    await send(ADMIN_EMAIL, 'Halal Bridge: an introduction to arrange',
+      shell('Both have asked to meet',
+        [`<strong>${a?.name || rec.member_a}</strong> and <strong>${b?.name || rec.member_b}</strong> have both asked for an introduction.`,
+         'They are waiting on a time and a place from you. Neither has been told the other asked.',
+         `<span style="color:#6b7186;font-size:13px">Match ID: ${rec.id}</span>`],
+        'Arrange it in Halal Bridge'));
+    return 'admin notified: introduction to arrange';
+  }
+
+  if (chatBefore < 2 && chatAfter >= 2) {
+    const [a, b] = await Promise.all([profileOf(rec.member_a), profileOf(rec.member_b)]);
+    await send(ADMIN_EMAIL, 'Halal Bridge: two members are ready to message',
+      shell('Both sides have asked to message',
+        [`<strong>${a?.name || rec.member_a}</strong> and <strong>${b?.name || rec.member_b}</strong> have both asked to message each other.`,
+         'Re-check them both, then open a supervised conversation.',
+         `<span style="color:#6b7186;font-size:13px">Match ID: ${rec.id}</span>`],
+        'Open Halal Bridge'));
+    return 'admin notified: ready to open a conversation';
+  }
+
+  return 'nothing crossed a threshold — nothing to do';
 }
 
 // A member has reported someone. This one is always for the team, never for
