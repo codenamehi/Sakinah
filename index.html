@@ -4,53 +4,192 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="robots" content="noindex,nofollow"/>
-<title>Sakinah</title>
+<title>Halal Bridge</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..600;1,6..72,200..500&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ─────────────────────────────────────────────────────────────────────────
-   Sakinah — turquoise, gold and warm sand.
-   The colours of Persian and Andalusian tilework: deep teal, glazed
-   turquoise, warm gold on a sand ground. Warm and alive without any of
-   the urgency a dating app runs on -- nothing counts down, nothing is
-   bright for the sake of it.
+   Halal Bridge — emerald and gold, in two lights.
+
+   Light is warm sand and white paper; dark is deep glazed emerald. Both
+   keep the same gold, used the way gold is used in a manuscript: on the
+   one thing that matters and nothing else.
+
+   Nothing here is a flat fill. Surfaces are lit from above -- a hairline
+   highlight along the top edge, a soft shadow beneath -- fields are sunk
+   into the card rather than drawn on it, and a fine grain sits over the
+   whole page, which also stops the large areas of colour from banding.
+
    One rule runs through the type: a member's own words are set in the
    serif, the interface speaks in the sans.
    ───────────────────────────────────────────────────────────────────────── */
+
+/* ── LIGHT, the default ─────────────────────────────────────────────────── */
 :root{
-  --ink:#1f3330;          /* text, and the darkest surfaces */
-  --ink-2:#5d706b;        /* secondary text */
-  --ink-3:#93a39e;        /* faintest text */
-  --night:#123a39;
-  --night-2:#17514e;
-  --night-3:#1d6b66;
-  --stone:#fbf5ec;        /* page: warm sand */
+  color-scheme:light;
+  --ink:#15322b;          /* text */
+  --ink-2:#5c7168;        /* secondary text */
+  --ink-3:#8b9f96;        /* faintest text */
+  --night:#0f2a24;        /* the header stays deep emerald in both themes */
+  --night-2:#143229;
+  --stone:#f5efe3;        /* page: warm sand */
   --surface:#ffffff;      /* cards */
-  --surface-2:#fdf7ee;    /* recessed fields */
-  --brass:#2e8b84;        /* glazed turquoise: the primary accent */
-  --brass-lt:#6cbfb6;
-  --brass-wash:#dcefec;
+  --surface-hi:#fffdf8;   /* the lit top edge of a card */
+  --surface-2:#f7f1e5;    /* recessed fields */
+  --brass:#9b7430;        /* gold, dark enough to carry pale text */
+  --brass-hi:#b0853c;     /* the lit top of a gold button */
+  --brass-hv:#85621f;
+  --brass-lt:#7a5a22;     /* gold as text, on a pale ground */
+  --brass-wash:#f3ead8;
+  --brass-line:#c2a265;
+  --on-accent:#fffaf0;    /* text sitting on gold */
   --pine:#1d6b66;         /* settled, verified, open */
-  --pine-wash:#d6ece9;
-  --clay:#b0603f;         /* needs attention */
-  --clay-wash:#fbe9df;
-  --line:#ecdfcb;
-  --line-soft:#f3e9da;
-  --gold:#d9a441;         /* a second accent, used sparingly */
-  --gold-wash:#fcefd6;
+  --pine-wash:#dcefec;
+  --pine-line:#bfe0dc;
+  --clay:#a85435;         /* needs attention */
+  --clay-wash:#fbe6dc;
+  --on-clay:#fff5ef;
+  --line:#e6dac4;
+  --line-soft:#efe6d6;
+  --gold-wash:#fbf0d8;
+  --gold-ink:#7a5a12;
+  --gold-line:#ecd9b8;
+  --mine:#dcefec;         /* your own message */
+  --mine-line:#bfe0dc;
+  --toast-bg:#15322b;
+  --toast-ink:#f6f1e6;
+  --scrim:rgba(40,30,15,.44);
+  --glow-a:rgba(46,139,132,.10);
+  --glow-b:rgba(201,164,92,.16);
+  --grain:.038;
+  --hair:rgba(255,255,255,.9);          /* the highlight along a top edge */
+  --sink:rgba(31,51,48,.055);           /* the shadow inside a sunk field */
+  --lift:0 1px 2px rgba(31,51,48,.05), 0 10px 24px -12px rgba(31,51,48,.2),
+         inset 0 1px 0 var(--hair);
+  --lift-2:0 2px 5px rgba(31,51,48,.06), 0 18px 34px -16px rgba(31,51,48,.28),
+           inset 0 1px 0 var(--hair);
   --r-card:18px;
   --r-field:11px;
-  --lift:0 1px 2px rgba(31,51,48,.04), 0 8px 22px -10px rgba(31,51,48,.13);
 }
+
+/* ── DARK ───────────────────────────────────────────────────────────────── */
+/* Written twice on purpose: once for people whose system is set to dark and
+   who haven't chosen otherwise, once for people who picked dark here. */
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ink:#f4efe6;
+    --ink-2:#a9bdb4;
+    --ink-3:#7b918a;
+    --night:#0a1f1a;
+    --night-2:#143229;
+    --stone:#0f2a24;
+    --surface:#163a32;
+    --surface-hi:#1b4339;
+    --surface-2:#11302a;
+    --brass:#c9a45c;
+    --brass-hi:#dcbb7c;
+    --brass-hv:#d8b873;
+    --brass-lt:#e2c68e;
+    --brass-wash:#1e453c;
+    --brass-line:#b8934a;
+    --on-accent:#11261f;
+    --pine:#6fc3a4;
+    --pine-wash:#153f36;
+    --pine-line:#2a5b4f;
+    --clay:#e29070;
+    --clay-wash:#3b241c;
+    --on-clay:#2b160f;
+    --line:#27463e;
+    --line-soft:#214038;
+    --gold-wash:#332c19;
+    --gold-ink:#e8c98e;
+    --gold-line:#5a4a28;
+    --mine:#215046;
+    --mine-line:#2c6155;
+    --toast-bg:#081a16;
+    --toast-ink:#f4efe6;
+    --scrim:rgba(4,14,11,.74);
+    --glow-a:rgba(32,100,86,.42);
+    --glow-b:rgba(201,164,92,.11);
+    --grain:.055;
+    --hair:rgba(255,255,255,.055);
+    --sink:rgba(0,0,0,.26);
+    --lift:0 1px 2px rgba(0,0,0,.28), 0 10px 26px -12px rgba(0,0,0,.62),
+           inset 0 1px 0 var(--hair);
+    --lift-2:0 2px 6px rgba(0,0,0,.34), 0 20px 38px -16px rgba(0,0,0,.7),
+             inset 0 1px 0 var(--hair);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ink:#f4efe6;
+  --ink-2:#a9bdb4;
+  --ink-3:#7b918a;
+  --night:#0a1f1a;
+  --night-2:#143229;
+  --stone:#0f2a24;
+  --surface:#163a32;
+  --surface-hi:#1b4339;
+  --surface-2:#11302a;
+  --brass:#c9a45c;
+  --brass-hi:#dcbb7c;
+  --brass-hv:#d8b873;
+  --brass-lt:#e2c68e;
+  --brass-wash:#1e453c;
+  --brass-line:#b8934a;
+  --on-accent:#11261f;
+  --pine:#6fc3a4;
+  --pine-wash:#153f36;
+  --pine-line:#2a5b4f;
+  --clay:#e29070;
+  --clay-wash:#3b241c;
+  --on-clay:#2b160f;
+  --line:#27463e;
+  --line-soft:#214038;
+  --gold-wash:#332c19;
+  --gold-ink:#e8c98e;
+  --gold-line:#5a4a28;
+  --mine:#215046;
+  --mine-line:#2c6155;
+  --toast-bg:#081a16;
+  --toast-ink:#f4efe6;
+  --scrim:rgba(4,14,11,.74);
+  --glow-a:rgba(32,100,86,.42);
+  --glow-b:rgba(201,164,92,.11);
+  --grain:.055;
+  --hair:rgba(255,255,255,.055);
+  --sink:rgba(0,0,0,.26);
+  --lift:0 1px 2px rgba(0,0,0,.28), 0 10px 26px -12px rgba(0,0,0,.62),
+         inset 0 1px 0 var(--hair);
+  --lift-2:0 2px 6px rgba(0,0,0,.34), 0 20px 38px -16px rgba(0,0,0,.7),
+           inset 0 1px 0 var(--hair);
+}
+
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{
-  background:var(--stone);
+  /* Two soft pools of light rather than one flat fill, fixed so they don't
+     slide around as the page scrolls. */
+  background:
+    radial-gradient(900px 620px at 12% -6%, var(--glow-a) 0%, transparent 68%),
+    radial-gradient(820px 600px at 92% 102%, var(--glow-b) 0%, transparent 66%),
+    var(--stone);
+  background-attachment:fixed;
   color:var(--ink);
   font-family:'Karla',system-ui,-apple-system,sans-serif;
   font-size:15.5px;line-height:1.6;
   -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+/* A fine grain over everything. It costs nothing, it stops the big areas of
+   colour banding on cheaper screens, and it is the difference between a
+   surface and a swatch. */
+body::after{
+  content:'';position:fixed;inset:0;z-index:999;pointer-events:none;
+  opacity:var(--grain);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 button{font-family:inherit;cursor:pointer}
 input,textarea,select{font-family:inherit;font-size:15.5px}
@@ -65,91 +204,120 @@ input,textarea,select{font-family:inherit;font-size:15.5px}
 .wordmark{font-family:'Newsreader',serif;font-weight:400;letter-spacing:.22em;text-transform:uppercase}
 
 /* ── sign-in ───────────────────────────────────────────────────────────── */
+/* The gate is the dark hero in both themes: one screen, seen once, and the
+   first thing anyone sees of the brand. Its colours are fixed rather than
+   themed, which is why they are written out here instead of tokenised. */
 #gate{
   min-height:100vh;display:flex;align-items:center;justify-content:center;
   padding:2rem 1.5rem;position:relative;overflow:hidden;
   background:
-    radial-gradient(760px 520px at 22% 4%, rgba(46,139,132,.42) 0%, transparent 68%),
-    radial-gradient(680px 520px at 82% 96%, rgba(217,164,65,.20) 0%, transparent 66%),
-    linear-gradient(#123a39, #0c2a2a);
+    radial-gradient(760px 520px at 22% 4%, rgba(26,86,73,.72) 0%, transparent 68%),
+    radial-gradient(680px 520px at 82% 96%, rgba(201,164,92,.20) 0%, transparent 66%),
+    linear-gradient(#0f2a24, #071711);
 }
 /* The one ornament: a single khatim, not a tiled pattern. */
 .khatim{
   position:absolute;width:min(132vw,860px);height:auto;
   top:50%;left:50%;transform:translate(-50%,-56%);
-  opacity:.085;color:#7fd4ca;pointer-events:none;
+  opacity:.09;color:#c9a45c;pointer-events:none;
 }
 .gate-card{width:100%;max-width:372px;text-align:center;position:relative;z-index:1}
 .gate-wordmark{
-  font-family:'Newsreader',serif;font-weight:300;font-size:3.1rem;
-  color:#fff;margin:0;line-height:1;letter-spacing:.01em;
+  font-family:'Newsreader',serif;font-weight:300;font-size:2.85rem;
+  color:#f4efe6;margin:0;line-height:1;letter-spacing:.01em;
 }
-.gate-mark{
-  color:var(--brass-lt);font-size:.82rem;margin:.55rem 0 0;
-  letter-spacing:.01em;
-}
+.gate-mark{color:#c9a45c;font-size:.82rem;margin:.55rem 0 0;letter-spacing:.01em}
 .gate-verse{
   font-family:'Newsreader',serif;font-style:italic;font-weight:300;
-  font-size:1.26rem;line-height:1.62;color:rgba(255,255,255,.80);
+  font-size:1.26rem;line-height:1.62;color:rgba(244,239,230,.80);
   margin:2.1rem auto .5rem;max-width:21rem;
 }
-.gate-ref{
-  color:rgba(255,255,255,.34);font-size:.78rem;margin:0 0 2.3rem;
-}
+.gate-ref{color:rgba(244,239,230,.34);font-size:.78rem;margin:0 0 2.3rem}
 .gate-box{
-  background:rgba(255,255,255,.045);
-  border:1px solid rgba(201,169,97,.18);
+  background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.03));
+  border:1px solid rgba(184,147,74,.26);
   border-radius:var(--r-card);padding:1.5rem;text-align:left;
   backdrop-filter:blur(10px);
+  box-shadow:0 20px 44px -22px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.07);
 }
 .gate-box label{
   display:block;font-size:.84rem;font-weight:600;
-  color:rgba(255,255,255,.62);margin-bottom:.35rem;
+  color:rgba(244,239,230,.62);margin-bottom:.35rem;
 }
 .gate-box input{
-  width:100%;background:rgba(255,255,255,.06);
+  width:100%;background:rgba(0,0,0,.18);
   border:1px solid rgba(255,255,255,.13);border-radius:var(--r-field);
-  padding:.74rem .85rem;color:#fff;margin-bottom:1rem;outline:none;
+  padding:.74rem .85rem;color:#f4efe6;margin-bottom:1rem;outline:none;
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.3);
   transition:border-color .18s,background .18s;
 }
-.gate-box input:focus{border-color:var(--brass-lt);background:rgba(255,255,255,.09)}
-.gate-box input::placeholder{color:rgba(255,255,255,.28)}
-.btn-primary{
-  width:100%;background:var(--brass);color:#fff;border:none;
-  border-radius:var(--r-field);padding:.82rem;font-weight:700;font-size:.95rem;
-  transition:background .18s;
-}
-.btn-primary:hover{background:#35a099}
-.btn-primary:disabled{opacity:.5;cursor:default}
-.gate-switch{text-align:center;margin-top:1.05rem;font-size:.9rem;color:rgba(255,255,255,.46)}
+.gate-box input:focus{border-color:#c9a45c;background:rgba(0,0,0,.1)}
+.gate-box input::placeholder{color:rgba(244,239,230,.28)}
+.gate-switch{text-align:center;margin-top:1.05rem;font-size:.9rem;color:rgba(244,239,230,.46)}
 .gate-switch button{
-  background:none;border:none;color:var(--brass-lt);
+  background:none;border:none;color:#e2c68e;
   text-decoration:underline;text-underline-offset:3px;padding:0;font-size:.9rem;
 }
-.gate-msg{font-size:.88rem;margin-top:.85rem;text-align:center;min-height:1.1rem;color:#d79a93}
-.gate-msg.ok{color:var(--brass-lt)}
-.gate-foot{margin-top:1.7rem;font-size:.82rem;color:rgba(255,255,255,.3)}
+.gate-msg{font-size:.88rem;margin-top:.85rem;text-align:center;min-height:1.1rem;color:#e29070}
+.gate-msg.ok{color:#6fc3a4}
+.gate-foot{margin-top:1.7rem;font-size:.82rem;color:rgba(244,239,230,.3)}
+/* The gate's own button, fixed to the dark ground it sits on. */
+.btn-primary{
+  width:100%;background:linear-gradient(180deg,#dcbb7c,#c9a45c);
+  color:#11261f;border:1px solid #b8934a;
+  border-radius:var(--r-field);padding:.82rem;font-weight:700;font-size:.95rem;
+  box-shadow:0 2px 5px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.32);
+  transition:filter .18s;
+}
+.btn-primary:hover{filter:brightness(1.07)}
+.btn-primary:disabled{opacity:.5;cursor:default;box-shadow:none}
 
 /* ── shell ─────────────────────────────────────────────────────────────── */
-#app{display:none;min-height:100vh;flex-direction:column}
+#app{display:none;min-height:100vh;flex-direction:column;position:relative}
 .topbar{
-  background:var(--night);color:#fff;padding:0 1.3rem;height:60px;
+  background:linear-gradient(180deg,var(--night-2),var(--night));
+  color:#f4efe6;padding:0 1.3rem;height:60px;
   display:flex;align-items:center;justify-content:space-between;
   position:sticky;top:0;z-index:50;
+  box-shadow:0 1px 0 rgba(0,0,0,.25), 0 8px 20px -14px rgba(0,0,0,.6),
+             inset 0 1px 0 rgba(255,255,255,.05);
 }
-.topbar .wordmark{color:#fff;font-size:.94rem;letter-spacing:.24em}
-.topbar-right{display:flex;align-items:center;gap:.9rem}
-.who{font-size:.88rem;color:rgba(255,255,255,.52);
-  max-width:34vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topbar .wordmark{color:#c9a45c;font-size:.9rem;letter-spacing:.17em}
+.topbar-right{display:flex;align-items:center;gap:.7rem}
+.who{font-size:.88rem;color:rgba(244,239,230,.52);
+  max-width:28vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .btn-ghost{
-  background:none;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.78);
-  border-radius:7px;padding:.36rem .76rem;font-size:.84rem;transition:border-color .15s,color .15s;
+  background:rgba(255,255,255,.04);border:1px solid rgba(244,239,230,.2);
+  color:rgba(244,239,230,.78);
+  border-radius:7px;padding:.36rem .76rem;font-size:.84rem;
+  transition:border-color .15s,color .15s,background .15s;
 }
-.btn-ghost:hover{border-color:var(--brass-lt);color:var(--brass-lt)}
+.btn-ghost:hover{border-color:#c9a45c;color:#e2c68e;background:rgba(255,255,255,.08)}
+/* The light/dark switch. Square, icon-only, so it never crowds the name. */
+.btn-theme{
+  background:rgba(255,255,255,.04);border:1px solid rgba(244,239,230,.2);
+  color:rgba(244,239,230,.82);border-radius:7px;
+  width:32px;height:30px;display:inline-flex;align-items:center;justify-content:center;
+  padding:0;flex:none;transition:border-color .15s,color .15s,background .15s;
+}
+.btn-theme:hover{border-color:#c9a45c;color:#e2c68e;background:rgba(255,255,255,.08)}
+/* `.btn-theme svg` is a class plus an element, so it outranks a bare
+   `.icon-sun` and both icons showed at once. Every rule that decides which
+   icon is visible is scoped to the button for that reason. */
+.btn-theme svg{width:15px;height:15px}
+.btn-theme .icon-sun{display:none}
+.btn-theme .icon-moon{display:block}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .btn-theme .icon-sun{display:block}
+  :root:not([data-theme="light"]) .btn-theme .icon-moon{display:none}
+}
+:root[data-theme="dark"] .btn-theme .icon-sun{display:block}
+:root[data-theme="dark"] .btn-theme .icon-moon{display:none}
 
 .tabs{
   display:flex;background:var(--surface);border-bottom:1px solid var(--line);
-  position:sticky;top:60px;z-index:49;
+  position:sticky;top:60px;z-index:49;overflow-x:auto;
+  box-shadow:0 6px 16px -14px rgba(0,0,0,.5);
 }
 .tab{
   flex:1;background:none;border:none;padding:.95rem .5rem .85rem;
@@ -170,9 +338,11 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
 }
 .view-head p{margin:0;color:var(--ink-2);font-size:.96rem;max-width:34rem}
 
-/* Cards differ by what they are, not all one shape. */
+/* Cards are lit from above: a hairline along the top edge, a soft shadow
+   beneath, and a gradient so the face itself isn't one flat tone. */
 .card{
-  background:var(--surface);border:1px solid var(--line-soft);
+  background:linear-gradient(180deg,var(--surface-hi),var(--surface));
+  border:1px solid var(--line-soft);
   border-radius:var(--r-card);padding:1.5rem;margin-bottom:1.1rem;
   box-shadow:var(--lift);
 }
@@ -181,35 +351,79 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
 .field label{
   display:block;font-size:.88rem;font-weight:600;color:var(--ink-2);margin-bottom:.4rem;
 }
+/* Fields are sunk into the card rather than drawn on top of it. */
 .field input,.field textarea,.field select{
   width:100%;background:var(--surface-2);border:1px solid var(--line);
   border-radius:var(--r-field);padding:.7rem .85rem;color:var(--ink);outline:none;
-  transition:border-color .18s,background .18s;
+  box-shadow:inset 0 2px 4px var(--sink);
+  transition:border-color .18s,box-shadow .18s;
 }
+.field input::placeholder,.field textarea::placeholder{color:var(--ink-3)}
 .field input:focus,.field textarea:focus,.field select:focus{
-  border-color:var(--brass);background:#fff;
+  border-color:var(--brass);
+  box-shadow:inset 0 2px 4px var(--sink), 0 0 0 3px var(--brass-wash);
 }
 .field textarea{resize:vertical;min-height:96px;font-family:'Newsreader',Georgia,serif;
   font-size:1.02rem;line-height:1.68}
 .field .hint{font-size:.86rem;color:var(--ink-3);margin-top:.4rem;line-height:1.55}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.15rem}
+.qrow{padding:1.1rem 0;border-bottom:1px solid var(--line-soft)}
+.qrow:first-child{padding-top:0}
+.qrow:last-child{border-bottom:none;padding-bottom:0}
+.qq{font-weight:600;margin:0 0 .6rem;color:var(--ink)}
+.opts{display:flex;flex-wrap:wrap;gap:.45rem}
+.opt{
+  background:linear-gradient(180deg,var(--surface),var(--surface-2));
+  border:1px solid var(--line);color:var(--ink-2);
+  border-radius:999px;padding:.46rem .95rem;font-size:.9rem;font-weight:500;
+  box-shadow:0 1px 1px var(--sink);
+  transition:border-color .14s,color .14s,transform .14s,box-shadow .14s;
+}
+.opt:hover{border-color:var(--brass);transform:translateY(-1px)}
+.opt.on{
+  background:linear-gradient(180deg,var(--brass-hi),var(--brass));
+  border-color:var(--brass-line);color:var(--on-accent);
+  box-shadow:0 2px 5px var(--sink), inset 0 1px 0 rgba(255,255,255,.3);
+}
+.opt.spent{opacity:.42}
+.prog{
+  background:linear-gradient(180deg,var(--surface-hi),var(--surface));
+  border:1px solid var(--line-soft);border-radius:var(--r-card);
+  padding:1rem 1.2rem;box-shadow:var(--lift);
+}
+.prog-bar{height:8px;background:var(--surface-2);border-radius:999px;overflow:hidden;
+  box-shadow:inset 0 1px 3px var(--sink)}
+.prog-bar span{display:block;height:100%;
+  background:linear-gradient(90deg,var(--brass),var(--brass-hi));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3);
+  border-radius:999px;transition:width .3s cubic-bezier(.22,1,.36,1)}
+.prog-text{margin:.5rem 0 0;font-size:.88rem;color:var(--ink-2)}
 .checks{display:flex;flex-wrap:wrap;gap:.45rem}
 .check{
   display:inline-flex;align-items:center;gap:.45rem;cursor:pointer;
-  background:var(--surface-2);border:1px solid var(--line);border-radius:999px;
+  background:linear-gradient(180deg,var(--surface),var(--surface-2));
+  border:1px solid var(--line);border-radius:999px;
   padding:.4rem .9rem;font-size:.92rem;color:var(--ink-2);
+  box-shadow:0 1px 1px var(--sink);
   transition:border-color .15s,background .15s,color .15s;
   flex:0 0 auto;white-space:nowrap;
 }
 .check input{accent-color:var(--brass);margin:0 .15rem 0 0;flex:none;width:15px;height:15px}
-.check:has(input:checked){border-color:var(--brass);background:var(--brass-wash);color:#17514e}
+.check:has(input:checked){border-color:var(--brass-line);background:var(--brass-wash);color:var(--brass-lt)}
 .scale{display:flex;gap:.4rem;flex-wrap:wrap}
 .scale button{
-  flex:1;min-width:48px;background:var(--surface-2);border:1px solid var(--line);
+  flex:1;min-width:48px;
+  background:linear-gradient(180deg,var(--surface),var(--surface-2));
+  border:1px solid var(--line);
   border-radius:var(--r-field);padding:.5rem;font-size:.95rem;font-weight:600;
-  color:var(--ink-2);transition:border-color .15s,background .15s,color .15s;
+  color:var(--ink-2);box-shadow:0 1px 1px var(--sink);
+  transition:border-color .15s,background .15s,color .15s;
 }
-.scale button.on{border-color:var(--brass);background:var(--brass);color:#fff}
+.scale button.on{
+  border-color:var(--brass-line);color:var(--on-accent);
+  background:linear-gradient(180deg,var(--brass-hi),var(--brass));
+  box-shadow:0 2px 5px var(--sink), inset 0 1px 0 rgba(255,255,255,.3);
+}
 
 /* home */
 .jobs{list-style:none;margin:0 0 1.4rem;padding:0}
@@ -221,11 +435,11 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
   box-shadow:var(--lift);cursor:pointer;
   transition:transform .16s cubic-bezier(.22,1,.36,1),box-shadow .16s;
 }
-.job:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(31,51,48,.05),0 14px 28px -12px rgba(31,51,48,.22)}
+.job:hover{transform:translateY(-2px);box-shadow:var(--lift-2)}
 .job-text{min-width:0}
 .job-title{font-weight:700;margin:0 0 .1rem;color:var(--ink)}
 .job-sub{margin:0;font-size:.9rem;color:var(--ink-2)}
-.job-go{color:var(--brass);font-weight:700;font-size:.92rem;white-space:nowrap}
+.job-go{color:var(--brass-lt);font-weight:700;font-size:.92rem;white-space:nowrap}
 .calm{
   background:linear-gradient(165deg,var(--brass-wash) 0%,var(--surface) 70%);
   border:1px solid var(--line-soft);border-radius:var(--r-card);
@@ -235,25 +449,40 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
 .tally{display:flex;gap:2.2rem;flex-wrap:wrap;padding:1.2rem 1.5rem;
   background:linear-gradient(100deg,var(--gold-wash) 0%,var(--surface) 58%)}
 .tally div{min-width:0}
-.tally .n{font-family:'Newsreader',serif;font-size:1.9rem;color:var(--night);line-height:1}
+.tally .n{font-family:'Newsreader',serif;font-size:1.9rem;color:var(--brass-lt);line-height:1}
 .tally .l{font-size:.88rem;color:var(--ink-2);margin-top:.15rem}
 .readonly{
   padding:.7rem 0 .4rem;color:var(--ink);font-weight:600;
   border-bottom:1px solid var(--line-soft);
 }
 
-.btn-save{
-  background:var(--ink);color:#fff;border:none;border-radius:var(--r-field);
-  padding:.74rem 1.5rem;font-size:.94rem;font-weight:700;transition:background .18s;
+/* Buttons are lit the same way cards are: a highlight on the top edge and a
+   shadow underneath, so they read as something you can press. */
+.btn-save,.btn-soft,.composer button{
+  background:linear-gradient(180deg,var(--brass-hi),var(--brass));
+  color:var(--on-accent);border:1px solid var(--brass-line);
+  font-weight:700;
+  box-shadow:0 2px 5px var(--sink), inset 0 1px 0 rgba(255,255,255,.3);
+  transition:filter .18s,transform .12s,box-shadow .12s;
 }
-.btn-save:hover{background:var(--night-2)}
-.btn-save:disabled{opacity:.45;cursor:default}
-.btn-soft{
-  background:var(--brass);color:#fff;border:none;border-radius:var(--r-field);
-  padding:.64rem 1.2rem;font-size:.92rem;font-weight:700;transition:background .18s;
+.btn-save:hover,.btn-soft:hover,.composer button:hover{filter:brightness(1.07)}
+.btn-save:active,.btn-soft:active,.composer button:active{
+  transform:translateY(1px);box-shadow:0 1px 2px var(--sink), inset 0 1px 2px rgba(0,0,0,.2);
 }
-.btn-soft:hover{background:#35a099}
-.btn-soft:disabled{opacity:.45;cursor:default}
+.btn-save:disabled,.btn-soft:disabled,.composer button:disabled{
+  opacity:.45;cursor:default;box-shadow:none;transform:none;
+}
+.btn-save{border-radius:var(--r-field);padding:.74rem 1.5rem;font-size:.94rem}
+.btn-soft{border-radius:var(--r-field);padding:.64rem 1.2rem;font-size:.92rem}
+.btn-quiet{
+  background:linear-gradient(180deg,var(--surface),var(--surface-2));
+  border:1px solid var(--line);color:var(--ink-2);
+  border-radius:var(--r-field);padding:.64rem 1.2rem;font-size:.92rem;font-weight:600;
+  box-shadow:0 1px 2px var(--sink);
+  transition:border-color .15s,color .15s;
+}
+.btn-quiet:hover{border-color:var(--ink-3);color:var(--ink)}
+.btn-quiet:disabled{opacity:.45;cursor:default}
 .btn-plain{
   background:none;border:none;color:var(--ink-3);
   padding:.64rem .35rem;font-size:.92rem;font-weight:600;
@@ -268,7 +497,7 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
   border-radius:var(--r-field);padding:1.05rem 1.2rem;margin-bottom:1.3rem;
   font-size:.94rem;line-height:1.65;border:1px solid transparent;
 }
-.notice-wait{background:var(--gold-wash);border-color:#f0dcb0;color:#7a5a12}
+.notice-wait{background:var(--gold-wash);border-color:var(--gold-line);color:var(--gold-ink)}
 .notice-calm{background:var(--surface);border-color:var(--line-soft);color:var(--ink-2)}
 
 /* An empty screen is an invitation, so it gets room and a serif voice. */
@@ -278,17 +507,20 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
 .empty p{font-size:.96rem;margin:0 auto;line-height:1.7;max-width:26rem}
 
 /* ── a match ───────────────────────────────────────────────────────────── */
-/* The most important thing on the page, so it gets the most presence. */
+/* The most important thing on the page, so it sits highest off it. */
 .match{
-  background:var(--surface);border:1px solid var(--line-soft);
+  background:linear-gradient(180deg,var(--surface-hi),var(--surface));
+  border:1px solid var(--line-soft);
   border-radius:var(--r-card);padding:1.6rem 1.6rem 1.4rem;margin-bottom:1.1rem;
-  box-shadow:var(--lift);position:relative;overflow:hidden;
+  box-shadow:var(--lift-2);position:relative;overflow:hidden;
 }
 .match::before{
   content:'';position:absolute;inset:0 auto 0 0;width:3px;background:var(--line);
 }
-.match.is-yours::before{background:linear-gradient(var(--brass),var(--brass-lt))}
-.match.is-open::before{background:linear-gradient(var(--pine),var(--brass-lt))}
+.match.is-yours::before{background:linear-gradient(var(--brass),var(--brass-hi))}
+.match.is-open::before{background:linear-gradient(var(--pine),var(--brass-hi))}
+.match.is-declined{opacity:.62}
+.match.is-declined::before{background:var(--line)}
 .match-top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
 .match-name{
   font-family:'Newsreader',serif;font-weight:400;font-size:1.62rem;
@@ -298,8 +530,8 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
 /* Chips, not a run-on string of dots. */
 .chips{display:flex;flex-wrap:wrap;gap:.4rem;margin:0}
 .chip{
-  background:var(--brass-wash);border:1px solid transparent;
-  border-radius:999px;padding:.24rem .72rem;font-size:.84rem;color:#1d6b66;font-weight:500;
+  background:var(--brass-wash);border:1px solid var(--line);
+  border-radius:999px;padding:.24rem .72rem;font-size:.84rem;color:var(--pine);font-weight:500;
 }
 .match-bio{
   font-family:'Newsreader',Georgia,serif;font-size:1.04rem;line-height:1.7;
@@ -312,60 +544,67 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
   font-weight:600;color:var(--ink-3);margin-bottom:.25rem}
 .pill{
   display:inline-block;font-size:.8rem;padding:.26rem .68rem;border-radius:999px;
-  font-weight:600;white-space:nowrap;
+  font-weight:600;white-space:nowrap;border:1px solid transparent;
 }
-.pill-wait{background:var(--gold-wash);color:#8a6414}
-.pill-open{background:var(--pine-wash);color:var(--pine)}
+.pill-wait{background:var(--gold-wash);color:var(--gold-ink);border-color:var(--gold-line)}
+.pill-open{background:var(--pine-wash);color:var(--pine);border-color:var(--pine-line)}
+.pill-off{background:var(--surface-2);color:var(--ink-3);border-color:var(--line)}
 .match-actions{margin-top:1.25rem;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
 .match-note{font-size:.88rem;color:var(--ink-3);line-height:1.5}
 
 /* ── conversations ─────────────────────────────────────────────────────── */
 .convo{
-  background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--r-card);
+  background:linear-gradient(180deg,var(--surface-hi),var(--surface));
+  border:1px solid var(--line-soft);border-radius:var(--r-card);
   padding:1.1rem 1.3rem;margin-bottom:.7rem;cursor:pointer;
   display:flex;justify-content:space-between;align-items:center;gap:1rem;
-  transition:border-color .15s,box-shadow .15s;box-shadow:var(--lift);
+  transition:border-color .15s,box-shadow .15s,transform .15s;box-shadow:var(--lift);
 }
-.convo:hover{border-color:var(--brass-lt)}
+.convo:hover{border-color:var(--brass);transform:translateY(-1px);box-shadow:var(--lift-2)}
 .convo-name{font-weight:700;color:var(--ink);margin:0 0 .18rem;font-size:1rem}
 .convo-prev{
   font-family:'Newsreader',Georgia,serif;font-size:.97rem;color:var(--ink-2);margin:0;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:46vw;
 }
 .unread{
-  display:inline-block;background:var(--clay);color:#fff;border-radius:999px;
+  display:inline-block;background:var(--clay);color:var(--on-clay);border-radius:999px;
   font-size:.76rem;font-weight:700;padding:.06rem .46rem;margin-left:.36rem;
   vertical-align:1px;font-family:'Karla',sans-serif;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25);
 }
 
 /* ── chat ──────────────────────────────────────────────────────────────── */
 .chat-head{display:flex;align-items:center;gap:.9rem;margin-bottom:1rem}
 .chat-back{
-  background:none;border:1px solid var(--line);border-radius:7px;
+  background:linear-gradient(180deg,var(--surface),var(--surface-2));
+  border:1px solid var(--line);border-radius:7px;
   padding:.4rem .78rem;font-size:.88rem;color:var(--ink-2);
+  box-shadow:0 1px 2px var(--sink);
 }
 .chat-back:hover{border-color:var(--brass);color:var(--ink)}
 .chat-title{font-family:'Newsreader',serif;font-weight:400;font-size:1.5rem;color:var(--ink);margin:0}
 .chat-sub{font-size:.88rem;color:var(--ink-3);margin:.1rem 0 0}
+.chat-tools{margin-left:auto;display:flex;gap:.5rem;align-items:center}
 
 .rules{
-  background:var(--gold-wash);border:1px solid #f0dcb0;border-radius:var(--r-field);
-  padding:.95rem 1.15rem;margin-bottom:1rem;font-size:.9rem;color:#7a5a12;line-height:1.6;
+  background:var(--gold-wash);border:1px solid var(--gold-line);border-radius:var(--r-field);
+  padding:.95rem 1.15rem;margin-bottom:1rem;font-size:.9rem;color:var(--gold-ink);line-height:1.6;
 }
 .rules p{margin:0 0 .5rem}
-.rules strong{color:#5f4609}
-.rules .btn-plain{margin-top:.2rem;padding:.3rem 0;color:#8a6414}
+.rules strong{color:var(--brass-lt)}
+.rules .btn-plain{margin-top:.2rem;padding:.3rem 0;color:var(--gold-ink)}
 .rules .btn-plain:hover{color:var(--clay)}
 .supervised{
-  background:var(--brass-wash);border:1px solid #bfe0dc;
+  background:var(--brass-wash);border:1px solid var(--pine-line);
   border-radius:var(--r-field);padding:.8rem 1rem;margin-bottom:1rem;
-  font-size:.9rem;color:#6b5321;line-height:1.6;
+  font-size:.9rem;color:var(--ink-2);line-height:1.6;
 }
 
+/* The thread is a well sunk into the page, not another card raised off it. */
 .thread{
-  background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--r-card);
+  background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-card);
   padding:1.3rem;height:52vh;min-height:300px;overflow-y:auto;margin-bottom:.85rem;
-  box-shadow:var(--lift);
+  box-shadow:inset 0 2px 8px var(--sink);
 }
 .msg{margin-bottom:1.15rem;display:flex;flex-direction:column;max-width:80%}
 .msg:last-child{margin-bottom:0}
@@ -373,7 +612,7 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
 .msg-who{font-size:.82rem;color:var(--ink-3);margin-bottom:.26rem;font-weight:600;
   display:flex;align-items:center;gap:.4rem}
 .who-tag{
-  background:var(--brass-wash);color:#17514e;border-radius:999px;
+  background:var(--brass-wash);color:var(--brass-lt);border-radius:999px;
   padding:.04rem .45rem;font-size:.74rem;font-weight:700;
 }
 .msg.mine .msg-who{flex-direction:row-reverse}
@@ -381,48 +620,73 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
   padding:.68rem .95rem;border-radius:13px;font-size:1.01rem;line-height:1.62;
   white-space:pre-wrap;word-break:break-word;
   font-family:'Newsreader',Georgia,serif;
+  box-shadow:0 1px 2px var(--sink), inset 0 1px 0 var(--hair);
 }
-.msg.mine .msg-body{background:var(--ink);color:#fff;border-bottom-right-radius:4px}
-.msg.theirs .msg-body{background:var(--surface-2);border:1px solid var(--line-soft);
+.msg.mine .msg-body{background:var(--mine);border:1px solid var(--mine-line);
+  color:var(--ink);border-bottom-right-radius:4px}
+.msg.theirs .msg-body{background:var(--surface);border:1px solid var(--line-soft);
   border-bottom-left-radius:4px}
-.msg.staff .msg-body{background:var(--brass-wash);border:1px solid #bfe0dc;color:#17514e}
+.msg.staff .msg-body{background:var(--brass-wash);border:1px solid var(--pine-line);color:var(--ink)}
 .msg-time{font-size:.78rem;color:var(--ink-3);margin-top:.24rem}
 
 .composer{display:flex;gap:.6rem;align-items:flex-end}
 .composer textarea{
-  flex:1;background:var(--surface);border:1px solid var(--line);border-radius:11px;
-  padding:.76rem .9rem;resize:none;min-height:48px;max-height:140px;
+  flex:1;background:var(--surface-2);border:1px solid var(--line);border-radius:11px;
+  padding:.76rem .9rem;resize:none;min-height:48px;max-height:140px;color:var(--ink);
   outline:none;line-height:1.55;font-family:'Newsreader',Georgia,serif;font-size:1.01rem;
-  transition:border-color .18s;
+  box-shadow:inset 0 2px 4px var(--sink);
+  transition:border-color .18s,box-shadow .18s;
 }
-.composer textarea:focus{border-color:var(--brass)}
-.composer button{
-  background:var(--ink);color:#fff;border:none;border-radius:11px;
-  padding:.78rem 1.3rem;font-size:.92rem;font-weight:700;flex-shrink:0;
-  transition:background .18s;
+.composer textarea::placeholder{color:var(--ink-3)}
+.composer textarea:focus{border-color:var(--brass);
+  box-shadow:inset 0 2px 4px var(--sink), 0 0 0 3px var(--brass-wash)}
+.composer button{border-radius:11px;padding:.78rem 1.3rem;font-size:.92rem;flex-shrink:0}
+
+/* ── the sheet ─────────────────────────────────────────────────────────── */
+.sheet{
+  position:fixed;inset:0;background:var(--scrim);z-index:150;
+  display:none;align-items:flex-end;justify-content:center;padding:0;
+  backdrop-filter:blur(2px);
 }
-.composer button:hover{background:var(--night-2)}
-.composer button:disabled{opacity:.4;cursor:default}
+.sheet.show{display:flex}
+.sheet-card{
+  background:linear-gradient(180deg,var(--surface-hi),var(--surface));
+  border:1px solid var(--line);
+  border-radius:var(--r-card) var(--r-card) 0 0;
+  width:100%;max-width:620px;padding:1.6rem 1.4rem 1.9rem;
+  max-height:88vh;overflow-y:auto;
+  box-shadow:0 -24px 56px rgba(0,0,0,.4), inset 0 1px 0 var(--hair);
+}
+.sheet-card h3{font-family:'Newsreader',serif;font-weight:400;font-size:1.5rem;
+  margin:0 0 .3rem;color:var(--ink)}
+.sheet-card .sheet-sub{margin:0 0 1.2rem;color:var(--ink-2);font-size:.92rem;line-height:1.6}
+.sheet-foot{display:flex;gap:.6rem;align-items:center;margin-top:1.2rem;flex-wrap:wrap}
+@media(min-width:620px){
+  .sheet{align-items:center;padding:1.5rem}
+  .sheet-card{border-radius:var(--r-card)}
+}
 
 .toast{
   position:fixed;left:50%;bottom:1.7rem;transform:translateX(-50%) translateY(150%);
-  background:var(--ink);color:#fff;padding:.8rem 1.35rem;border-radius:10px;
-  font-size:.94rem;box-shadow:0 14px 36px rgba(27,31,42,.3);
-  transition:transform .32s cubic-bezier(.22,1,.36,1);z-index:200;
-  max-width:88vw;text-align:center;
+  background:var(--toast-bg);color:var(--toast-ink);border:1px solid var(--line);
+  padding:.8rem 1.35rem;border-radius:10px;
+  font-size:.94rem;
+  box-shadow:0 16px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.07);
+  transition:transform .32s cubic-bezier(.22,1,.36,1);z-index:1000;
+  max-width:88vw;text-align:center;visibility:hidden;
 }
-.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.show{transform:translateX(-50%) translateY(0);visibility:visible}
 
 #loading{
   position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-  background:#123a39;color:var(--brass-lt);z-index:300;
+  background:var(--stone);color:var(--brass-lt);z-index:300;
   font-family:'Newsreader',serif;letter-spacing:.26em;
   text-transform:uppercase;font-size:.88rem;
 }
 
 @media(max-width:560px){
   .grid-2{grid-template-columns:1fr}
-  .gate-wordmark{font-size:2.6rem}
+  .gate-wordmark{font-size:2.15rem}
   .gate-verse{font-size:1.14rem}
   main{padding:1.6rem .95rem 3rem}
   .view-head h2{font-size:1.8rem}
@@ -430,12 +694,24 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
   .match-name{font-size:1.45rem}
   .msg{max-width:90%}
   .convo-prev{max-width:42vw}
+  .who{display:none}
 }
 </style>
+<script>
+/* Set the theme before the first paint, so a member who chose light never
+   sees a dark flash on the way in. Storage can throw in a private window,
+   so every touch of it is wrapped. */
+(function(){
+  try {
+    var t = localStorage.getItem('hb-theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+})();
+</script>
 </head>
 <body>
 
-<div id="loading">Sakinah</div>
+<div id="loading">Halal Bridge</div>
 
 <script>
 // The app code is an ES module that pulls the Supabase client from a CDN. If
@@ -451,11 +727,11 @@ setTimeout(function(){
   el.innerHTML =
     '<div style="max-width:420px;text-align:center;line-height:2;letter-spacing:normal;' +
     'text-transform:none;font-size:.95rem">' +
-    '<strong style="letter-spacing:.2em">SAKINAH</strong><br><br>' +
-    'Sakinah couldn\'t finish loading.<br>' +
+    '<strong style="letter-spacing:.2em">HALAL BRIDGE</strong><br><br>' +
+    'Halal Bridge couldn\'t finish loading.<br>' +
     'Check your internet connection and refresh the page.<br><br>' +
     '<span style="opacity:.6;font-size:.86rem">If it keeps happening, a network ' +
-    'or browser extension may be blocking cdn.jsdelivr.net. Message the Sakinah ' +
+    'or browser extension may be blocking cdn.jsdelivr.net. Message the Halal Bridge ' +
     'team and we\'ll help.</span></div>';
 }, 8000);
 </script>
@@ -473,7 +749,7 @@ setTimeout(function(){
     </g>
   </svg>
   <div class="gate-card">
-    <h1 class="gate-wordmark">Sakinah</h1>
+    <h1 class="gate-wordmark">Halal Bridge</h1>
     <p class="gate-verse">“And He placed between you affection and mercy.”</p>
     <p class="gate-ref">Qur'an 30:21</p>
 
@@ -505,9 +781,23 @@ setTimeout(function(){
 <!-- ───────── APP ───────── -->
 <div id="app">
   <div class="topbar">
-    <span class="wordmark">Sakinah</span>
+    <span class="wordmark">Halal Bridge</span>
     <div class="topbar-right">
       <span class="who" id="who"></span>
+      <!-- The icon shows what you'd switch TO, which is the convention
+           people already read without thinking about it. -->
+      <button class="btn-theme" id="btn-theme" title="Switch between light and dark"
+              aria-label="Switch between light and dark">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+        </svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+        </svg>
+      </button>
       <button class="btn-ghost" id="btn-signout">Sign out</button>
     </div>
   </div>
@@ -515,6 +805,7 @@ setTimeout(function(){
   <div class="tabs">
     <button class="tab active" data-view="home">Home</button>
     <button class="tab" data-view="profile">Profile</button>
+    <button class="tab" data-view="questions">Questions</button>
     <button class="tab" data-view="matches">Matches</button>
     <button class="tab" data-view="messages">Messages</button>
   </div>
@@ -534,10 +825,38 @@ setTimeout(function(){
     <section class="view" id="view-profile">
       <div class="view-head">
         <h2>Your profile</h2>
-        <p>This is what we share with someone once you've both been matched.</p>
+        <p>Two halves: what a match is shown, and what only we ever see.</p>
       </div>
       <div id="verify-notice"></div>
       <div id="id-card"></div>
+
+      <!-- Contact details never reach another member. my_matches() returns
+           name, age, city, occupation, education, languages, bio and
+           looking_for -- and nothing else. This card has to say so, because
+           the page used to claim the opposite. -->
+      <div class="notice notice-calm" style="margin-bottom:.8rem">
+        <strong>Only the team sees this.</strong> Your email and phone number are
+        never shown to a match, and they aren't on your profile. We use them to
+        reach you, and that's all. Contact details are exchanged after a
+        conversation goes well — by us, with both of you asked first.
+      </div>
+      <div class="card">
+        <div class="grid-2">
+          <div class="field">
+            <label>Email</label>
+            <div class="readonly" id="p-email">—</div>
+          </div>
+          <div class="field">
+            <label>Phone</label>
+            <input type="tel" id="p-phone" placeholder="e.g. 0400 000 000"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="notice notice-calm" style="margin-bottom:.8rem">
+        <strong>This is what a match sees</strong> — once you've both asked for
+        an introduction, and not before.
+      </div>
       <div class="card">
         <div class="grid-2">
           <div class="field">
@@ -545,18 +864,8 @@ setTimeout(function(){
             <div class="readonly" id="p-name">—</div>
           </div>
           <div class="field">
-            <label>Email</label>
-            <div class="readonly" id="p-email">—</div>
-          </div>
-        </div>
-        <div class="grid-2">
-          <div class="field">
             <label>Age</label>
             <div class="readonly" id="p-age">—</div>
-          </div>
-          <div class="field">
-            <label>Phone</label>
-            <input type="tel" id="p-phone" placeholder="e.g. 0400 000 000"/>
           </div>
         </div>
         <div class="grid-2">
@@ -586,7 +895,7 @@ setTimeout(function(){
         <div class="field">
           <label>About you</label>
           <textarea id="p-bio" placeholder="A few honest lines about who you are — your deen, your character, what matters to you."></textarea>
-          <div class="hint">Shared with someone only once you've both been matched.</div>
+          <div class="hint">Shown to a match once you've both asked for an introduction.</div>
         </div>
         <div class="field">
           <label>What you're looking for</label>
@@ -594,7 +903,7 @@ setTimeout(function(){
         </div>
         <button class="btn-save" id="p-save">Save changes</button>
       </div>
-      <p class="match-note">Name, age and the details from your questionnaire are managed by the Sakinah team. Message us if any of it needs correcting.</p>
+      <p class="match-note">Name, age and the details from your questionnaire are managed by the Halal Bridge team. Message us if any of it needs correcting.</p>
 
       <div class="view-head" style="margin-top:2.6rem">
         <h2>What you're looking for</h2>
@@ -689,6 +998,46 @@ setTimeout(function(){
       <div id="pause-card"></div>
     </section>
 
+    <!-- QUESTIONNAIRE -->
+    <section class="view" id="view-questions">
+      <div class="view-head">
+        <h2>Your questions</h2>
+        <p>This is what we match on. Only our team sees your answers — the person
+           you're matched with never sees them, or the criteria behind a match.</p>
+      </div>
+      <div id="q-progress"></div>
+
+      <div class="view-head" style="margin:1.8rem 0 1rem">
+        <h2 style="font-size:1.45rem">About you</h2>
+      </div>
+      <div class="card" id="q-about"></div>
+
+      <div class="view-head" style="margin:2rem 0 1rem">
+        <h2 style="font-size:1.45rem">Your background</h2>
+        <p>Tick as many as apply. Never shown on your profile — it's used for
+           matching only.</p>
+      </div>
+      <div class="card"><div class="opts" id="q-ethnicity"></div></div>
+
+      <div class="view-head" style="margin:2rem 0 1rem">
+        <h2 style="font-size:1.45rem">What you're looking for</h2>
+      </div>
+      <div class="card" id="q-want"></div>
+
+      <div class="view-head" style="margin:2rem 0 1rem">
+        <h2 style="font-size:1.45rem">Dealbreakers</h2>
+        <p>Optional, and at most three. These rule someone out completely rather
+           than counting against them, so keep them for things you truly can't
+           move on.</p>
+      </div>
+      <div class="card">
+        <div class="opts" id="q-dealbreakers"></div>
+        <p class="match-note" id="q-db-count" style="margin-top:.9rem"></p>
+      </div>
+
+      <button class="btn-save" id="q-save" style="margin-top:1.4rem">Save answers</button>
+    </section>
+
     <!-- MATCHES -->
     <section class="view" id="view-matches">
       <div class="view-head">
@@ -716,6 +1065,11 @@ setTimeout(function(){
           <h2 class="chat-title" id="chat-title">—</h2>
           <p class="chat-sub" id="chat-sub"></p>
         </div>
+        <!-- Reporting is reachable from inside the conversation, where the
+             problem is, not buried in a settings page somewhere else. -->
+        <div class="chat-tools">
+          <button class="chat-back" id="chat-report" style="display:none">Report</button>
+        </div>
       </div>
       <div class="supervised" id="chat-supervised"></div>
       <div id="chat-rules"></div>
@@ -726,6 +1080,33 @@ setTimeout(function(){
       </div>
     </section>
   </main>
+</div>
+
+<!-- Passing on a match, and reporting a conversation, both ask a question
+     and take an optional note. Neither can use confirm()/prompt(): those are
+     suppressed by some mobile browsers, can't be styled, and a browser
+     dialog is the wrong register for telling someone you're not interested. -->
+<div class="sheet" id="sheet">
+  <div class="sheet-card">
+    <h3 id="sheet-title">—</h3>
+    <p class="sheet-sub" id="sheet-sub"></p>
+    <div class="field">
+      <label id="sheet-reason-label">Reason</label>
+      <div class="opts" id="sheet-reasons"></div>
+    </div>
+    <div class="field">
+      <label id="sheet-note-label">Anything else? (optional)</label>
+      <textarea id="sheet-note" rows="3"></textarea>
+      <div class="hint" id="sheet-hint"></div>
+    </div>
+    <div class="field" id="sheet-extras-wrap" style="display:none">
+      <div class="checks" id="sheet-extras"></div>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn-soft" id="sheet-go">Send</button>
+      <button class="btn-quiet" id="sheet-cancel">Cancel</button>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -758,10 +1139,10 @@ if (SUPABASE_URL.includes('YOUR-PROJECT-REF') || SUPABASE_KEY.includes('YOUR-ANO
   $('loading').innerHTML =
     `<div style="max-width:420px;text-align:center;line-height:2;letter-spacing:normal;
                  text-transform:none;font-size:.95rem">
-       <strong style="letter-spacing:.2em">SAKINAH</strong><br><br>
+       <strong style="letter-spacing:.2em">HALAL BRIDGE</strong><br><br>
        This page hasn't been connected to your Supabase project yet.<br>
-       Open <code style="color:#fff">sakinah.html</code>, find
-       <code style="color:#fff">SUPABASE_URL</code> near the top of the script,
+       Open <code style="color:#e2c68e">index.html</code>, find
+       <code style="color:#e2c68e">SUPABASE_URL</code> near the top of the script,
        and paste in your Project URL and anon key from
        Supabase → Project Settings → API.
      </div>`;
@@ -786,6 +1167,101 @@ function toast(msg){
   clearTimeout(t._t);
   t._t = setTimeout(() => t.classList.remove('show'), 3200);
 }
+
+/* ───────── the sheet ─────────
+   One dialog, reused by "Not for me" and by reporting a conversation. It
+   asks a question, offers a short list of reasons, and takes an optional
+   note. onGo returns a string to keep the sheet open and show an error, or
+   nothing to close it. */
+const DECLINE_REASONS = [
+  'Not enough in common',
+  'Too far away',
+  'Different stage of life',
+  'Different expectations around deen',
+  'I\'d rather not say',
+];
+const REPORT_REASONS = [
+  'They asked for my contact details',
+  'Disrespectful or inappropriate',
+  'They don\'t seem genuine',
+  'They won\'t take no for an answer',
+  'Something else',
+];
+
+let SHEET = null;
+
+function openSheet(cfg){
+  SHEET = { ...cfg, reason: null };
+  $('sheet-title').textContent      = cfg.title;
+  $('sheet-sub').textContent        = cfg.sub || '';
+  $('sheet-reason-label').textContent = cfg.reasonLabel || 'Reason';
+  $('sheet-note-label').textContent = cfg.noteLabel || 'Anything else? (optional)';
+  $('sheet-hint').textContent       = cfg.hint || '';
+  $('sheet-go').textContent         = cfg.go || 'Send';
+  $('sheet-go').disabled            = false;
+  $('sheet-note').value             = '';
+
+  // Extra tick-boxes, for the sheets that need them. Rebuilt each time so a
+  // sheet never opens carrying the previous one's ticks.
+  const extras = cfg.extras || [];
+  $('sheet-extras-wrap').style.display = extras.length ? 'block' : 'none';
+  $('sheet-extras').innerHTML = extras.map(([k,label]) =>
+    `<label class="check"><input type="checkbox" data-extra="${esc(k)}"/>${esc(label)}</label>`
+  ).join('');
+
+  paintSheetReasons();
+  $('sheet').classList.add('show');
+  // Focus belongs inside the sheet, not behind it.
+  setTimeout(() => $('sheet-note').focus(), 60);
+}
+
+function paintSheetReasons(){
+  $('sheet-reasons').innerHTML = (SHEET.reasons || []).map(r =>
+    `<button type="button" class="opt${SHEET.reason === r ? ' on' : ''}"
+       data-reason="${esc(r)}">${esc(r)}</button>`).join('');
+}
+
+function closeSheet(){
+  $('sheet').classList.remove('show');
+  SHEET = null;
+}
+
+$('sheet-reasons').onclick = e => {
+  const b = e.target.closest('[data-reason]');
+  if (!b || !SHEET) return;
+  // Tap the chosen one again to clear it -- a reason is optional.
+  SHEET.reason = SHEET.reason === b.dataset.reason ? null : b.dataset.reason;
+  paintSheetReasons();
+};
+$('sheet-cancel').onclick = closeSheet;
+// Clicking the dimmed area behind the card closes it; clicking the card
+// itself must not.
+$('sheet').onclick = e => { if (e.target === $('sheet')) closeSheet(); };
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && SHEET) closeSheet();
+});
+$('sheet-go').onclick = async () => {
+  if (!SHEET) return;
+  const btn  = $('sheet-go');
+  const cfg  = SHEET;
+  const extras = {};
+  $('sheet-extras').querySelectorAll('[data-extra]').forEach(
+    b => { extras[b.dataset.extra] = b.checked; });
+  const args = { reason: SHEET.reason, note: $('sheet-note').value.trim(), extras };
+  const label = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Sending…';
+  let err;
+  try { err = await cfg.onGo(args); }
+  catch (e) { err = 'Something went wrong. Please try again.'; }
+  // The sheet may already have been closed by a re-render underneath.
+  if (SHEET !== cfg) return;
+  if (err) {
+    toast('Could not send: ' + err);
+    btn.disabled = false; btn.textContent = label;
+    return;
+  }
+  closeSheet();
+};
 
 function fmtTime(ts){
   if (!ts) return '';
@@ -909,6 +1385,20 @@ $('g-reset').onclick = async () => {
 
 $('g-pass').addEventListener('keydown', e => { if (e.key === 'Enter') $('g-btn').click(); });
 
+/* Light and dark. With nothing stored the page follows the device, which is
+   what most people expect; choosing here pins it and is remembered. */
+$('btn-theme').onclick = () => {
+  const root = document.documentElement;
+  const stored = root.getAttribute('data-theme');
+  const systemDark = window.matchMedia
+    && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const now  = stored || (systemDark ? 'dark' : 'light');
+  const next = now === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  try { localStorage.setItem('hb-theme', next); } catch (e) {}
+  toast(next === 'dark' ? 'Dark' : 'Light');
+};
+
 $('btn-signout').onclick = async () => {
   closeChat();
   await supabase.auth.signOut();
@@ -927,7 +1417,8 @@ function showView(name){
   document.querySelectorAll('.tab').forEach(t =>
     t.classList.toggle('active', t.dataset.view === lit));
   window.scrollTo(0, 0);
-  if (name === 'home')     loadHome();
+  if (name === 'home')      loadHome();
+  if (name === 'questions') loadQuestionnaire();
   if (name === 'matches')  loadMatches();
   if (name === 'messages') loadConversations();
 }
@@ -1139,7 +1630,7 @@ function paintIdCard(){
       <div>
         <h3 class="match-name" style="font-size:1.1rem">Verify your age</h3>
         <p class="match-meta">We confirm everyone's age before matching. It's the floor
-           everything else on Sakinah stands on.</p>
+           everything else on Halal Bridge stands on.</p>
       </div>
       ${rejected ? '<span class="pill pill-wait">Needs attention</span>' : ''}
     </div>
@@ -1188,7 +1679,7 @@ async function submitId(){
 
   const age = ageFrom(dob);
   if (age === null)  return toast('That date doesn\'t look right.');
-  if (age < 18)      return toast('You must be at least 18 to use Sakinah.');
+  if (age < 18)      return toast('You must be at least 18 to use Halal Bridge.');
   if (age > 100)     return toast('Please check that date of birth.');
 
   btn.disabled = true; btn.textContent = 'Uploading…';
@@ -1289,6 +1780,15 @@ async function loadHome(){
     jobs.push({ t:'Tell us what you\'re looking for',
                 s:'The more we know, the better we can match you.', go:'profile' });
   }
+  // The questionnaire is what matching actually runs on, so an unfinished
+  // one is the single most useful thing they could do.
+  const { data: qrow } = await supabase
+    .from('questionnaire').select('completed_at').eq('id', ME.id).maybeSingle();
+  if (!qrow?.completed_at) {
+    jobs.push({ t:'Answer your questions',
+                s:'This is what we match on. It takes about five minutes.',
+                go:'questions' });
+  }
 
   let matches = [], convos = [];
   if (PROFILE.verified) {
@@ -1373,7 +1873,7 @@ $('pf-save').onclick = async () => {
   if (lo !== null && hi !== null && lo > hi)
     return toast('The lower age should be smaller than the upper one.');
   if ((lo !== null && lo < 18) || (hi !== null && hi < 18))
-    return toast('Everyone on Sakinah is 18 or over.');
+    return toast('Everyone on Halal Bridge is 18 or over.');
 
   const picked = sel => [...$(sel).querySelectorAll('input:checked')].map(i => i.value);
   const kids = $('pf-mykids').value;
@@ -1395,6 +1895,203 @@ $('pf-save').onclick = async () => {
   if (error) return toast('Could not save: ' + friendly(error));
   Object.assign(PROFILE, patch);
   toast('✓ Preferences saved');
+};
+
+
+// ───────── QUESTIONNAIRE ─────────
+// Every answer is multiple choice, because a score can't be computed from
+// free text. The form is generated from this one list rather than written
+// out by hand -- fifteen questions with two sides each is 30 blocks of
+// near-identical markup otherwise, and they drift apart the moment one is
+// edited.
+
+const ETHNICITIES = [
+  ['arab','Arab'], ['south_asian','South Asian'], ['afghan','Afghan'],
+  ['persian','Persian'], ['turkish','Turkish'], ['kurdish','Kurdish'],
+  ['southeast_asian','Southeast Asian'], ['east_african','East African'],
+  ['west_african','West African'], ['north_african','North African'],
+  ['central_asian','Central Asian'], ['european','European'],
+  ['latin_american','Latin American'], ['other','Other'],
+  ['prefer_not_say','Prefer not to say'],
+];
+
+const DEALBREAKERS = [
+  ['smokes','Smokes'],
+  ['has_children','Has children'],
+  ['previously_married','Previously married'],
+  ['no_regular_prayer',"Doesn't pray regularly"],
+  ['wont_relocate',"Won't relocate"],
+  ['outside_my_city','Lives outside my city'],
+  ['doesnt_want_children',"Doesn't want children"],
+  ['different_madhhab','Different school of thought'],
+  ['no_hijab_beard',"Doesn't wear hijab / doesn't have a beard"],
+  ['lives_with_inlaws','Wants to live with in-laws'],
+  ['different_ethnicity','Different ethnicity'],
+];
+
+// side: 'me' = about you, 'want' = what you're looking for
+const QUESTIONS = [
+  { f:'marital', side:'me', q:'Have you been married before?',
+    o:[['never_married','Never married'],['divorced','Divorced'],['widowed','Widowed']] },
+  { f:'children', side:'me', q:'Do you have children?', num:true,
+    o:[[0,'None'],[1,'1'],[2,'2'],[3,'3 or more']] },
+  { f:'wants_children', side:'me', q:'Do you want children?',
+    o:[['yes','Yes'],['maybe','Maybe'],['no','No']] },
+  { f:'children_number', side:'me', q:'How many would you hope for?',
+    o:[['1_2','1 to 2'],['3_4','3 to 4'],['5plus','5 or more'],['whatever','Whatever Allah wills']] },
+  { f:'timeline', side:'me', q:'You hope to marry within',
+    o:[['6m','6 months'],['1y','a year'],['2y','two years'],['unsure','Not sure yet']] },
+  { f:'prayer', side:'me', q:'How often do you pray?',
+    o:[['all_five','All five daily'],['most','Most days'],['sometimes','Sometimes'],['rarely','Rarely']] },
+  { f:'observance', side:'me', q:'Do you wear hijab / have a beard?',
+    o:[['yes','Yes'],['sometimes','Sometimes'],['no','No']] },
+  { f:'madhhab', side:'me', q:'School of thought',
+    o:[['hanafi','Hanafi'],['shafii',"Shafi'i"],['maliki','Maliki'],['hanbali','Hanbali'],['just_muslim','Just Muslim']] },
+  { f:'education', side:'me', q:'Education',
+    o:[['high_school','High school'],['trade','Trade'],['bachelors',"Bachelor's"],['postgrad','Postgraduate']] },
+  { f:'work_view', side:'me', q:'After marriage, a wife working',
+    o:[['should_work','Should work'],['stay_home','Should stay home'],['her_choice','Her choice']] },
+  { f:'living', side:'me', q:'After marriage you would like to live',
+    o:[['with_family','With family'],['nearby','Near family'],['independent','Independently'],['flexible','Flexible']] },
+  { f:'relocate', side:'me', q:'Would you relocate for the right person?',
+    o:[['yes','Yes'],['possibly','Possibly'],['no','No']] },
+  { f:'smoking', side:'me', q:'Do you smoke?',
+    o:[['never','Never'],['occasionally','Occasionally'],['yes','Yes']] },
+  { f:'language', side:'me', q:'Language spoken at home',
+    o:[['english','English'],['arabic','Arabic'],['urdu','Urdu'],['bengali','Bengali'],
+       ['turkish','Turkish'],['somali','Somali'],['indonesian','Indonesian / Malay'],
+       ['farsi','Farsi / Dari'],['other','Other']] },
+
+  { f:'want_divorced', side:'want', q:'Would you consider someone divorced, or with children?',
+    o:[['yes','Yes to both'],['divorced_only','Divorced, but no children'],
+       ['no_children_only','Either, as long as no children'],['no','Neither']] },
+  { f:'want_timeline', side:'want', q:'You would like them to be ready to marry within',
+    o:[['6m','6 months'],['1y','a year'],['2y','two years'],['unsure','No strong view']] },
+  { f:'want_religion', side:'want', q:'How important is religious practice in a spouse?',
+    o:[['essential','Essential'],['important','Important'],['somewhat','Somewhat'],['not_important','Not important']] },
+  { f:'want_observance', side:'want', q:'Hijab / beard in a spouse',
+    o:[['must','Must'],['prefer','Prefer'],['no_preference','No preference']] },
+  { f:'want_madhhab', side:'want', q:'School of thought in a spouse',
+    o:[['hanafi','Hanafi'],['shafii',"Shafi'i"],['maliki','Maliki'],['hanbali','Hanbali'],
+       ['just_muslim','Just Muslim'],['no_preference','No preference']] },
+  { f:'want_education', side:'want', q:'Education in a spouse',
+    o:[['high_school','High school'],['trade','Trade'],['bachelors',"Bachelor's"],
+       ['postgrad','Postgraduate'],['no_preference','No preference']] },
+  { f:'want_work_view', side:'want', q:'Their view on a wife working',
+    o:[['should_work','Should work'],['stay_home','Should stay home'],
+       ['her_choice','Her choice'],['no_preference','No preference']] },
+  { f:'want_living', side:'want', q:'Where they would like to live',
+    o:[['with_family','With family'],['nearby','Near family'],['independent','Independently'],
+       ['flexible','Flexible'],['no_preference','No preference']] },
+  { f:'want_ethnicity', side:'want', q:'Ethnicity',
+    o:[['open_to_all','Open to all'],['prefer_same','Prefer the same'],['same_only','Same only']] },
+  { f:'want_smoking', side:'want', q:'A spouse who smokes',
+    o:[['ok',"That's fine"],['not_ok','Not for me']] },
+];
+
+let QA = {};   // the member's own answers
+
+async function loadQuestionnaire(){
+  const { data, error } = await supabase
+    .from('questionnaire').select('*').eq('id', ME.id).maybeSingle();
+  if (error) { toast('Could not load your answers: ' + friendly(error)); return; }
+  QA = data || { id: ME.id, ethnicity: [], dealbreakers: [] };
+  QA.ethnicity    = QA.ethnicity    || [];
+  QA.dealbreakers = QA.dealbreakers || [];
+  paintQuestionnaire();
+}
+
+function qOptions(q){
+  return q.o.map(([v,l]) => {
+    const on = String(QA[q.f] ?? '') === String(v);
+    return `<button type="button" class="opt${on ? ' on' : ''}"
+      data-q="${esc(q.f)}" data-v="${esc(v)}"${q.num ? ' data-num="1"' : ''}>${esc(l)}</button>`;
+  }).join('');
+}
+
+function paintQuestionnaire(){
+  const block = side => QUESTIONS.filter(q => q.side === side).map(q =>
+    `<div class="qrow">
+       <p class="qq">${esc(q.q)}</p>
+       <div class="opts">${qOptions(q)}</div>
+     </div>`).join('');
+
+  const answered = QUESTIONS.filter(q => QA[q.f] !== null && QA[q.f] !== undefined && QA[q.f] !== '').length;
+  const total = QUESTIONS.length + 1;   // + ethnicity
+  const done = answered + (QA.ethnicity.length ? 1 : 0);
+  const pct = Math.round(100 * done / total);
+
+  $('q-progress').innerHTML = `<div class="prog">
+      <div class="prog-bar"><span style="width:${pct}%"></span></div>
+      <p class="prog-text">${done} of ${total} answered${
+        QA.completed_at ? ' — thank you, this is complete' : ''}</p>
+    </div>`;
+
+  $('q-about').innerHTML  = block('me');
+  $('q-want').innerHTML   = block('want');
+
+  $('q-ethnicity').innerHTML = ETHNICITIES.map(([v,l]) =>
+    `<button type="button" class="opt${QA.ethnicity.includes(v) ? ' on' : ''}"
+       data-eth="${esc(v)}">${esc(l)}</button>`).join('');
+
+  const picked = QA.dealbreakers.length;
+  $('q-dealbreakers').innerHTML = DEALBREAKERS.map(([v,l]) => {
+    const on = QA.dealbreakers.includes(v);
+    return `<button type="button" class="opt${on ? ' on' : ''}${!on && picked >= 3 ? ' spent' : ''}"
+       data-db="${esc(v)}">${esc(l)}</button>`;
+  }).join('');
+  $('q-db-count').textContent = picked
+    ? `${picked} of 3 chosen` : 'None chosen — these are optional';
+
+  // one delegated handler per group, rather than per button
+  $('q-about').onclick = $('q-want').onclick = e => {
+    const b = e.target.closest('[data-q]'); if (!b) return;
+    const f = b.dataset.q;
+    const v = b.dataset.num ? Number(b.dataset.v) : b.dataset.v;
+    QA[f] = (String(QA[f] ?? '') === String(v)) ? null : v;   // tap again to clear
+    paintQuestionnaire();
+  };
+  $('q-ethnicity').onclick = e => {
+    const b = e.target.closest('[data-eth]'); if (!b) return;
+    const v = b.dataset.eth;
+    // "Prefer not to say" is a position of its own, not one tick among many.
+    if (v === 'prefer_not_say') QA.ethnicity = QA.ethnicity.includes(v) ? [] : [v];
+    else {
+      QA.ethnicity = QA.ethnicity.filter(x => x !== 'prefer_not_say');
+      QA.ethnicity = QA.ethnicity.includes(v)
+        ? QA.ethnicity.filter(x => x !== v) : [...QA.ethnicity, v];
+    }
+    paintQuestionnaire();
+  };
+  $('q-dealbreakers').onclick = e => {
+    const b = e.target.closest('[data-db]'); if (!b) return;
+    const v = b.dataset.db;
+    if (QA.dealbreakers.includes(v)) QA.dealbreakers = QA.dealbreakers.filter(x => x !== v);
+    else if (QA.dealbreakers.length >= 3) return toast('Three dealbreakers is the limit — they rule people out entirely.');
+    else QA.dealbreakers = [...QA.dealbreakers, v];
+    paintQuestionnaire();
+  };
+}
+
+$('q-save').onclick = async () => {
+  const btn = $('q-save');
+  const patch = { id: ME.id, ethnicity: QA.ethnicity, dealbreakers: QA.dealbreakers };
+  for (const q of QUESTIONS) patch[q.f] = (QA[q.f] === '' ? null : QA[q.f]) ?? null;
+
+  const unanswered = QUESTIONS.filter(q => patch[q.f] === null).length;
+  const noEth = QA.ethnicity.length === 0;
+  patch.completed_at = (unanswered === 0 && !noEth) ? new Date().toISOString() : null;
+
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const { error } = await supabase.from('questionnaire').upsert(patch);
+  btn.disabled = false; btn.textContent = 'Save answers';
+  if (error) return toast('Could not save: ' + friendly(error));
+
+  QA.completed_at = patch.completed_at;
+  paintQuestionnaire();
+  toast(patch.completed_at
+    ? '✓ All done — we can start matching you'
+    : `Saved. ${unanswered + (noEth ? 1 : 0)} left before we can match you.`);
 };
 
 // ───────── MATCHES ─────────
@@ -1441,8 +2138,10 @@ async function loadMatches(){
         ? 'You\'ve both asked — we\'re setting up your conversation inshAllah.'
         : 'We\'ve passed your request on. We\'ll set things up once they\'ve responded too.';
     } else {
+      // Two real choices, shown as a pair. The decline is not a dismissive
+      // little link in the corner -- passing is a legitimate answer.
       action = `<button class="btn-soft" data-intro="${esc(r.match_id)}">Request introduction</button>
-                <button class="btn-plain" data-decline="${esc(r.match_id)}">Not for me</button>`;
+                <button class="btn-quiet" data-decline="${esc(r.match_id)}">Not for me</button>`;
       note   = 'Nothing is shared with them until you ask.';
     }
 
@@ -1475,22 +2174,29 @@ async function loadMatches(){
   }).join('');
 
   el.querySelectorAll('[data-decline]').forEach(btn => {
-    btn.onclick = async () => {
-      if (!confirm('Let us know this one isn\'t right for you?\n\n' +
-                   'They are never told that you declined, or that a match existed at all.')) return;
-      const why = prompt('Anything you\'d like us to know? This is private — only our team sees it, ' +
-                         'and it helps us match you better next time.\n\n(You can leave this blank.)');
-      if (why === null) return;
-      btn.disabled = true; btn.textContent = 'Sending…';
-      const { error } = await supabase.rpc('decline_match',
-        { p_match_id: btn.dataset.decline, p_reason: why.trim() || null });
-      if (error) {
-        toast('Could not send: ' + friendly(error));
-        btn.disabled = false; btn.textContent = 'Not for me';
-      } else {
-        toast('Thank you — we\'ll keep looking');
-        loadMatches();
-      }
+    btn.onclick = () => {
+      const id = btn.dataset.decline;
+      openSheet({
+        title: 'Not for me',
+        sub: 'They are never told that you declined, or that a match existed at all. ' +
+             'What you write here is private to our team — it is never shown to them, ' +
+             'and it helps us match you better next time.',
+        reasonLabel: 'Closest reason (optional)',
+        reasons: DECLINE_REASONS,
+        noteLabel: 'Anything you\'d like us to know? (optional)',
+        hint: 'Only our team reads this.',
+        go: 'Send',
+        onGo: async ({ reason, note }) => {
+          // The reason and the note are one private string for the team to
+          // read; the structure is for the member choosing, not for storage.
+          const why = [reason, note].filter(Boolean).join(' — ');
+          const { error } = await supabase.rpc('decline_match',
+            { p_match_id: id, p_reason: why || null });
+          if (error) return friendly(error);
+          toast('Thank you — we\'ll keep looking');
+          loadMatches();
+        }
+      });
     };
   });
 
@@ -1568,10 +2274,10 @@ function renderThread(){
     const cls   = mine ? 'mine' : (staff ? 'theirs staff' : 'theirs');
     const who   = mine ? 'You' : (m.sender_name || 'Member');
     // Only tag the role when it actually tells you something the name
-    // doesn't -- otherwise the team's messages read "Sakinah team,
-    // Sakinah team".
+    // doesn't -- otherwise the team's messages read "Halal Bridge team,
+    // Halal Bridge team".
     const role  = staff && !mine
-      ? (m.sender_role === 'wali' ? 'Wali' : 'Sakinah team') : '';
+      ? (m.sender_role === 'wali' ? 'Wali' : 'Halal Bridge team') : '';
     const tag   = role && role.toLowerCase() !== who.toLowerCase()
       ? `<span class="who-tag">${esc(role)}</span>` : '';
     return `<div class="msg ${cls}">
@@ -1621,7 +2327,7 @@ async function openChat(convo){
   const closed = convo.status === 'closed';
   $('chat-supervised').textContent = closed
     ? 'This conversation has been closed. You can still read it, but no new messages can be sent.'
-    : 'A member of the Sakinah team is part of this conversation and can see every message. Please keep things respectful and appropriate.';
+    : 'A member of the Halal Bridge team is part of this conversation and can see every message. Please keep things respectful and appropriate.';
 
   $('chat-rules').innerHTML = closed ? '' : `<div class="rules">
     <p><strong>Contact details stay off the chat.</strong> Phone numbers, emails and
@@ -1634,23 +2340,62 @@ async function openChat(convo){
   </div>`;
 
   const endBtn = $('end-convo');
-  if (endBtn) endBtn.onclick = async () => {
-    if (!confirm('End this conversation?\n\nNeither of you will be able to write here again, ' +
-                 'and we\'ll know you\'re ready to be introduced to someone else.')) return;
-    const why = prompt('Anything you\'d like us to know? Only our team sees this.\n\n(You can leave it blank.)');
-    if (why === null) return;
-    endBtn.disabled = true; endBtn.textContent = 'Ending…';
-    const { error } = await supabase.rpc('end_conversation',
-      { p_convo: convo.id, p_reason: why.trim() || null });
-    if (error) {
-      toast(friendly(error));
-      endBtn.disabled = false; endBtn.textContent = 'End this conversation';
-      return;
+  if (endBtn) endBtn.onclick = () => openSheet({
+    title: 'End this conversation',
+    sub: 'Neither of you will be able to write here again, and we\'ll know ' +
+         'you\'re ready to be introduced to someone else.',
+    reasonLabel: 'Closest reason (optional)',
+    reasons: ['We weren\'t compatible', 'They stopped replying',
+              'Our families didn\'t agree', 'I\'m pausing for now',
+              'I\'d rather not say'],
+    noteLabel: 'Anything you\'d like us to know? (optional)',
+    hint: 'Only our team reads this.',
+    go: 'End conversation',
+    onGo: async ({ reason, note }) => {
+      const why = [reason, note].filter(Boolean).join(' — ');
+      const { error } = await supabase.rpc('end_conversation',
+        { p_convo: convo.id, p_reason: why || null });
+      if (error) return friendly(error);
+      toast('Conversation ended — we\'ll be in touch');
+      closeChat();
+      showView('messages');
     }
-    toast('Conversation ended — we\'ll be in touch');
-    closeChat();
-    showView('messages');
-  };
+  });
+
+  // Reporting. The conversation can be ended in the same step: someone who
+  // has just reported harassment shouldn't have to go and find a second
+  // button to get out of the room.
+  const reportBtn = $('chat-report');
+  reportBtn.style.display = 'inline-block';
+  reportBtn.onclick = () => openSheet({
+    title: 'Report this conversation',
+    sub: 'A moderator reads this along with the messages, usually the same day. ' +
+         'They are not told that you reported them.',
+    reasonLabel: 'What happened?',
+    reasons: REPORT_REASONS,
+    noteLabel: 'In your own words (optional)',
+    hint: 'Only our moderators read this.',
+    go: 'Send to a moderator',
+    // Two extra choices that only the report sheet shows.
+    extras: [
+      ['block', 'Never match me with them again'],
+      ['end',   'End this conversation now'],
+    ],
+    onGo: async ({ reason, note, extras }) => {
+      if (!reason && !note) return 'Please choose a reason or write a line.';
+      const { error } = await supabase.rpc('file_report', {
+        p_convo:  convo.id,
+        p_reason: reason,
+        p_note:   note || null,
+        p_block:  !!extras.block,
+        p_end:    !!extras.end
+      });
+      if (error) return friendly(error);
+      toast('Sent — a moderator will look at this');
+      if (extras.end) { closeChat(); showView('messages'); }
+      else loadConversations();
+    }
+  });
 
   $('composer-text').disabled = closed;
   $('composer-send').disabled = closed;
