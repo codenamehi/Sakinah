@@ -499,6 +499,8 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
 }
 .notice-wait{background:var(--gold-wash);border-color:var(--gold-line);color:var(--gold-ink)}
 .notice-calm{background:var(--surface);border-color:var(--line-soft);color:var(--ink-2)}
+.notice-bad{background:var(--clay-wash);border-color:var(--clay);color:var(--clay)}
+.notice-bad strong{color:var(--clay)}
 
 /* An empty screen is an invitation, so it gets room and a serif voice. */
 .empty{text-align:center;padding:3.4rem 1.2rem;color:var(--ink-2)}
@@ -549,6 +551,7 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
 .pill-wait{background:var(--gold-wash);color:var(--gold-ink);border-color:var(--gold-line)}
 .pill-open{background:var(--pine-wash);color:var(--pine);border-color:var(--pine-line)}
 .pill-off{background:var(--surface-2);color:var(--ink-3);border-color:var(--line)}
+.pill-bad{background:var(--clay-wash);color:var(--clay);border-color:var(--clay)}
 .match-actions{margin-top:1.25rem;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
 .match-note{font-size:.88rem;color:var(--ink-3);line-height:1.5}
 
@@ -1632,10 +1635,11 @@ function paintIdCard(){
         <p class="match-meta">We confirm everyone's age before matching. It's the floor
            everything else on Halal Bridge stands on.</p>
       </div>
-      ${rejected ? '<span class="pill pill-wait">Needs attention</span>' : ''}
+      ${rejected ? '<span class="pill pill-bad">Needs another photo</span>' : ''}
     </div>
-    ${rejected ? `<p class="match-bio" style="color:var(--rose)">
-        <strong>We couldn't accept the last one:</strong> ${esc(PROFILE.id_reason || '')}</p>` : ''}
+    ${rejected ? `<p class="notice notice-bad" style="margin:1rem 0 0">
+        <strong>We couldn't accept the last one.</strong><br>${esc(PROFILE.id_reason || '')}
+        <br><span style="opacity:.8">Send another photo below and we'll check it again.</span></p>` : ''}
     <div style="margin-top:1rem">
       <div class="grid-2">
         <div class="field">
