@@ -229,6 +229,22 @@ main{flex:1;width:100%;max-width:980px;margin:0 auto;padding:1.5rem 1.1rem 3rem}
 .btn-bad{color:var(--rose);border-color:var(--rose-line)}
 .btn-bad:hover{background:var(--rose-bg);border-color:var(--rose)}
 .btn:disabled{opacity:.45;cursor:default;box-shadow:none}
+/* A line of text asked for inside the card it belongs to, rather than in a
+   browser dialog. You type why the photo is unreadable while looking at it. */
+.ask{margin-top:.9rem;padding:.9rem;background:var(--sunk);border:1px solid var(--line);
+  border-radius:8px;box-shadow:inset 0 2px 4px var(--dip)}
+.ask-label{display:block;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);margin-bottom:.45rem}
+.ask-quick{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.55rem}
+.ask-quick button{background:var(--paper);border:1px solid var(--line);color:var(--ink-soft);
+  border-radius:999px;padding:.26rem .62rem;font-size:.72rem;text-align:left}
+.ask-quick button:hover{border-color:var(--sand);color:var(--ink)}
+.ask textarea{width:100%;background:var(--paper);border:1px solid var(--line);border-radius:6px;
+  padding:.55rem .7rem;color:var(--ink);outline:none;resize:vertical;min-height:64px;
+  font-size:.84rem;line-height:1.55;font-family:inherit}
+.ask textarea::placeholder{color:var(--ink-faint)}
+.ask textarea:focus{border-color:var(--sand)}
+.ask-foot{display:flex;gap:.5rem;margin-top:.6rem;flex-wrap:wrap}
 .detail{margin-top:.9rem;padding-top:.9rem;border-top:1px solid var(--line);
   font-size:.86rem;display:none}
 .detail.open{display:block}
@@ -1161,6 +1177,60 @@ function selfSummary(m){
 }
 
 // ───────── ID checks ─────────
+
+/* ───────── asking for a line of text ─────────
+   prompt() is suppressed outright by some mobile browsers: it returns null,
+   which every caller here read as "cancelled". On a phone the Reject button
+   therefore did nothing at all, and said nothing about why -- and since
+   review_id refuses a rejection without a reason, there was no way to reject
+   from a phone even if the dialog had appeared. This asks inside the card
+   instead, which also means you type why a photo is unreadable while you are
+   looking at it. */
+function askInline(hostId, cfg){
+  const host = $(hostId);
+  if (!host) return;
+  if (host.dataset.open === '1') return closeAsk(host);   // tapping again backs out
+  host.dataset.open = '1';
+  host.innerHTML = `<div class="ask">
+    <span class="ask-label">${esc(cfg.label)}</span>
+    ${(cfg.quick || []).length ? `<div class="ask-quick">${
+      cfg.quick.map(q => `<button type="button" data-q="${esc(q)}">${esc(q)}</button>`).join('')
+    }</div>` : ''}
+    <textarea placeholder="${esc(cfg.placeholder || '')}"></textarea>
+    <div class="ask-foot">
+      <button class="btn btn-key" data-go>${esc(cfg.go || 'Send')}</button>
+      <button class="btn" data-cancel>Cancel</button>
+    </div>
+  </div>`;
+
+  const ta = host.querySelector('textarea');
+  const go = host.querySelector('[data-go]');
+  setTimeout(() => ta.focus(), 40);
+
+  // The quick phrases fill the box rather than sending on their own, so you
+  // can still add the detail that makes the message worth reading.
+  host.querySelectorAll('[data-q]').forEach(q => q.onclick = () => {
+    const add = q.dataset.q;
+    ta.value = ta.value.trim() ? ta.value.trim() + ' ' + add : add;
+    ta.focus();
+  });
+  host.querySelector('[data-cancel]').onclick = () => closeAsk(host);
+  go.onclick = async () => {
+    const text = ta.value.trim();
+    if (cfg.required && !text) return toast(cfg.requiredMsg || 'Please write something.', true);
+    go.disabled = true; go.textContent = 'Sending\u2026';
+    let err;
+    try { err = await cfg.onGo(text); }
+    catch (e) { err = 'Something went wrong. Please try again.'; }
+    if (err) {
+      go.disabled = false; go.textContent = cfg.go || 'Send';
+      return toast(err, true);
+    }
+    closeAsk(host);
+  };
+}
+function closeAsk(host){ host.dataset.open = '0'; host.innerHTML = ''; }
+
 function paintIdChecks(){
   const rows = MEMBERS.filter(m => m.id_status === 'pending');
   if (!rows.length) {
@@ -1190,6 +1260,7 @@ function paintIdChecks(){
         <button class="btn btn-key" data-approve="${esc(m.id)}">Approve</button>
         <button class="btn btn-bad" data-reject="${esc(m.id)}">Reject</button>
       </div>
+      <div id="ask-${esc(m.id)}"></div>
       <div id="doc-${esc(m.id)}" style="margin-top:.9rem"></div>
     </div>`;
   }).join('');
@@ -1214,22 +1285,44 @@ function paintIdChecks(){
     b.textContent = 'Hide document';
   });
 
-  $('id-list').querySelectorAll('[data-approve]').forEach(b => b.onclick = () => review(b.dataset.approve, true));
+  // review() now reports failure by returning a message, so approving has to
+  // show it -- otherwise a refused approval would look like it worked.
+  $('id-list').querySelectorAll('[data-approve]').forEach(b => b.onclick = async () => {
+    b.disabled = true;
+    const err = await review(b.dataset.approve, true);
+    b.disabled = false;
+    if (err) toast(err, true);
+  });
   $('id-list').querySelectorAll('[data-reject]').forEach(b => b.onclick = () => {
-    const reason = prompt('What was wrong with it? They will see this, so be specific —\n' +
-                          'e.g. "The photo is too blurry to read the date of birth."');
-    if (reason === null) return;
-    if (!reason.trim()) return toast('A reason is needed so they know what to fix.', true);
-    review(b.dataset.reject, false, reason.trim());
+    const id = b.dataset.reject;
+    askInline('ask-' + id, {
+      label: 'Why? They see this word for word, so write it to them',
+      quick: [
+        'The photo is too blurry to read.',
+        "The date of birth doesn't match what you entered.",
+        "The name doesn't match your profile.",
+        'The document has expired.',
+        'Part of the document is cut off.',
+        'We need a government ID, not a photo of you.',
+      ],
+      placeholder: 'e.g. The photo is too blurry to read the date of birth.',
+      go: 'Reject and tell them',
+      required: true,
+      requiredMsg: 'A reason is needed so they know what to fix.',
+      onGo: text => review(id, false, text),
+    });
   });
 }
 
+// Returns a message on failure so the caller can keep the reason box open
+// with what was typed still in it. Returning nothing used to mean the box
+// closed on an error and the words had to be written out again.
 async function review(userId, approve, reason){
   const m = byId(userId);
   const path = m?.id_file_path;
   const { error } = await supabase.rpc('review_id',
     { p_user: userId, p_approve: approve, p_reason: reason || null });
-  if (error) return toast(friendly(error), true);
+  if (error) return friendly(error);
 
   // The document has served its purpose. Keeping identity documents after
   // the check is done is pure liability, so remove it now.
@@ -1799,6 +1892,7 @@ function paintReports(){
       </div>
 
       <div id="rlog-${esc(r.id)}"></div>
+      <div id="rask-${esc(r.id)}"></div>
 
       <div class="actions">
         <button class="btn" data-rlog="${esc(r.id)}">Read the messages</button>
@@ -1852,19 +1946,43 @@ function paintReports(){
   });
 
   list.querySelectorAll('[data-raction]').forEach(b => b.onclick = async () => {
-    const action = b.dataset.raction;
-    const note = action === 'open' ? null : window.prompt(
-      action === 'actioned'
-        ? 'What did you do? Only the team ever reads this.'
-        : 'Why are you dismissing it? Only the team ever reads this.');
-    if (note === null && action !== 'open') return;
-    b.disabled = true;
-    const { error } = await supabase.rpc('resolve_report',
-      { p_report: b.dataset.rid, p_action: action, p_note: (note || '').trim() || null });
-    b.disabled = false;
-    if (error) return toast(friendly(error), true);
-    toast(action === 'open' ? 'Reopened' : 'Closed');
-    loadReports();
+    const action = b.dataset.raction, id = b.dataset.rid;
+
+    const close = async note => {
+      const { error } = await supabase.rpc('resolve_report',
+        { p_report: id, p_action: action, p_note: (note || '').trim() || null });
+      if (error) return friendly(error);
+      toast(action === 'open' ? 'Reopened' : 'Closed');
+      loadReports();
+    };
+
+    // Reopening needs no note; closing one does, and that note used to be
+    // asked for with prompt(), which a phone browser may never show.
+    if (action === 'open') {
+      b.disabled = true;
+      const err = await close(null);
+      b.disabled = false;
+      if (err) toast(err, true);
+      return;
+    }
+
+    askInline('rask-' + id, {
+      label: action === 'actioned'
+        ? 'What did you do? Only the team ever reads this'
+        : 'Why are you dismissing it? Only the team ever reads this',
+      quick: action === 'actioned'
+        ? ['Spoke to them.', 'Final warning given.', 'Paused their account.',
+           'Removed them.', 'Conversation closed.']
+        : ['Nothing in it.', 'A misunderstanding.', 'Already dealt with.',
+           'Not enough to act on.'],
+      placeholder: action === 'actioned'
+        ? 'e.g. Spoke to him. Final warning.'
+        : 'e.g. Crossed wires about the event date.',
+      go: action === 'actioned' ? 'Mark as actioned' : 'Dismiss it',
+      required: true,
+      requiredMsg: 'Write a line, so the next person to look knows what happened.',
+      onGo: close,
+    });
   });
 
   list.querySelectorAll('[data-rpause],[data-runpause]').forEach(b => b.onclick = async () => {
