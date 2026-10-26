@@ -57,6 +57,9 @@
   --gold-line:#ecd9b8;
   --mine:#dcefec;         /* your own message */
   --mine-line:#bfe0dc;
+  --wali-bg:#efe8dd;      /* a wali, sitting in */
+  --wali-line:#d8cbb8;
+  --wali-edge:#8a7760;
   --toast-bg:#15322b;
   --toast-ink:#f6f1e6;
   --scrim:rgba(40,30,15,.44);
@@ -108,6 +111,9 @@
     --gold-line:#5a4a28;
     --mine:#215046;
     --mine-line:#2c6155;
+    --wali-bg:#2c2822;
+    --wali-line:#47402f;
+    --wali-edge:#a8947a;
     --toast-bg:#081a16;
     --toast-ink:#f4efe6;
     --scrim:rgba(4,14,11,.74);
@@ -153,6 +159,9 @@
   --gold-line:#5a4a28;
   --mine:#215046;
   --mine-line:#2c6155;
+  --wali-bg:#2c2822;
+  --wali-line:#47402f;
+  --wali-edge:#a8947a;
   --toast-bg:#081a16;
   --toast-ink:#f4efe6;
   --scrim:rgba(4,14,11,.74);
@@ -252,6 +261,31 @@ input,textarea,select{font-family:inherit;font-size:15.5px}
   transition:border-color .18s,background .18s;
 }
 .gate-box input:focus{border-color:#c9a45c;background:rgba(0,0,0,.1)}
+/* Reveal while typing. Not "see your stored password" -- that is a hash and
+   nobody can read it -- just a way to check what you are typing before you
+   commit to it, which is most of why people get locked out. */
+.pw-wrap{position:relative}
+.pw-wrap input{padding-right:3rem!important}
+.pw-eye{
+  position:absolute;right:.5rem;top:.5rem;width:2rem;height:2rem;
+  background:none;border:none;padding:0;border-radius:6px;
+  display:inline-flex;align-items:center;justify-content:center;
+  color:var(--ink-3);opacity:.85;transition:color .15s,opacity .15s;
+}
+.gate-box .pw-eye{color:rgba(244,239,230,.55);top:.42rem}
+.pw-eye:hover{color:var(--brass);opacity:1}
+.gate-box .pw-eye:hover{color:#e2c68e}
+.pw-eye::before{
+  content:'';display:block;width:19px;height:19px;
+  background:currentColor;
+  -webkit-mask:var(--eye) center/contain no-repeat;
+          mask:var(--eye) center/contain no-repeat;
+}
+.pw-eye[data-shown="1"]::before{-webkit-mask-image:var(--eye-off);mask-image:var(--eye-off)}
+:root{
+  --eye:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E");
+  --eye-off:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9.9 4.24A9.1 9.1 0 0 1 12 4c6.4 0 10 7 10 7a18 18 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24'/%3E%3Cpath d='M6.6 6.6A18 18 0 0 0 2 11s3.6 7 10 7a9 9 0 0 0 5.4-1.6'/%3E%3Cline x1='2' y1='2' x2='22' y2='22'/%3E%3C/svg%3E");
+}
 .gate-box input::placeholder{color:rgba(244,239,230,.28)}
 .gate-switch{text-align:center;margin-top:1.05rem;font-size:.9rem;color:rgba(244,239,230,.46)}
 .gate-switch button{
@@ -619,17 +653,38 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
   padding:.04rem .45rem;font-size:.74rem;font-weight:700;
 }
 .msg.mine .msg-who{flex-direction:row-reverse}
+/* Four voices in one room, so four distinguishable bubbles. The colour does
+   the work at a glance; the stripe down the side of the two supervising
+   voices does it again for anyone who can't rely on colour. */
 .msg-body{
   padding:.68rem .95rem;border-radius:13px;font-size:1.01rem;line-height:1.62;
   white-space:pre-wrap;word-break:break-word;
   font-family:'Newsreader',Georgia,serif;
   box-shadow:0 1px 2px var(--sink), inset 0 1px 0 var(--hair);
 }
+/* you */
 .msg.mine .msg-body{background:var(--mine);border:1px solid var(--mine-line);
   color:var(--ink);border-bottom-right-radius:4px}
-.msg.theirs .msg-body{background:var(--surface);border:1px solid var(--line-soft);
+/* the person you're talking to */
+.msg.theirs .msg-body{background:var(--surface);border:1px solid var(--line);
   border-bottom-left-radius:4px}
-.msg.staff .msg-body{background:var(--brass-wash);border:1px solid var(--pine-line);color:var(--ink)}
+/* the team -- gold, because it is the one voice that is not a member */
+.msg.staff .msg-body{
+  background:var(--gold-wash);border:1px solid var(--gold-line);
+  border-left:3px solid var(--brass);color:var(--gold-ink);
+  border-bottom-left-radius:4px;
+}
+.msg.staff .msg-body strong{color:var(--brass-lt)}
+/* a wali, sitting in */
+.msg.wali .msg-body{
+  background:var(--wali-bg);border:1px solid var(--wali-line);
+  border-left:3px solid var(--wali-edge);color:var(--ink);
+  border-bottom-left-radius:4px;
+}
+.who-tag.tag-team{background:var(--gold-wash);color:var(--gold-ink);
+  border:1px solid var(--gold-line)}
+.who-tag.tag-wali{background:var(--wali-bg);color:var(--wali-edge);
+  border:1px solid var(--wali-line)}
 .msg-time{font-size:.78rem;color:var(--ink-3);margin-top:.24rem}
 
 .composer{display:flex;gap:.6rem;align-items:flex-end}
@@ -644,6 +699,25 @@ main{flex:1;width:100%;max-width:620px;margin:0 auto;padding:2.2rem 1.15rem 4rem
 .composer textarea:focus{border-color:var(--brass);
   box-shadow:inset 0 2px 4px var(--sink), 0 0 0 3px var(--brass-wash)}
 .composer button{border-radius:11px;padding:.78rem 1.3rem;font-size:.92rem;flex-shrink:0}
+/* The private line to the team. Quiet by default -- it is there when it is
+   needed, not competing with Send. */
+.composer .btn-help{
+  background:linear-gradient(180deg,var(--surface),var(--surface-2));
+  color:var(--ink-2);border:1px solid var(--line);
+  border-radius:11px;padding:0;width:48px;height:48px;flex:none;
+  display:inline-flex;align-items:center;justify-content:center;
+  box-shadow:0 1px 2px var(--sink);
+  transition:border-color .15s,color .15s,background .15s;
+}
+.composer .btn-help:hover{border-color:var(--brass-line);color:var(--brass-lt);
+  background:var(--brass-wash)}
+.composer .btn-help svg{width:21px;height:21px;display:block}
+.composer .btn-help:disabled{opacity:.45;cursor:default}
+/* A support thread is the team, not a match, so it doesn't pretend to be one. */
+.convo.is-support .convo-name::before{
+  content:'';display:inline-block;width:7px;height:7px;border-radius:50%;
+  background:var(--brass);margin-right:.45rem;vertical-align:1px;
+}
 
 /* ── the sheet ─────────────────────────────────────────────────────────── */
 .sheet{
@@ -766,7 +840,11 @@ setTimeout(function(){
         <input type="email" id="g-email" placeholder="you@email.com" autocomplete="email"/>
       </div>
       <label id="pass-label">Password</label>
-      <input type="password" id="g-pass" placeholder="••••••••" autocomplete="current-password"/>
+      <div class="pw-wrap">
+        <input type="password" id="g-pass" placeholder="••••••••" autocomplete="current-password"/>
+        <button type="button" class="pw-eye" data-eye="g-pass"
+                aria-label="Show password" title="Show password"></button>
+      </div>
       <button class="btn-primary" id="g-btn">Sign In</button>
       <div class="gate-msg" id="g-msg"></div>
       <div class="gate-switch">
@@ -909,6 +987,59 @@ setTimeout(function(){
       <p class="match-note">Name, age and the details from your questionnaire are managed by the Halal Bridge team. Message us if any of it needs correcting.</p>
 
       <div class="view-head" style="margin-top:2.6rem">
+        <h2>Your password</h2>
+        <p>We can't show you your current one — it isn't stored anywhere in a
+           form anyone can read, not even us. You can set a new one here.</p>
+      </div>
+      <div class="card">
+        <div class="field">
+          <label>Current password</label>
+          <div class="pw-wrap">
+            <input type="password" id="pw-old" autocomplete="current-password" placeholder="••••••••"/>
+            <button type="button" class="pw-eye" data-eye="pw-old" aria-label="Show password"></button>
+          </div>
+        </div>
+        <div class="field">
+          <label>New password</label>
+          <div class="pw-wrap">
+            <input type="password" id="pw-new" autocomplete="new-password" placeholder="At least 8 characters"/>
+            <button type="button" class="pw-eye" data-eye="pw-new" aria-label="Show password"></button>
+          </div>
+          <div class="hint">Eight characters or more. A short phrase you'll remember
+            beats something clever you won't.</div>
+        </div>
+        <button class="btn-save" id="pw-save">Change password</button>
+      </div>
+
+      <div class="view-head" style="margin-top:2.6rem">
+        <h2>More about you</h2>
+        <p>Things worth someone knowing eventually, but not on the front page.
+           Every one of these is optional, and you decide who sees it and when.
+           Leave anything blank and it simply doesn't exist.</p>
+      </div>
+      <div id="facts"></div>
+      <div class="match-actions" style="margin-bottom:2rem">
+        <button class="btn-save" id="facts-save">Save</button>
+        <span class="match-note" id="facts-note"></span>
+      </div>
+
+      <div class="view-head" style="margin-top:2.6rem">
+        <h2>Leaving</h2>
+        <p>Pausing keeps everything and simply stops new matches. Closing your
+           account removes it.</p>
+      </div>
+      <div id="pause-card"></div>
+      <div class="card">
+        <p class="match-note" style="margin:0 0 1rem">
+          <strong>Close my account.</strong> Your profile, your answers, anything
+          you wrote here and every message you sent are deleted. Any conversation
+          you are in is closed. This can't be undone and we can't recover it
+          for you afterwards.
+        </p>
+        <button class="btn-quiet" id="acct-delete">Close my account</button>
+      </div>
+
+      <div class="view-head" style="margin-top:2.6rem">
         <h2>What you're looking for</h2>
         <p>Only our team sees these. They're used to find you better matches — the
            person you're matched with never sees your criteria.</p>
@@ -998,7 +1129,6 @@ setTimeout(function(){
         </div>
         <button class="btn-save" id="pf-save">Save preferences</button>
       </div>
-      <div id="pause-card"></div>
     </section>
 
     <!-- QUESTIONNAIRE -->
@@ -1080,6 +1210,20 @@ setTimeout(function(){
       <div class="thread" id="thread"></div>
       <div class="composer">
         <textarea id="composer-text" placeholder="Write a message…" rows="1"></textarea>
+        <!-- A private word with the team, without leaving the conversation.
+             Someone who is uncomfortable shouldn't have to say so in front
+             of the person making them uncomfortable. -->
+        <button class="btn-help" id="composer-help"
+                title="Talk to the Halal Bridge team privately"
+                aria-label="Talk to the Halal Bridge team privately">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 14v-2a8 8 0 0 1 16 0v2"/>
+            <path d="M4 14h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/>
+            <path d="M20 14h-2a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1z"/>
+            <path d="M20 18v1a3 3 0 0 1-3 3h-2"/>
+          </svg>
+        </button>
         <button id="composer-send">Send</button>
       </div>
     </section>
@@ -1267,6 +1411,211 @@ $('sheet-go').onclick = async () => {
   closeSheet();
 };
 
+/* ───────── passwords ─────────
+   One delegated handler for every eye on the page, including the ones that
+   don't exist yet when this runs. */
+document.addEventListener('click', e => {
+  const b = e.target.closest('.pw-eye'); if (!b) return;
+  const input = $(b.dataset.eye); if (!input) return;
+  const show = input.type === 'password';
+  input.type = show ? 'text' : 'password';
+  b.dataset.shown = show ? '1' : '0';
+  b.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+  b.title = show ? 'Hide password' : 'Show password';
+  input.focus();
+});
+
+$('pw-save').onclick = async () => {
+  const btn = $('pw-save');
+  const oldPw = $('pw-old').value;
+  const newPw = $('pw-new').value;
+  if (!oldPw)              return toast('Enter your current password first.');
+  if (newPw.length < 8)    return toast('Please choose at least 8 characters.');
+  if (newPw === oldPw)     return toast('That is the same password you have now.');
+
+  btn.disabled = true; btn.textContent = 'Changing…';
+  // Supabase will change a password without checking the old one, which
+  // means an unattended open laptop is enough to take someone's account.
+  // Signing in with the current one first is what stops that.
+  const check = await supabase.auth.signInWithPassword({
+    email: ME.email, password: oldPw });
+  if (check.error) {
+    btn.disabled = false; btn.textContent = 'Change password';
+    return toast('That current password doesn\'t match.');
+  }
+  const { error } = await supabase.auth.updateUser({ password: newPw });
+  btn.disabled = false; btn.textContent = 'Change password';
+  if (error) return toast('Could not change it: ' + friendly(error));
+  $('pw-old').value = ''; $('pw-new').value = '';
+  toast('✓ Password changed');
+};
+
+/* ───────── leaving ───────── */
+$('acct-delete').onclick = () => openSheet({
+  title: 'Close your account',
+  sub: 'Your profile, your answers, everything you wrote and every message you '
+     + 'sent will be deleted. Any conversation you are in will be closed. We '
+     + 'cannot undo this or get it back for you.',
+  reasonLabel: 'Would you tell us why? (optional)',
+  reasons: ['I met someone', 'Not the right time', 'It wasn\'t for me',
+            'I\'d rather not say'],
+  noteLabel: 'Type DELETE to confirm',
+  hint: 'This is the last step.',
+  go: 'Close my account',
+  onGo: async ({ reason, note }) => {
+    if ((note || '').trim().toUpperCase() !== 'DELETE') {
+      return 'Type DELETE in the box to confirm.';
+    }
+    // Said on the way out, while there is still an account to attach it to.
+    if (reason) {
+      await supabase.rpc('open_support_conversation').then(async ({ data: id }) => {
+        if (id) await supabase.from('messages')
+          .insert({ conversation_id: id, body: 'Closing my account — ' + reason })
+          .then(() => {}, () => {});
+      }, () => {});
+    }
+    const { error } = await supabase.rpc('delete_my_account');
+    if (error) return friendly(error);
+    await supabase.auth.signOut().then(() => {}, () => {});
+    document.body.innerHTML =
+      '<div style="min-height:100vh;display:flex;align-items:center;'
+      + 'justify-content:center;padding:2rem;text-align:center;'
+      + 'font-family:Newsreader,Georgia,serif;font-size:1.2rem;line-height:1.7">'
+      + '<div>Your account is closed.<br>'
+      + '<span style="font-size:.95rem;opacity:.75">'
+      + 'Thank you for trusting us with it. You are welcome back any time.'
+      + '</span></div></div>';
+  }
+});
+
+/* The other person's staged facts. The database has already decided which
+   of them this moment allows, so whatever arrives here is meant to be read. */
+const FACT_LABELS = {
+  marital:'Previous marriage', children:'Children', family:'Family and background',
+  health:'Health', revert:'Being a revert', living:'Living situation',
+  work:'Work and study', other:'Also worth saying',
+};
+function factBlocks(facts){
+  let list = facts;
+  if (typeof list === 'string') { try { list = JSON.parse(list); } catch (e) { list = []; } }
+  if (!Array.isArray(list) || !list.length) return '';
+  return list.map(f => `<p class="match-bio"><span class="lead">${
+    esc(FACT_LABELS[f.topic] || 'More')}</span>${esc(f.body)}</p>`).join('');
+}
+
+/* ───────── more about you ─────────
+   The facts people want known eventually but not immediately. Each carries
+   its own answer to who sees it and at what point, and the default on every
+   one of them is nobody. */
+const FACT_TOPICS = [
+  ['marital',  'If you have been married before',
+               'Many people have. Say as much or as little as you want to.'],
+  ['children', 'If you have children',
+               'How many, their ages, who they live with — whatever matters.'],
+  ['family',   'Your family and background',
+               'Where your family is from, who you live with, how involved they are.'],
+  ['health',   'Anything health-related',
+               'Only if you would want someone to know before things got serious.'],
+  ['revert',   'If you are a revert',
+               'When, and how your family took it, if you would like to say.'],
+  ['living',   'Your living situation',
+               'Where you live, who with, and what you are hoping for after marriage.'],
+  ['work',     'Your work and study, in more detail',
+               'Hours, travel, plans — the things a one-line job title leaves out.'],
+  ['other',    'Anything else',
+               'Whatever you would want said before meeting, in your own words.'],
+];
+
+const FACT_WHEN = [
+  ['hidden',    'Hidden',          'Nobody sees this. You can still write it down.'],
+  ['matched',   'On my profile',   'Shown with your profile as soon as you are matched.'],
+  ['messaging', 'Once we are messaging',
+                'Held back until a conversation between you is open.'],
+];
+
+let FACTS = {};   // topic -> { body, visible_at }
+
+async function loadFacts(){
+  const { data, error } = await supabase
+    .from('profile_facts').select('topic, body, visible_at').eq('member', ME.id);
+  if (error) { $('facts').innerHTML =
+    `<div class="notice notice-calm">Couldn't load this section just now.</div>`; return; }
+  FACTS = {};
+  (data || []).forEach(r => { FACTS[r.topic] = { body: r.body, visible_at: r.visible_at }; });
+  paintFacts();
+}
+
+function paintFacts(){
+  $('facts').innerHTML = FACT_TOPICS.map(([topic, label, hint]) => {
+    const f = FACTS[topic] || { body:'', visible_at:'hidden' };
+    const filled = !!f.body.trim();
+    return `<div class="card">
+      <div class="field" style="margin-bottom:.9rem">
+        <label>${esc(label)}</label>
+        <textarea data-fact="${esc(topic)}" rows="3"
+          placeholder="${esc(hint)}">${esc(f.body)}</textarea>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label>Who sees it</label>
+        <div class="opts" data-when="${esc(topic)}">
+          ${FACT_WHEN.map(([v, l]) => `<button type="button"
+             class="opt${f.visible_at === v ? ' on' : ''}${filled ? '' : ' spent'}"
+             data-v="${esc(v)}">${esc(l)}</button>`).join('')}
+        </div>
+        <div class="hint">${esc(
+          (FACT_WHEN.find(w => w[0] === f.visible_at) || FACT_WHEN[0])[2])}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  $('facts').oninput = e => {
+    const t = e.target.closest('[data-fact]'); if (!t) return;
+    const topic = t.dataset.fact;
+    FACTS[topic] = { ...(FACTS[topic] || { visible_at:'hidden' }), body: t.value };
+  };
+  $('facts').onclick = e => {
+    const b = e.target.closest('[data-when] .opt'); if (!b) return;
+    const topic = b.parentElement.dataset.when;
+    const cur = FACTS[topic] || { body:'', visible_at:'hidden' };
+    // Writing is what makes it exist; choosing who sees it comes after.
+    if (!cur.body.trim()) return toast('Write something here first.');
+    FACTS[topic] = { ...cur, visible_at: b.dataset.v };
+    paintFacts();
+  };
+}
+
+$('facts-save').onclick = async () => {
+  const btn = $('facts-save');
+  const rows = [], gone = [];
+  for (const [topic] of FACT_TOPICS) {
+    const f = FACTS[topic];
+    const body = (f?.body || '').trim();
+    if (body) rows.push({ member: ME.id, topic, body,
+                          visible_at: f.visible_at || 'hidden',
+                          updated_at: new Date().toISOString() });
+    else gone.push(topic);
+  }
+
+  btn.disabled = true; btn.textContent = 'Saving…';
+  // Emptying a box deletes the row rather than storing an empty one, so
+  // "I took that back" really does take it back.
+  if (gone.length) {
+    await supabase.from('profile_facts').delete()
+      .eq('member', ME.id).in('topic', gone).then(() => {}, () => {});
+  }
+  const { error } = rows.length
+    ? await supabase.from('profile_facts').upsert(rows)
+    : { error: null };
+  btn.disabled = false; btn.textContent = 'Save';
+  if (error) return toast('Could not save: ' + friendly(error));
+
+  const shown = rows.filter(r => r.visible_at !== 'hidden').length;
+  $('facts-note').textContent = shown
+    ? `Saved — ${shown} of ${rows.length} will be shared.`
+    : (rows.length ? 'Saved, and none of it is shared with anyone.' : 'Saved.');
+  loadFacts();
+};
+
 /* ───────── asking for the introduction ─────────
    The second of the two asks, and the one that leads somewhere real: meeting
    in person, with us there. It lives inside the conversation because that is
@@ -1281,11 +1630,48 @@ function paintMeeting(convo, closed){
   // Already arranged. Nothing to ask for, and the details are the team's to
   // give -- the time shows here, the rest comes from us.
   if (convo.meeting_at) {
-    box.innerHTML = `<div class="notice notice-calm" style="border-color:var(--pine-line)">
-      <strong>Your introduction is arranged.</strong><br>
-      ${esc(fmtTime(convo.meeting_at))} — we'll be in touch with everything else,
-      and we'll be there with you.
+    const past = new Date(convo.meeting_at) < new Date();
+    if (!past) {
+      box.innerHTML = `<div class="notice notice-calm" style="border-color:var(--pine-line)">
+        <strong>Your introduction is arranged.</strong><br>
+        ${esc(fmtTime(convo.meeting_at))} — we'll be in touch with everything else,
+        and we'll be there with you.
+      </div>`;
+      return;
+    }
+    // Afterwards. A way to say it didn't work that isn't going quiet on
+    // someone -- and the only thing that tells us whether any of this works.
+    box.innerHTML = `<div class="notice notice-calm">
+      <strong>How did it go?</strong><br>
+      Only our team sees this. ${esc(convo.other_name || 'They')} is never told
+      what you said, and we'll take it from here either way.
+      <div style="margin-top:.8rem">
+        <button class="btn-soft" id="say-how">Tell us</button>
+      </div>
     </div>`;
+    $('say-how').onclick = () => openSheet({
+      title: 'How did the introduction go?',
+      sub: 'This goes to us, never to them. If it is a no, you do not have to '
+         + 'be the one to say it — we will handle it kindly.',
+      reasonLabel: 'In short',
+      reasons: ['It went well — I\'d like to continue',
+                'I\'m not sure yet',
+                'It isn\'t right — please let them know'],
+      noteLabel: 'Anything you want to add? (optional)',
+      hint: 'Only our team reads this.',
+      go: 'Send',
+      onGo: async ({ reason, note }) => {
+        if (!reason) return 'Please choose one of the three.';
+        const answer = /well/.test(reason) ? 'yes' : /sure/.test(reason) ? 'unsure' : 'no';
+        const { error } = await supabase.rpc('leave_feedback', {
+          p_match: convo.match_id, p_went_well: answer, p_note: note || null });
+        if (error) return friendly(error);
+        toast('Thank you — we\'ll be in touch');
+        box.innerHTML = `<div class="notice notice-calm">
+          <strong>Thank you.</strong><br>We have it, and we'll take it from here.
+        </div>`;
+      }
+    });
     return;
   }
 
@@ -1504,6 +1890,7 @@ function showView(name){
     t.classList.toggle('active', t.dataset.view === lit));
   window.scrollTo(0, 0);
   if (name === 'home')      loadHome();
+  if (name === 'profile')   loadFacts();
   if (name === 'questions') loadQuestionnaire();
   if (name === 'matches')  loadMatches();
   if (name === 'messages') loadConversations();
@@ -2263,6 +2650,7 @@ async function loadMatches(){
       </div>
       ${r.other_bio ? `<p class="match-bio"><span class="lead">About them</span>${esc(r.other_bio)}</p>` : ''}
       ${r.other_looking_for ? `<p class="match-bio"><span class="lead">What they're looking for</span>${esc(r.other_looking_for)}</p>` : ''}
+      ${factBlocks(r.other_facts)}
       <div class="match-actions">
         ${action}
         <span class="match-note">${note}</span>
@@ -2367,16 +2755,19 @@ function renderThread(){
   const atBottom = thread.scrollHeight - thread.scrollTop - thread.clientHeight < 60;
   thread.innerHTML = MSGS.map(m => {
     const mine  = m.sender_id === ME.id;
-    const staff = m.sender_role === 'admin' || m.sender_role === 'wali';
-    const cls   = mine ? 'mine' : (staff ? 'theirs staff' : 'theirs');
+    const wali  = m.sender_role === 'wali';
+    const team  = m.sender_role === 'admin';
+    // The team and a wali each get their own bubble rather than sharing the
+    // other member's -- in the panel they were all the same colour and you
+    // had to read the name above every message to know who was speaking.
+    const cls   = mine ? 'mine' : team ? 'theirs staff' : wali ? 'theirs wali' : 'theirs';
     const who   = mine ? 'You' : (m.sender_name || 'Member');
     // Only tag the role when it actually tells you something the name
     // doesn't -- otherwise the team's messages read "Halal Bridge team,
     // Halal Bridge team".
-    const role  = staff && !mine
-      ? (m.sender_role === 'wali' ? 'Wali' : 'Halal Bridge team') : '';
+    const role  = !mine ? (wali ? 'Wali' : team ? 'Halal Bridge team' : '') : '';
     const tag   = role && role.toLowerCase() !== who.toLowerCase()
-      ? `<span class="who-tag">${esc(role)}</span>` : '';
+      ? `<span class="who-tag ${wali ? 'tag-wali' : 'tag-team'}">${esc(role)}</span>` : '';
     return `<div class="msg ${cls}">
       <span class="msg-who">${esc(who)}${tag}</span>
       <div class="msg-body">${esc(m.body)}</div>
@@ -2415,16 +2806,33 @@ async function openChat(convo){
   currentConvo = convo;
   showView('chat');
 
-  $('chat-title').textContent = convo.other_name || 'Conversation';
+  const support = convo.kind === 'support';
+  $('chat-title').textContent = support
+    ? 'Halal Bridge team'
+    : (convo.other_name || 'Conversation');
   const others = (convo.others || []).filter(Boolean);
-  $('chat-sub').textContent = others.length
-    ? 'Also in this conversation: ' + others.join(', ')
-    : '';
+  $('chat-sub').textContent = support
+    ? 'A private line to us. Nobody you have been matched with can see this.'
+    : (others.length ? 'Also in this conversation: ' + others.join(', ') : '');
 
   const closed = convo.status === 'closed';
   $('chat-supervised').textContent = closed
     ? 'This conversation has been closed. You can still read it, but no new messages can be sent.'
     : 'A member of the Halal Bridge team is part of this conversation and can see every message. Please keep things respectful and appropriate.';
+
+  // None of the match machinery belongs in a thread that is just us: there
+  // is no one to report, no introduction to arrange, and no second person
+  // for the contact-detail rule to protect.
+  $('composer-help').style.display = support ? 'none' : 'inline-flex';
+  if (support) {
+    $('chat-rules').innerHTML = '';
+    $('chat-meeting').innerHTML = '';
+    $('chat-report').style.display = 'none';
+    $('chat-supervised').textContent =
+      'Write to us about anything — a worry about a conversation, a question, '
+      + 'or something you would rather not say in front of the other person. '
+      + 'Phone numbers are fine here.';
+  } else {
 
   $('chat-rules').innerHTML = closed ? '' : `<div class="rules">
     <p><strong>Contact details stay off the chat.</strong> Phone numbers, emails and
@@ -2499,9 +2907,13 @@ async function openChat(convo){
     }
   });
 
+  }
+
   $('composer-text').disabled = closed;
   $('composer-send').disabled = closed;
-  $('composer-text').placeholder = closed ? 'This conversation is closed.' : 'Write a message…';
+  $('composer-text').placeholder = closed
+    ? 'This conversation is closed.'
+    : (support ? 'Write to the team…' : 'Write a message…');
 
   $('thread').innerHTML = '<div class="empty"><p>Loading…</p></div>';
   MSGS = [];
@@ -2564,6 +2976,23 @@ composer.addEventListener('input', () => {
 composer.addEventListener('keydown', e => {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('composer-send').click(); }
 });
+
+/* The headset. Opens the member's own thread with the team -- one per
+   person, reused every time, so our history with them stays in one place.
+   It deliberately does not count as their one conversation: talking to us
+   is not talking to someone else. */
+$('composer-help').onclick = async () => {
+  const btn = $('composer-help');
+  btn.disabled = true;
+  const { data: id, error } = await supabase.rpc('open_support_conversation');
+  btn.disabled = false;
+  if (error) return toast('Could not open it: ' + friendly(error));
+  await loadConversations();
+  const convo = CONVOS.find(c => c.id === id);
+  if (!convo) return toast('Opened — find it in Messages.');
+  openChat(convo);
+  toast('This is just you and our team — they can\'t see it.');
+};
 
 $('composer-send').onclick = async () => {
   const text = composer.value.trim();
