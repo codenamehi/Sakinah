@@ -1784,7 +1784,7 @@ async function submitId(){
     return;
   }
 
-  const { error } = await supabase.rpc('submit_id', {
+  const { data: superseded, error } = await supabase.rpc('submit_id', {
     p_path: path, p_dob: dob,
     p_phone: ($('id-phone')?.value || $('p-phone')?.value || '').trim() || null
   });
@@ -1801,6 +1801,14 @@ async function submitId(){
     toast(friendly(error));
     btn.disabled = false; btn.textContent = 'Submit for verification';
     return;
+  }
+
+  // A second submission before anyone has reviewed the first leaves the
+  // earlier photo in the bucket with nothing pointing at it. submit_id hands
+  // back that path so it can go now rather than sit there for good.
+  if (superseded) {
+    await supabase.storage.from('id-documents').remove([superseded])
+      .then(() => {}, () => {});
   }
 
   PROFILE.id_status = 'pending';
@@ -2425,6 +2433,8 @@ async function openChat(convo){
     <p><strong>One conversation at a time.</strong> You're talking to
        ${esc(convo.other_name || 'this person')} only. If you'd like to be introduced
        to someone else, end this conversation first.</p>
+    <p><strong>This doesn't stay on our records.</strong> A month after a conversation
+       ends, we delete the messages.</p>
     <button class="btn-plain" id="end-convo">End this conversation</button>
   </div>`;
 
@@ -2434,7 +2444,8 @@ async function openChat(convo){
   if (endBtn) endBtn.onclick = () => openSheet({
     title: 'End this conversation',
     sub: 'Neither of you will be able to write here again, and we\'ll know ' +
-         'you\'re ready to be introduced to someone else.',
+         'you\'re ready to be introduced to someone else. ' +
+         'The messages are deleted from our records a month after that.',
     reasonLabel: 'Closest reason (optional)',
     reasons: ['We weren\'t compatible', 'They stopped replying',
               'Our families didn\'t agree', 'I\'m pausing for now',
