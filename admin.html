@@ -435,6 +435,10 @@ setTimeout(function(){
           These are identity documents. Open one only when you're reviewing it, and don't
           save copies anywhere. The file is deleted the moment you approve or reject.
         </p>
+        <div class="actions" style="margin-top:.7rem">
+          <button class="btn" id="sweep-check">Check for stranded documents</button>
+          <span class="meta" id="sweep-out"></span>
+        </div>
       </div>
       <div id="id-list"></div>
     </section>
@@ -476,6 +480,7 @@ setTimeout(function(){
           <p>You are a participant in every one of these.</p>
         </div>
       </div>
+      <div id="retention" class="card" style="background:var(--amber-bg);border-color:var(--amber-line)"></div>
       <div id="convos-list"></div>
     </section>
 
@@ -615,6 +620,16 @@ function makeDemoClient(){
     conversations: [
       { id:'d-c1', match_id:'d-m2', status:'open', created_by:'demo-admin',
         last_message_at:ago(42), last_message_preview:'That sounds good, jazakAllah khair.' },
+      // One that ended six weeks ago, so the retention panel has something
+      // real to show and to clear.
+      { id:'d-c3', match_id:null, status:'closed', created_by:'demo-admin',
+        closed_at:new Date(Date.now() - 45*24*3600e3).toISOString(),
+        last_message_at:ago(60*24*45), last_message_preview:'JazakAllah khair for everything.' },
+      // Old enough to clear, but a moderator still has a report on it --
+      // so it must survive every sweep until that is closed.
+      { id:'d-c4', match_id:null, status:'closed', created_by:'demo-admin',
+        closed_at:new Date(Date.now() - 70*24*3600e3).toISOString(),
+        last_message_at:ago(60*24*70), last_message_preview:'Please stop asking.' },
     ],
     participants: [
       { conversation_id:'d-c1', user_id:'d-aisha', role:'member', last_read:ago(40), last_notified_at:null },
@@ -634,6 +649,17 @@ function makeDemoClient(){
         sender_role:'wali', body:'Assalamu alaykum, I am Omar\'s wali and will be following along.', created_at:ago(60) },
       { id:'d-x5', conversation_id:'d-c1', sender_id:'d-aisha', sender_name:'Aisha Rahman',
         sender_role:'member', body:'That sounds good, jazakAllah khair.', created_at:ago(42) },
+      { id:'d-x6', conversation_id:'d-c4', sender_id:'d-yusuf', sender_name:'Yusuf Ahmed',
+        sender_role:'member', body:'Can I have your number?', created_at:ago(60*24*71) },
+      { id:'d-x7', conversation_id:'d-c4', sender_id:'d-hana', sender_name:'Hana Mahmoud',
+        sender_role:'member', body:'Please stop asking.', created_at:ago(60*24*70) },
+    ],
+    // Two files nothing points at, so the sweep has something to find.
+    // One old enough to sweep, one uploaded two hours ago -- which the guard
+    // must leave alone, because a file that new may be mid-submission.
+    orphans: [
+      { path:'d-hana/1760000000000.jpg', uploaded_at:ago(60*72), belongs_to:'Hana Mahmoud' },
+      { path:'d-omar/1761000000000.jpg', uploaded_at:ago(120),   belongs_to:'Omar Siddiqui' },
     ],
     // Two reports so the queue shows both ends of it: one urgent and open,
     // one already dealt with.
@@ -643,6 +669,15 @@ function makeDemoClient(){
         note:'He asked for my number twice after I said we should keep it here.',
         severity:'urgent', status:'open', outcome_note:null,
         handled_by:null, handled_at:null, created_at:ago(20) },
+      // Closed ten days ago, which still holds the chat log back: a dismissed
+      // report can be reopened, and an actioned one may be the first of a
+      // pattern. Left open it would have sat in the moderator queue instead,
+      // which is a different demonstration.
+      { id:'d-r3', reporter:'d-hana', reported:'d-yusuf', conversation_id:'d-c4',
+        match_id:null, reason:"They won't take no for an answer", note:null,
+        severity:'normal', status:'actioned',
+        outcome_note:'Warned him. Watching for a repeat.',
+        handled_by:'demo-admin', handled_at:ago(60*24*10), created_at:ago(60*24*69) },
       { id:'d-r2', reporter:'d-hana', reported:'d-yusuf', conversation_id:null,
         match_id:null, reason:'They don\'t seem genuine', note:null,
         severity:'normal', status:'actioned',
@@ -781,6 +816,49 @@ function makeDemoClient(){
                  c.last_message_preview = String(args.p_preview || '').slice(0,80); }
         return { data:null, error:null };
       }
+      if (name === 'purge_pending') {
+        const month = 30*24*3600e3;
+        return { data: (S.conversations || [])
+          .filter(c => c.status === 'closed' && !c.messages_purged_at)
+          .map(c => {
+            const closed = new Date(c.closed_at || c.last_message_at || Date.now()).getTime();
+            const rep = (S.reports || []).find(r => r.conversation_id === c.id);
+            return {
+              conversation_id: c.id,
+              closed_at: new Date(closed).toISOString(),
+              due_at: new Date(closed + month).toISOString(),
+              message_count: (S.messages || []).filter(m => m.conversation_id === c.id).length,
+              held_because: rep && rep.status === 'open' ? 'a report is still open'
+                          : rep && rep.handled_at ? 'a report was handled recently' : null,
+            };
+          }), error:null };
+      }
+      if (name === 'admin_purge_now') {
+        const month = 30*24*3600e3, now = Date.now();
+        let n = 0;
+        (S.conversations || []).forEach(c => {
+          if (c.status !== 'closed' || c.messages_purged_at) return;
+          const closed = new Date(c.closed_at || c.last_message_at || now).getTime();
+          if (closed + month > now) return;
+          const rep = (S.reports || []).find(r => r.conversation_id === c.id);
+          if (rep && (rep.status === 'open' || rep.handled_at)) return;
+          S.messages = (S.messages || []).filter(m => m.conversation_id !== c.id);
+          c.last_message_preview = null;
+          c.messages_purged_at = new Date().toISOString();
+          n++;
+        });
+        return { data:n, error:null };
+      }
+      if (name === 'orphan_id_documents') {
+        // Mirror the real function's guard, so the demo shows the same
+        // behaviour rather than a friendlier version of it.
+        // Honour the interval the same way the real function does, so a
+        // caller can ask for everything and see what the guard is holding.
+        const hours = /^(\d+)\s*hour/.exec(args?.p_older_than || '')?.[1];
+        const cutoff = Date.now() - (hours === undefined ? 24 : Number(hours)) * 3600e3;
+        return { data: (S.orphans || []).filter(
+          o => new Date(o.uploaded_at).getTime() < cutoff), error:null };
+      }
       if (name === 'arrange_meeting') {
         const m = S.matches.find(x => x.id === args.p_match_id);
         if (!m) return { data:null, error:{ message:'No such match' } };
@@ -860,7 +938,12 @@ function makeDemoClient(){
     rpc: rpcBuilder,
     storage: { from(){ return {
       async createSignedUrl(){ return { data:{ signedUrl: SAMPLE_DOC }, error:null }; },
-      async remove(){ return { data:null, error:null }; },
+      async remove(paths){
+        // A no-op here would have let a broken sweep pass its own test.
+        const gone = Array.isArray(paths) ? paths : [paths];
+        S.orphans = (S.orphans || []).filter(o => !gone.includes(o.path));
+        return { data:null, error:null };
+      },
       async upload(){ return { data:null, error:null }; }
     }; } },
     channel(){ const c = { on(){ return c; }, subscribe(){ return c; } }; return c; },
@@ -871,6 +954,9 @@ function makeDemoClient(){
 const supabase = DEMO ? makeDemoClient() : createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
 });
+// Exposed in demo only, so the test suite can ask the stand-in client
+// questions the panel's own screens don't surface.
+if (DEMO) window.__sb = supabase;
 
 let ME = null, MEMBERS = [], MATCHES = [], CONVOS = [], PARTS = [];
 let REPORTS = [], OPEN_REPORTS = 0, REPORT_FILTER = 'open';
@@ -980,6 +1066,10 @@ async function route(session){
   $('who').textContent = ME.email;
   await loadAll();
   showView('members');
+  // Not awaited: nothing on screen depends on it, and it must never be the
+  // thing that keeps the panel from opening.
+  sweepQuietly();
+  purgeQuietly();
 }
 
 // ───────── data ─────────
@@ -1040,7 +1130,7 @@ function showView(name){
   if (name === 'members') paintMembers();
   if (name === 'idchecks') paintIdChecks();
   if (name === 'matches') { paintPickers(); paintMatches(); }
-  if (name === 'convos')  paintConvos();
+  if (name === 'convos')  { paintConvos(); paintRetention(); }
   if (name === 'reports') loadReports();
 }
 function teardown(){
@@ -1052,6 +1142,7 @@ $('chat-back').onclick = () => { teardown(); showView('convos'); };
 
 // ───────── members ─────────
 $('m-search').oninput = () => paintMembers();
+$('sweep-check').onclick = () => sweepOrphans();
 
 function paintMembers(){
   const q = $('m-search').value.trim().toLowerCase();
@@ -1249,6 +1340,106 @@ function askInline(hostId, cfg){
 }
 function closeAsk(host){ host.dataset.open = '0'; host.innerHTML = ''; }
 
+/* Documents nothing points at any more: an upload from a tab that was closed
+   before the record saved, or one superseded by a second submission. Photos
+   are the only thing in this product that costs real storage -- a message is
+   a couple of hundred bytes, a photo of a licence is a few megabytes -- so
+   it is worth being able to find them. */
+/* The quiet version, run once when the panel opens. review_id clears the
+   profile's reference first and the browser deletes the file second -- so a
+   dropped connection, or a closed tab, between those two leaves the photo in
+   the bucket with nothing pointing at it and no way to reach it. That turned
+   "we delete it as soon as we've checked it" into a promise that held only
+   when the network cooperated. This closes it. */
+/* Chat logs. A conversation stops being ours to keep once it has ended, so
+   the messages go a month later -- but never while a moderator still has a
+   report on it, because the usual moment to report someone is on the way
+   out. This screen shows what is due and what is being held, so deletion is
+   visible rather than silent. */
+async function paintRetention(){
+  const box = $('retention');
+  if (!box) return;
+  const { data, error } = await supabase.rpc('purge_pending');
+  if (error) { box.style.display = 'none'; return; }
+  const rows = data || [];
+  if (!rows.length) {
+    box.innerHTML = `<p class="meta" style="margin:0;color:var(--amber)">
+      Nothing waiting to be cleared. Messages are deleted a month after a
+      conversation ends, unless a report is still open on it.</p>`;
+    return;
+  }
+  const held = rows.filter(r => r.held_because);
+  const due  = rows.filter(r => !r.held_because && new Date(r.due_at) <= new Date());
+  const soon = rows.filter(r => !r.held_because && new Date(r.due_at) > new Date());
+  const msgs = n => n.reduce((t, r) => t + Number(r.message_count || 0), 0);
+
+  box.innerHTML = `
+    <p class="meta" style="margin:0 0 .5rem;color:var(--amber)">
+      <strong>Chat logs.</strong> Deleted a month after a conversation ends.</p>
+    <ul class="meta" style="margin:0;padding-left:1.1rem;color:var(--amber)">
+      ${due.length  ? `<li><strong>${due.length}</strong> ready to clear now
+                       (${msgs(due)} messages)</li>` : ''}
+      ${soon.length ? `<li>${soon.length} not due yet — the earliest on
+                       ${esc(fmt(soon[0].due_at))}</li>` : ''}
+      ${held.length ? `<li>${held.length} held back: ${
+                       esc([...new Set(held.map(h => h.held_because))].join('; '))}</li>` : ''}
+    </ul>
+    ${due.length ? `<div class="actions" style="margin-top:.6rem">
+      <button class="btn btn-bad" id="purge-go">Clear them now</button></div>` : ''}`;
+
+  const go = $('purge-go');
+  if (go) go.onclick = async () => {
+    go.disabled = true; go.textContent = 'Clearing…';
+    const { data: n, error: err } = await supabase.rpc('admin_purge_now');
+    if (err) { go.disabled = false; go.textContent = 'Clear them now';
+               return toast(friendly(err), true); }
+    toast(`Cleared ${n} conversation${n === 1 ? '' : 's'}`);
+    await loadAll();
+    paintRetention(); paintConvos();
+  };
+}
+
+// Run on sign-in alongside the document sweep, so the month-old logs go
+// whether or not anyone thinks to press a button.
+async function purgeQuietly(){
+  const { data, error } = await supabase.rpc('admin_purge_now');
+  if (!error && data) toast(`Cleared ${data} old conversation${data === 1 ? '' : 's'}`);
+}
+
+async function sweepQuietly(){
+  const { data, error } = await supabase.rpc('orphan_id_documents');
+  if (error || !data || !data.length) return;
+  const { error: delErr } = await supabase.storage.from('id-documents')
+    .remove(data.map(r => r.path));
+  if (delErr) return;
+  toast(`Cleared ${data.length} leftover document${data.length>1?'s':''}`);
+}
+
+async function sweepOrphans(){
+  const out = $('sweep-out'), btn = $('sweep-check');
+  btn.disabled = true; out.textContent = 'Looking…';
+  const { data, error } = await supabase.rpc('orphan_id_documents');
+  btn.disabled = false;
+  if (error) { out.textContent = ''; return toast(friendly(error), true); }
+  const rows = data || [];
+  if (!rows.length) { out.textContent = 'Nothing stranded — the bucket is clean.'; return; }
+
+  out.innerHTML = `<strong>${rows.length} stranded file${rows.length>1?'s':''}</strong>` +
+    ` — ${rows.map(r => esc(r.belongs_to || 'unknown')).slice(0,4).join(', ')}` +
+    `${rows.length > 4 ? ' and others' : ''}. ` +
+    `<button class="btn btn-bad" id="sweep-go" style="margin-left:.4rem">Delete them</button>`;
+
+  $('sweep-go').onclick = async () => {
+    const b = $('sweep-go'); b.disabled = true; b.textContent = 'Deleting…';
+    const { error: delErr } = await supabase.storage.from('id-documents')
+      .remove(rows.map(r => r.path));
+    if (delErr) { b.disabled = false; b.textContent = 'Delete them';
+                  return toast(friendly(delErr), true); }
+    out.textContent = `Deleted ${rows.length} file${rows.length>1?'s':''}.`;
+    toast('Cleared');
+  };
+}
+
 function paintIdChecks(){
   const rows = MEMBERS.filter(m => m.id_status === 'pending');
   if (!rows.length) {
@@ -1346,7 +1537,10 @@ async function review(userId, approve, reason){
   // the check is done is pure liability, so remove it now.
   if (path) {
     const del = await supabase.storage.from('id-documents').remove([path]);
-    if (del.error) toast('Reviewed, but the document could not be deleted — remove it in Supabase.', true);
+    // If this fails the profile no longer points at the file, so nothing in
+    // the panel can reach it again. The sweep below is what actually
+    // guarantees it goes, rather than this one network call succeeding.
+    if (del.error) toast('Reviewed. The document will be cleared on the next sweep.', true);
   }
   toast(approve ? `✓ ${m?.name || 'Member'} verified — their age is now confirmed`
                 : `${m?.name || 'Member'} asked to send a clearer document`);
