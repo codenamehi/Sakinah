@@ -1,0 +1,8 @@
+{
+  "name": "halal-bridge",
+  "private": true,
+  "description": "Halal Bridge: coming-soon waitlist, admin panel and email functions",
+  "dependencies": {
+    "nodemailer": "^6.9.16"
+  }
+}

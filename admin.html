@@ -281,10 +281,21 @@ main{flex:1;width:100%;max-width:980px;margin:0 auto;padding:1.5rem 1.1rem 3rem}
 .msg-body{padding:.58rem .82rem;border-radius:10px;font-size:.87rem;line-height:1.6;
   white-space:pre-wrap;word-break:break-word;
   box-shadow:0 1px 2px var(--dip), inset 0 1px 0 var(--hair)}
-.msg.mine .msg-body{background:var(--sage-bg);border:1px solid var(--sage-line);color:var(--ink);
+/* Four voices, four bubbles. These were all within a shade of each other,
+   so you had to read the name above every message to know who was speaking. */
+.msg.mine .msg-body{                       /* the team, writing */
+  background:var(--amber-bg);border:1px solid var(--amber-line);
+  border-right:3px solid var(--sand);color:var(--amber);
   border-bottom-right-radius:3px}
-.msg.theirs .msg-body{background:var(--paper);border:1px solid var(--line);border-bottom-left-radius:3px}
-.msg.wali .msg-body{background:var(--amber-bg);border:1px solid var(--amber-line);color:var(--amber)}
+.msg.theirs .msg-body{                     /* one member */
+  background:var(--sunk);border:1px solid var(--line);border-bottom-left-radius:3px}
+.msg.them-b .msg-body{                     /* the other member */
+  background:var(--sage-bg);border:1px solid var(--sage-line);
+  color:var(--ink);border-bottom-left-radius:3px}
+.msg.wali .msg-body{                       /* a wali, sitting in */
+  background:var(--rose-bg);border:1px solid var(--rose-line);
+  border-left:3px solid var(--rose);color:var(--ink)}
+.msg-who{font-weight:600}
 .msg-time{font-size:.65rem;color:var(--ink-faint);margin-top:.18rem}
 .composer{display:flex;gap:.6rem;align-items:flex-end}
 .composer textarea{flex:1;background:var(--sunk);border:1px solid var(--line);border-radius:8px;
@@ -333,6 +344,28 @@ body.demo .tabs{top:91px}
   .msg{max-width:88%}
   .who{display:none}
 }
+
+/* ── waitlist ── */
+.wl-hero{margin-bottom:1rem}
+.wl-big{font-family:'Cormorant Garamond',serif;font-size:3rem;line-height:1;color:var(--ink)}
+.wl-goal{font-size:1.4rem;color:var(--ink-faint)}
+.wl-bar{height:10px;border-radius:999px;background:var(--sunk);border:1px solid var(--line);overflow:hidden;margin:1rem 0 .5rem}
+.wl-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--sand-hi),var(--sand));transition:width .6s}
+.wl-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin-bottom:1rem}
+.wl-stat{margin:0}
+.wl-num{font-family:'Cormorant Garamond',serif;font-size:2rem;line-height:1.1;color:var(--ink)}
+.wl-two{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1rem}
+.wl-two .card{margin:0}
+.wl-rowbar{display:grid;grid-template-columns:130px 1fr 44px;gap:.6rem;align-items:center;font-size:.82rem;padding:.22rem 0}
+.wl-rowbar i{display:block;height:8px;border-radius:99px;background:var(--sage-bg)}
+.wl-rowbar i b{display:block;height:100%;border-radius:99px;background:var(--sage)}
+.wl-rowbar span:last-child{text-align:right;color:var(--ink-soft)}
+.wl-lbl{display:block;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--ink-soft);margin-bottom:.35rem}
+.wl-table{width:100%;border-collapse:collapse;font-size:.82rem}
+.wl-table th{text-align:left;font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;padding:.5rem .6rem;border-bottom:1px solid var(--line)}
+.wl-table td{padding:.55rem .6rem;border-bottom:1px solid var(--line);vertical-align:top}
+.wl-tablewrap{overflow-x:auto;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius)}
+@media (max-width:760px){.wl-stats{grid-template-columns:1fr 1fr}.wl-two{grid-template-columns:1fr}}
 </style>
 <script>
 /* Set the theme before the first paint so there's no flash of the wrong one. */
@@ -403,14 +436,75 @@ setTimeout(function(){
   </div>
 
   <div class="tabs">
+    <button class="tab" data-view="waitlist">Waitlist <span id="c-waitlist"></span></button>
     <button class="tab active" data-view="members">Members <span id="c-members"></span></button>
     <button class="tab" data-view="idchecks">ID checks <span id="c-id"></span></button>
     <button class="tab" data-view="matches">Matches <span id="c-matches"></span></button>
     <button class="tab" data-view="convos">Conversations</button>
     <button class="tab" data-view="reports">Reports <span id="c-reports"></span></button>
+    <button class="tab" data-view="feedback">After meeting</button>
   </div>
 
   <main>
+    <section class="view" id="view-waitlist">
+      <div class="view-head">
+        <div>
+          <h2>Waitlist</h2>
+          <p>Everyone who has signed up on the coming-soon page. The public site stays a waitlist until you press Go live.</p>
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <button class="btn" id="wl-refresh">Refresh</button>
+          <button class="btn" id="wl-export">Export CSV</button>
+        </div>
+      </div>
+
+      <div class="card wl-hero">
+        <div class="row" style="align-items:flex-end">
+          <div>
+            <p class="meta">Sign-ups so far</p>
+            <div class="wl-big"><span id="wl-count">–</span><span class="wl-goal"> / <span id="wl-goal-text">1,000</span></span></div>
+          </div>
+          <span id="wl-status-pill" class="pill pill-wait">Not live yet</span>
+        </div>
+        <div class="wl-bar" role="progressbar" aria-label="Progress to launch goal" aria-valuemin="0" aria-valuemax="100" id="wl-bar"><span id="wl-bar-fill"></span></div>
+        <p class="meta" id="wl-bar-note"></p>
+      </div>
+
+      <div class="wl-stats">
+        <div class="card wl-stat"><p class="meta">Brothers</p><div class="wl-num" id="wl-brothers">–</div></div>
+        <div class="card wl-stat"><p class="meta">Sisters</p><div class="wl-num" id="wl-sisters">–</div></div>
+        <div class="card wl-stat"><p class="meta">Last 7 days</p><div class="wl-num" id="wl-week">–</div></div>
+        <div class="card wl-stat"><p class="meta">Today</p><div class="wl-num" id="wl-today">–</div></div>
+      </div>
+
+      <div class="wl-two">
+        <div class="card"><h3 class="name" style="margin-bottom:.7rem">By state</h3><div id="wl-states"></div></div>
+        <div class="card"><h3 class="name" style="margin-bottom:.7rem">How they heard about us</h3><div id="wl-heard"></div></div>
+      </div>
+
+      <div class="card" id="wl-launch">
+        <h3 class="name">Launch</h3>
+        <p class="meta" style="margin:.25rem 0 1rem">When you press Go live, the coming-soon page sends visitors to the app link below. Then send the launch email to everyone on the list.</p>
+        <label class="wl-lbl" for="wl-app-url">Link to the live app</label>
+        <input class="search" id="wl-app-url" placeholder="https://app.yourdomain.com.au" style="margin-bottom:.8rem"/>
+        <label class="wl-lbl" for="wl-goal-input">Launch goal</label>
+        <input class="search" id="wl-goal-input" type="number" min="1" style="margin-bottom:.8rem;max-width:160px"/>
+        <label class="wl-lbl" for="wl-subject">Launch email subject</label>
+        <input class="search" id="wl-subject" style="margin-bottom:.8rem"/>
+        <label class="wl-lbl" for="wl-body">Launch email message <span style="text-transform:none;letter-spacing:0;font-weight:400">— {{firstname}} becomes their first name, {{link}} the app link</span></label>
+        <textarea class="search" id="wl-body" rows="12" style="font-family:inherit;line-height:1.55;resize:vertical"></textarea>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.9rem">
+          <button class="btn" id="wl-save">Save changes</button>
+          <button class="btn btn-key" id="wl-golive">Go live</button>
+          <button class="btn btn-go" id="wl-send">Send launch email</button>
+        </div>
+        <p class="meta" id="wl-send-status" style="margin-top:.8rem"></p>
+      </div>
+
+      <input class="search" id="wl-search" placeholder="Search by name, email, city or state…"/>
+      <div id="wl-list"></div>
+    </section>
+
     <section class="view active" id="view-members">
       <div class="view-head">
         <div>
@@ -419,6 +513,7 @@ setTimeout(function(){
         </div>
       </div>
       <div id="queue"></div>
+      <div id="stale"></div>
       <input class="search" id="m-search" placeholder="Search by name, email or city…"/>
       <div id="members-list"></div>
     </section>
@@ -482,6 +577,17 @@ setTimeout(function(){
       </div>
       <div id="retention" class="card" style="background:var(--amber-bg);border-color:var(--amber-line)"></div>
       <div id="convos-list"></div>
+    </section>
+
+    <section class="view" id="view-feedback">
+      <div class="view-head">
+        <div>
+          <h2>After they met</h2>
+          <p>What each of them said afterwards, side by side. Neither ever sees
+             the other's answer, which is why they are honest.</p>
+        </div>
+      </div>
+      <div id="feedback-list"></div>
     </section>
 
     <section class="view" id="view-reports">
@@ -654,6 +760,19 @@ function makeDemoClient(){
       { id:'d-x7', conversation_id:'d-c4', sender_id:'d-hana', sender_name:'Hana Mahmoud',
         sender_role:'member', body:'Please stop asking.', created_at:ago(60*24*70) },
     ],
+    // Someone verified and ready who nobody has matched in two months.
+    stale: [
+      { id:'d-hana', name:'Hana Mahmoud', email:'hana@example.com', city:'Sydney',
+        age:25, joined_at:ago(60*24*70), last_matched_at:null, matches_so_far:0 },
+    ],
+    // One introduction that has already happened, with both answers in.
+    feedback: [
+      { match_id:'d-m2', met_at:ago(60*24*9),
+        a_name:'Aisha Rahman', a_said:'yes',
+        a_note:'It was easier than I expected. I would like to keep going.',
+        b_name:'Omar Siddiqui', b_said:'no',
+        b_note:'She was lovely, it just is not the right fit for me.' },
+    ],
     // Two files nothing points at, so the sweep has something to find.
     // One old enough to sweep, one uploaded two hours ago -- which the guard
     // must leave alone, because a file that new may be mid-submission.
@@ -773,6 +892,9 @@ function makeDemoClient(){
   function rpcBuilder(name, args){
     const b = { then(ok, bad){ return Promise.resolve(run()).then(ok, bad); } };
     function run(){
+      if (name === 'admin_waitlist') return { data: demoWaitlist(), error:null };
+      if (name === 'admin_site_settings') return { data: { ...DEMO_SETTINGS }, error:null };
+      if (name === 'admin_update_settings') { Object.assign(DEMO_SETTINGS, args.p_settings); return { data: { ...DEMO_SETTINGS }, error:null }; }
       if (name === 'admin_members') {
         const order = m => (m.kind === 'wali' ? 1 : 0) * 10 + (m.id_status === 'pending' ? 0 : 1) * 2 + (m.verified ? 1 : 0);
         return { data: [...S.members].sort((x,y) => order(x) - order(y)), error:null };
@@ -815,6 +937,12 @@ function makeDemoClient(){
         if (c) { c.last_message_at = new Date().toISOString();
                  c.last_message_preview = String(args.p_preview || '').slice(0,80); }
         return { data:null, error:null };
+      }
+      if (name === 'stale_members') {
+        return { data: (S.stale || []), error:null };
+      }
+      if (name === 'admin_feedback') {
+        return { data: (S.feedback || []), error:null };
       }
       if (name === 'purge_pending') {
         const month = 30*24*3600e3;
@@ -1065,7 +1193,7 @@ async function route(session){
   $('app').style.display = 'flex';
   $('who').textContent = ME.email;
   await loadAll();
-  showView('members');
+  showView('waitlist');
   // Not awaited: nothing on screen depends on it, and it must never be the
   // thing that keeps the panel from opening.
   sweepQuietly();
@@ -1117,6 +1245,7 @@ function paintCounts(){
   $('queue').innerHTML = jobs.length
     ? `<div class="queue"><h3>Needs you</h3><ul>${jobs.join('')}</ul></div>` : '';
   $('queue').querySelectorAll('[data-jump]').forEach(a => a.onclick = () => showView(a.dataset.jump));
+  paintStale();
 }
 
 // ───────── routing ─────────
@@ -1132,6 +1261,8 @@ function showView(name){
   if (name === 'matches') { paintPickers(); paintMatches(); }
   if (name === 'convos')  { paintConvos(); paintRetention(); }
   if (name === 'reports') loadReports();
+  if (name === 'feedback') loadFeedback();
+  if (name === 'waitlist') loadWaitlist();
 }
 function teardown(){
   if (msgChannel) { supabase.removeChannel(msgChannel); msgChannel = null; }
@@ -1941,19 +2072,28 @@ function paintConvos(){
       <p>Open one from a match where both sides have asked.</p></div>`;
     return;
   }
-  $('convos-list').innerHTML = CONVOS.map(c => {
+  // Anyone who has written to us directly is waiting on a reply, so they go
+  // above two people who are talking to each other quite happily.
+  const ordered = [...CONVOS].sort((a, b) =>
+    (b.kind === 'support') - (a.kind === 'support'));
+  $('convos-list').innerHTML = ordered.map(c => {
     const ps = partsOf(c.id);
     const members = ps.filter(p => p.role === 'member').map(p => nameOf(p.user_id));
     const extra = ps.filter(p => p.role === 'wali').map(p => nameOf(p.user_id));
-    return `<div class="card" style="cursor:pointer" data-convo="${esc(c.id)}">
+    // A member writing to us privately, rather than two members talking.
+    const support = c.kind === 'support';
+    return `<div class="card${support ? ' flag' : ''}" style="cursor:pointer" data-convo="${esc(c.id)}">
       <div class="row">
         <div style="min-width:0">
-          <h3 class="name">${esc(members.join(' & ') || 'Conversation')}</h3>
+          <h3 class="name">${support
+            ? esc(members[0] || 'A member') + ' &rarr; the team'
+            : esc(members.join(' & ') || 'Conversation')}</h3>
           <p class="meta">${esc(c.last_message_preview || 'No messages yet')}</p>
           ${extra.length ? `<p class="meta">Wali present: ${esc(extra.join(', '))}</p>` : ''}
         </div>
-        ${c.status === 'closed' ? '<span class="pill pill-no">Closed</span>'
-                                : '<span class="pill pill-ok">Open</span>'}
+        ${support ? '<span class="pill pill-wait">Asking us</span>'
+         : c.status === 'closed' ? '<span class="pill pill-no">Closed</span>'
+                                 : '<span class="pill pill-ok">Open</span>'}
       </div>
     </div>`;
   }).join('');
@@ -1967,7 +2107,14 @@ function renderThread(){
   const bottom = t.scrollHeight - t.scrollTop - t.clientHeight < 60;
   t.innerHTML = MSGS.map(m => {
     const mine = m.sender_id === ME.id;
-    const cls = mine ? 'mine' : (m.sender_role === 'wali' ? 'theirs wali' : 'theirs');
+    // The two members get a bubble each, so a three-way conversation reads
+    // as three people rather than as you and a wall of identical replies.
+    const members = [...new Set(MSGS.filter(x => x.sender_role === 'member')
+                                    .map(x => x.sender_id))];
+    const cls = mine ? 'mine'
+      : m.sender_role === 'wali'  ? 'theirs wali'
+      : m.sender_role === 'admin' ? 'mine'
+      : members.indexOf(m.sender_id) === 1 ? 'theirs them-b' : 'theirs';
     const tag = m.sender_role === 'wali' ? ' · Wali' : (m.sender_role === 'admin' && !mine ? ' · Team' : '');
     return `<div class="msg ${cls}">
       <span class="msg-who">${mine ? 'You' : esc(m.sender_name || 'Member')}${tag}</span>
@@ -2000,8 +2147,17 @@ async function openChat(c){
   const ps = partsOf(c.id);
   const members = ps.filter(p => p.role === 'member').map(p => nameOf(p.user_id));
   const others  = ps.filter(p => p.role !== 'member').map(p => nameOf(p.user_id) + ' (' + p.role + ')');
-  $('chat-title').textContent = members.join(' & ') || 'Conversation';
-  $('chat-sub').textContent = 'Also present: ' + (others.join(', ') || 'just you');
+  const support = c.kind === 'support';
+  $('chat-title').textContent = support
+    ? (members[0] || 'A member') + ' — asking us'
+    : (members.join(' & ') || 'Conversation');
+  $('chat-sub').textContent = support
+    ? 'A private line. Nobody they have been matched with can see this.'
+    : 'Also present: ' + (others.join(', ') || 'just you');
+  // Adding a wali to someone's private line to us would defeat the point
+  // of it being private.
+  $('wali-email').style.display = support ? 'none' : '';
+  $('add-wali').style.display   = support ? 'none' : '';
 
   const closed = c.status === 'closed';
   $('toggle-convo').textContent = closed ? 'Reopen conversation' : 'Close conversation';
@@ -2082,6 +2238,289 @@ $('composer-send').onclick = async () => {
   supabase.rpc('touch_conversation', { p_convo: currentConvo.id, p_preview: text })
     .then(() => {}, () => {});
 };
+
+// ───────── people nobody has got to ─────────
+// Verified, available, questionnaire finished, and still waiting. They are
+// invisible in a list sorted by anything else, and they are the ones who
+// quietly leave.
+async function paintStale(){
+  const box = $('stale');
+  if (!box) return;
+  const { data, error } = await supabase.rpc('stale_members');
+  if (error || !data || !data.length) { box.innerHTML = ''; return; }
+  const rows = data;
+  box.innerHTML = `<div class="queue" style="border-left-color:var(--rose)">
+    <h3>Waiting on you</h3>
+    <ul>
+      <li><strong>${rows.length}</strong> verified member${rows.length>1?'s':''}
+          ${rows.length>1?'have':'has'} been ready for six weeks or more with no match:
+          ${rows.slice(0,5).map(r => esc(r.name || 'someone')).join(', ')}${
+            rows.length > 5 ? ` and ${rows.length - 5} more` : ''}.</li>
+    </ul>
+    <p class="meta" style="margin:.4rem 0 0;color:var(--amber)">
+      Longest wait: ${esc(rows[0].name || 'someone')}, since
+      ${esc(fmt(rows[0].last_matched_at || rows[0].joined_at))}.</p>
+  </div>`;
+}
+
+// ───────── after they met ─────────
+
+// ───────── waitlist ─────────
+// The coming-soon page adds people through join_waitlist(); only an admin can
+// read them back, through admin_waitlist(). Going live and the launch email
+// wording live in site_settings.
+let WAITLIST = [], SETTINGS = {}, WL_LOADED = false;
+
+const DEMO_SETTINGS = {
+  launched:false, launch_goal:1000, app_url:'',
+  launch_email_subject:'Halal Bridge is now live',
+  launch_email_body:'Assalamu alaykum {{firstname}},\n\nAlhamdulillah, Halal Bridge is now open.\n\nCreate your account here:\n{{link}}\n\nJazakAllah khair,\nThe Halal Bridge Team'
+};
+let _demoWl = null;
+function demoWaitlist(){
+  if (_demoWl) return _demoWl;
+  const first = ['Aisha','Omar','Fatima','Yusuf','Maryam','Ibrahim','Zainab','Bilal','Hana','Khalid','Noor','Hamza','Sara','Tariq','Layla','Idris'];
+  const last  = ['Rahman','Ali','Hassan','Khan','Ahmed','Mahmoud','Siddiqui','Yousef','Hussain','Karim'];
+  const states = ['NSW','NSW','NSW','VIC','VIC','VIC','QLD','WA','SA','ACT','TAS','Outside Australia'];
+  const heard = ['Banner at the mosque','Instagram','Friend or family','TikTok','WhatsApp',null];
+  _demoWl = Array.from({ length: 347 }, (_, i) => {
+    const f = first[i % first.length], l = last[(i * 7) % last.length];
+    return { id:'d-w' + i, name: f + ' ' + l, email: (f + '.' + l + i).toLowerCase() + '@example.com',
+      gender: ['Aisha','Fatima','Maryam','Zainab','Hana','Noor','Sara','Layla'].includes(f) ? 'sister' : 'brother',
+      age: 20 + (i * 3) % 18, state: states[(i * 5) % states.length], city: null, phone: null,
+      heard_from: heard[i % heard.length], created_at: new Date(Date.now() - i * 3.1 * 3600000).toISOString(),
+      launch_emailed_at: null };
+  });
+  return _demoWl;
+}
+
+async function loadWaitlist(){
+  const [w, st] = await Promise.all([ supabase.rpc('admin_waitlist'), supabase.rpc('admin_site_settings') ]);
+  if (w.error || st.error) {
+    const e = w.error || st.error;
+    $('wl-list').innerHTML = `<div class="empty"><div class="display">Couldn't load the waitlist</div>
+      <p>${esc(friendly(e))}. If this is the first time, run <code>supabase/waitlist.sql</code> in the Supabase SQL editor.</p></div>`;
+    return;
+  }
+  WAITLIST = w.data || []; SETTINGS = st.data || {};
+  if (!WL_LOADED) {
+    $('wl-app-url').value  = SETTINGS.app_url || '';
+    $('wl-goal-input').value = SETTINGS.launch_goal || 1000;
+    $('wl-subject').value  = SETTINGS.launch_email_subject || '';
+    $('wl-body').value     = SETTINGS.launch_email_body || '';
+    WL_LOADED = true;
+  }
+  paintWaitlist();
+}
+
+function paintWaitlist(){
+  const n = WAITLIST.length;
+  const goal = Number(SETTINGS.launch_goal) || 1000;
+  const live = SETTINGS.launched === true;
+  const pct = Math.min(100, Math.round(n / goal * 100));
+  $('wl-count').textContent = n.toLocaleString();
+  $('wl-goal-text').textContent = goal.toLocaleString();
+  $('wl-bar-fill').style.width = pct + '%';
+  $('wl-bar').setAttribute('aria-valuenow', pct);
+  $('wl-bar-note').textContent = n >= goal
+    ? `Goal reached, alhamdulillah. You can go live whenever you're ready.`
+    : `${pct}% of the way there. ${(goal - n).toLocaleString()} more to go.`;
+  $('wl-status-pill').className = 'pill ' + (live ? 'pill-ok' : 'pill-wait');
+  $('wl-status-pill').textContent = live ? 'Live' : 'Not live yet';
+  $('wl-golive').textContent = live ? 'Take offline' : 'Go live';
+  $('wl-golive').className = live ? 'btn btn-bad' : 'btn btn-key';
+  $('c-waitlist').innerHTML = n ? `<span class="count">${n.toLocaleString()}</span>` : '';
+
+  const day = 86400000, now = Date.now();
+  const startOfToday = new Date(); startOfToday.setHours(0,0,0,0);
+  $('wl-brothers').textContent = WAITLIST.filter(x => x.gender === 'brother').length.toLocaleString();
+  $('wl-sisters').textContent  = WAITLIST.filter(x => x.gender === 'sister').length.toLocaleString();
+  $('wl-week').textContent  = WAITLIST.filter(x => now - new Date(x.created_at) < 7 * day).length.toLocaleString();
+  $('wl-today').textContent = WAITLIST.filter(x => new Date(x.created_at) >= startOfToday).length.toLocaleString();
+
+  const bars = (key, el) => {
+    const tally = {};
+    WAITLIST.forEach(x => { const k = x[key] || 'Not given'; tally[k] = (tally[k] || 0) + 1; });
+    const rows = Object.entries(tally).sort((a, b) => b[1] - a[1]);
+    const max = Math.max(1, ...rows.map(r => r[1]));
+    $(el).innerHTML = rows.length ? rows.map(([k, v]) =>
+      `<div class="wl-rowbar"><span>${esc(k)}</span><i><b style="width:${Math.round(v / max * 100)}%"></b></i><span>${v}</span></div>`).join('')
+      : '<p class="meta">Nothing yet.</p>';
+  };
+  bars('state', 'wl-states');
+  bars('heard_from', 'wl-heard');
+
+  const sent = WAITLIST.filter(x => x.launch_emailed_at).length;
+  const bounced = WAITLIST.filter(x => x.launch_email_error).length;
+  if (live) $('wl-send-status').textContent = `Launch email sent to ${sent.toLocaleString()} of ${n.toLocaleString()}.`
+    + (bounced ? ` ${bounced} couldn't be delivered (see the CSV).` : '');
+  else $('wl-send-status').textContent = 'The launch email can be sent once you go live.';
+
+  paintWaitlistList();
+}
+
+function paintWaitlistList(){
+  const q = $('wl-search').value.trim().toLowerCase();
+  const rows = WAITLIST.filter(x => !q ||
+    [x.name, x.email, x.city, x.state, x.phone].filter(Boolean).join(' ').toLowerCase().includes(q));
+  if (!rows.length) {
+    $('wl-list').innerHTML = `<div class="empty"><div class="display">${q ? 'No one matches that' : 'No sign-ups yet'}</div>
+      <p>${q ? 'Try a different search.' : 'People appear here as soon as they join on the coming-soon page.'}</p></div>`;
+    return;
+  }
+  const shown = rows.slice(0, 500);
+  $('wl-list').innerHTML = `<div class="wl-tablewrap"><table class="wl-table">
+    <thead><tr><th>Name</th><th>Email</th><th></th><th>Age</th><th>Location</th><th>Mobile</th><th>Heard from</th><th>Joined</th></tr></thead>
+    <tbody>${shown.map(x => `<tr>
+      <td>${esc(x.name)}</td><td>${esc(x.email)}</td>
+      <td><span class="pill ${x.gender === 'sister' ? 'pill-no' : 'pill-ok'}">${x.gender === 'sister' ? 'Sister' : 'Brother'}</span></td>
+      <td>${esc(x.age)}</td><td>${esc([x.city, x.state].filter(Boolean).join(', '))}</td>
+      <td>${esc(x.phone || '')}</td><td>${esc(x.heard_from || '')}</td>
+      <td style="white-space:nowrap">${esc(new Date(x.created_at).toLocaleDateString('en-AU', { day:'numeric', month:'short', year:'numeric' }))}</td>
+    </tr>`).join('')}</tbody></table></div>
+    ${rows.length > shown.length ? `<p class="meta" style="margin-top:.6rem">Showing the newest 500 of ${rows.length.toLocaleString()}. Export CSV for everyone.</p>` : ''}`;
+}
+
+$('wl-search').oninput = () => paintWaitlistList();
+$('wl-refresh').onclick = () => loadWaitlist();
+
+$('wl-export').onclick = () => {
+  if (!WAITLIST.length) return toast('No sign-ups yet');
+  const cols = ['name','email','gender','age','city','state','phone','heard_from','created_at','launch_emailed_at','launch_email_error'];
+  const head = ['Name','Email','Brother/Sister','Age','City','State','Mobile','Heard from','Joined','Launch email sent','Launch email problem'];
+  const csv = '﻿' + [head, ...WAITLIST.map(x => cols.map(c => x[c] ?? ''))]
+    .map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type:'text/csv;charset=utf-8' }));
+  a.download = 'halal-bridge-waitlist.csv'; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+};
+
+function launchFormValues(){
+  return {
+    app_url: $('wl-app-url').value.trim(),
+    launch_goal: Math.max(1, parseInt($('wl-goal-input').value, 10) || 1000),
+    launch_email_subject: $('wl-subject').value.trim(),
+    launch_email_body: $('wl-body').value
+  };
+}
+async function saveSettings(extra){
+  const { data, error } = await supabase.rpc('admin_update_settings', { p_settings: { ...launchFormValues(), ...(extra || {}) } });
+  if (error) { toast('Could not save: ' + friendly(error), true); return false; }
+  SETTINGS = data || SETTINGS;
+  paintWaitlist();
+  return true;
+}
+$('wl-save').onclick = async () => { if (await saveSettings()) toast('Saved'); };
+
+$('wl-golive').onclick = async () => {
+  const live = SETTINGS.launched === true;
+  const v = launchFormValues();
+  if (!live) {
+    if (!/^https:\/\//.test(v.app_url)) { toast('Add the link to the live app first (starting with https://)', true); $('wl-app-url').focus(); return; }
+    const goal = v.launch_goal, n = WAITLIST.length;
+    const msg = (n < goal ? `You have ${n.toLocaleString()} of ${goal.toLocaleString()} sign-ups.\n\n` : '')
+      + `Go live now?\n\nVisitors to the coming-soon page will be sent to:\n${v.app_url}`;
+    if (!confirm(msg)) return;
+    if (await saveSettings({ launched: true })) toast('Halal Bridge is live. Now send the launch email.');
+  } else {
+    if (!confirm('Take the site offline and show the coming-soon page again?')) return;
+    if (await saveSettings({ launched: false })) toast('Back to the coming-soon page');
+  }
+};
+
+// Sends in small batches so it never times out, and stops cleanly if the
+// email account hits its daily limit — press the button again the next day.
+let SENDING = false;
+$('wl-send').onclick = async () => {
+  if (SENDING) { SENDING = false; return; }
+  if (SETTINGS.launched !== true) { toast('Go live first', true); return; }
+  const pending = WAITLIST.filter(x => !x.launch_emailed_at && !x.launch_email_error).length;
+  if (!pending) { toast('Everyone has already been sent the launch email'); return; }
+  if (!await saveSettings()) return;
+  if (!confirm(`Send the launch email to ${pending.toLocaleString()} people?`)) return;
+
+  SENDING = true;
+  $('wl-send').textContent = 'Stop sending';
+  const status = $('wl-send-status');
+  let total = 0;
+  try {
+    while (SENDING) {
+      let r;
+      if (DEMO) {
+        await new Promise(res => setTimeout(res, 250));
+        const batch = WAITLIST.filter(x => !x.launch_emailed_at).slice(0, 10);
+        batch.forEach(x => x.launch_emailed_at = new Date().toISOString());
+        r = { sent: batch.length, remaining: WAITLIST.filter(x => !x.launch_emailed_at).length };
+      } else {
+        const { data: { session } } = await supabase.auth.getSession();
+        const res = await fetch('/api/launch-email', { method:'POST',
+          headers: { 'Content-Type':'application/json', Authorization: 'Bearer ' + session.access_token } });
+        r = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(r.message || ('Server returned ' + res.status));
+      }
+      total += r.sent || 0;
+      status.textContent = `Sent ${total.toLocaleString()} so far, ${Number(r.remaining || 0).toLocaleString()} left…`;
+      if (r.stopped) { status.textContent = `Sent ${total.toLocaleString()}. Paused: ${r.stopped}`; break; }
+      if (!r.remaining || (!r.sent && !r.failed)) break;
+    }
+  } catch (e) {
+    status.textContent = `Sent ${total.toLocaleString()}, then stopped: ${e.message}`;
+  } finally {
+    SENDING = false;
+    $('wl-send').textContent = 'Send launch email';
+    if (!DEMO) await loadWaitlist(); else paintWaitlist();
+    toast(`Launch email sent to ${total.toLocaleString()} ${total === 1 ? 'person' : 'people'}`);
+  }
+};
+
+async function loadFeedback(){
+  const box = $('feedback-list');
+  box.innerHTML = '<div class="empty"><p>Loading…</p></div>';
+  const { data, error } = await supabase.rpc('admin_feedback');
+  if (error) {
+    box.innerHTML = `<div class="empty"><div class="display">Couldn't load it</div>
+      <p>${esc(friendly(error))}</p></div>`;
+    return;
+  }
+  const rows = data || [];
+  if (!rows.length) {
+    box.innerHTML = `<div class="empty"><div class="display">Nothing yet</div>
+      <p>Once an introduction has happened, what each of them says about it
+         afterwards appears here.</p></div>`;
+    return;
+  }
+  const word = v => v === 'yes' ? '<span class="pill pill-ok">Would continue</span>'
+    : v === 'unsure' ? '<span class="pill pill-wait">Not sure</span>'
+    : v === 'no' ? '<span class="pill pill-no">Not right</span>'
+    : '<span class="pill pill-off">Hasn\'t said</span>';
+
+  box.innerHTML = rows.map(r => {
+    // Both saying yes is the thing you are looking for; one yes and one no
+    // is the thing that needs you to break it gently.
+    const both = r.a_said === 'yes' && r.b_said === 'yes';
+    const split = (r.a_said === 'no') !== (r.b_said === 'no')
+               && r.a_said && r.b_said;
+    return `<div class="card${both ? '' : split ? ' flag' : ''}">
+      <div class="row">
+        <div style="min-width:0">
+          <h3 class="name">${esc(r.a_name || '—')} &amp; ${esc(r.b_name || '—')}</h3>
+          <p class="meta">Met ${esc(fmt(r.met_at))}</p>
+        </div>
+        ${both ? '<span class="pill pill-ok">Both said yes</span>'
+         : split ? '<span class="pill pill-no">One yes, one no</span>' : ''}
+      </div>
+      <div class="detail open" style="display:block">
+        <dl>
+          <dt>${esc(r.a_name || 'One of them')}</dt>
+          <dd>${word(r.a_said)}${r.a_note ? '<br>' + esc(r.a_note) : ''}</dd>
+          <dt>${esc(r.b_name || 'The other')}</dt>
+          <dd>${word(r.b_said)}${r.b_note ? '<br>' + esc(r.b_note) : ''}</dd>
+        </dl>
+      </div>
+    </div>`;
+  }).join('');
+}
 
 // ───────── reports ─────────
 // The queue a moderator works through. A report is one side of a story, so
