@@ -59,13 +59,13 @@ insert into public.site_settings (key, value) values
   ('launched',      'false'::jsonb),
   ('launch_goal',   '1000'::jsonb),
   ('app_url',       '""'::jsonb),
-  ('launch_email_subject', to_jsonb('Halal Bridge is now live'::text)),
+  ('launch_email_subject', to_jsonb('Your Halal Bridge beta access is open'::text)),
   ('launch_email_body', to_jsonb(
 'Assalamu alaykum {{firstname}},
 
-Alhamdulillah, Halal Bridge is now open.
+Alhamdulillah, the Halal Bridge closed beta is now open, and your place is ready.
 
-You were one of the first to join our waitlist, and we are so grateful for your patience. You can now create your account, complete your profile and verification, and we will begin looking for your matches inshallah.
+Thank you for registering early and for your patience. You can now create your account, complete your profile and verification, and we will begin looking for your matches inshallah. As a beta member, your feedback will help shape Halal Bridge, so please tell us what works and what doesn''t.
 
 Every introduction is arranged by our team, nothing is shared until both sides agree, and every conversation is supervised, with your wali welcome to join.
 

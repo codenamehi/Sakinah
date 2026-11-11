@@ -26,11 +26,11 @@ module.exports = async (req, res) => {
     if (!admin) return res.status(401).json({ message: 'Sign in as an admin first.' });
 
     const settings = await getSettings();
-    if (settings.launched !== true) return res.status(400).json({ message: 'Go live before sending the launch email.' });
+    if (settings.launched !== true) return res.status(400).json({ message: 'Open the beta before sending the access email.' });
     const link = settings.app_url || process.env.HB_APP_URL || '';
     if (!/^https:\/\//.test(link)) return res.status(400).json({ message: 'Add the app link on the admin page first.' });
-    const subject = settings.launch_email_subject || 'Halal Bridge is now live';
-    const body = settings.launch_email_body || 'Assalamu alaykum {{firstname}},\n\nHalal Bridge is now open.\n\n{{link}}\n\nThe Halal Bridge Team';
+    const subject = settings.launch_email_subject || 'Your Halal Bridge beta access is open';
+    const body = settings.launch_email_body || 'Assalamu alaykum {{firstname}},\n\nThe Halal Bridge closed beta is now open.\n\n{{link}}\n\nThe Halal Bridge Team';
 
     const pendingFilter = 'launch_emailed_at=is.null&launch_email_error=is.null';
     const batch = await sb(`waitlist?${pendingFilter}&select=id,name,email&order=created_at.asc&limit=${BATCH}`);
@@ -44,7 +44,7 @@ module.exports = async (req, res) => {
         sent++;
       } catch (err) {
         if (looksLikeDailyLimit(err)) {
-          stopped = 'the email account reached its daily sending limit. Press Send launch email again tomorrow to carry on.';
+          stopped = 'the email account reached its daily sending limit. Press Send access email again tomorrow to carry on.';
           break;
         }
         // A bad address shouldn't block everyone after it. Note it and move on.

@@ -1,7 +1,7 @@
 // POST /api/welcome-email  { email }
 //
 // Called by the coming-soon page right after someone joins the waitlist, to
-// send them a "you're on the list" confirmation.
+// send them a "you're registered for the beta" confirmation.
 //
 // Because anyone can call this, it only ever emails an address that joined
 // the waitlist in the last 15 minutes and hasn't had a welcome email yet. So
@@ -12,13 +12,13 @@ const { sb, sendEmail, brandedEmail, fill, emailConfigured, supabaseConfigured }
 
 const WELCOME = `Assalamu alaykum {{firstname}},
 
-JazakAllah khair for joining the Halal Bridge waitlist. You're one of our founding members.
+JazakAllah khair for registering for the Halal Bridge closed beta. Your place is saved.
 
 Halal Bridge is a supervised matchmaking service for single Muslims. Every member is verified, every introduction is arranged by our team, and every conversation happens with us present, with your wali welcome to join.
 
-We're opening once 1,000 founding members have joined. We'll email you the moment we're live, inshallah.
+The beta opens once 1,000 people have registered. As soon as it does, we'll email you your access link so you can create your account, inshallah.
 
-If you know someone who is looking for marriage, please share Halal Bridge with them. The sooner we reach 1,000, the sooner we open.
+If you know someone who is looking for marriage, please share Halal Bridge with them. The sooner we reach 1,000, the sooner the beta opens.
 
 JazakAllah khair,
 The Halal Bridge Team`;
@@ -44,7 +44,7 @@ module.exports = async (req, res) => {
     if (!claimed || !claimed.length) return res.status(200).json({ ok: true });
 
     const text = fill(WELCOME, row, '');
-    await sendEmail(row.email, "You're on the Halal Bridge waitlist", brandedEmail(text), text);
+    await sendEmail(row.email, "You're registered for the Halal Bridge closed beta", brandedEmail(text), text);
     return res.status(200).json({ ok: true });
   } catch (err) {
     console.error('welcome-email error:', err);
