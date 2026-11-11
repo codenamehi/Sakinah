@@ -7,17 +7,17 @@
 <meta name="description" content="Halal Bridge is a supervised, verified matchmaking service for single Muslims in Australia. Register for the closed beta and be among the first members."/>
 <meta property="og:title" content="Halal Bridge — closed beta registration"/>
 <meta property="og:description" content="Verified members. Introductions arranged by our team. Every conversation supervised. Register for the closed beta."/>
-<meta name="theme-color" content="#0f2a24"/>
+<meta name="theme-color" content="#2a1248"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --night:#0f2a24;--night-2:#143229;--night-3:#1b4238;
+  --night:#2a1248;--night-2:#33185a;--night-3:#45227a;
   --sand:#c9a45c;--sand-hi:#dcbb7c;--sand-dk:#9b7430;--sand-lt:#7a5a22;
   --cream:#f5efe3;--paper:#fffdf8;--sunk:#f7f1e5;
-  --ink:#15322b;--ink-soft:#5c7168;--ink-faint:#8b9f96;
-  --line:#e6dac4;--sage:#1d6b66;--sage-bg:#dcefec;--rose:#a85435;--rose-bg:#fbe6dc;
+  --ink:#2a1a3f;--ink-soft:#6c5f80;--ink-faint:#998fa9;
+  --line:#e6dac4;--sage:#5a3596;--sage-bg:#ece4f7;--rose:#a85435;--rose-bg:#fbe6dc;
   --serif:'Cormorant Garamond',Georgia,serif;
   --sans:'Inter',system-ui,-apple-system,Segoe UI,sans-serif;
   --wrap:1120px;
@@ -50,21 +50,21 @@ p{margin:0}
 .hero::before{content:"";position:absolute;inset:0;
   background:
     radial-gradient(700px 520px at 82% 40%, rgba(201,164,92,.16), transparent 70%),
-    radial-gradient(900px 600px at 0% 0%, rgba(46,139,132,.22), transparent 66%);}
+    radial-gradient(900px 600px at 0% 0%, rgba(124,77,199,.22), transparent 66%);}
 .hero-pattern{position:absolute;right:-120px;top:50%;transform:translateY(-50%);width:640px;opacity:.13;pointer-events:none}
 .hero .wrap{position:relative;display:grid;grid-template-columns:1.15fr .85fr;gap:3rem;align-items:center}
 .hero .eyebrow{color:var(--sand-hi)}
 .hero h1{font-size:clamp(2.7rem,6vw,4.6rem);margin:1.1rem 0 1.4rem}
 .hero h1 em{font-style:italic;color:var(--sand-hi)}
-.hero-sub{font-size:1.08rem;color:#c9d6d0;max-width:34rem;font-weight:300}
+.hero-sub{font-size:1.08rem;color:#d6cee3;max-width:34rem;font-weight:300}
 .hero-actions{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;margin-top:2.2rem}
 .btn{display:inline-flex;align-items:center;gap:.55rem;font:500 .84rem var(--sans);letter-spacing:.12em;text-transform:uppercase;
   text-decoration:none;cursor:pointer;border-radius:999px;padding:1rem 1.7rem;border:0;transition:.2s}
-.btn-gold{background:linear-gradient(180deg,var(--sand-hi),var(--sand));color:#11261f;
+.btn-gold{background:linear-gradient(180deg,var(--sand-hi),var(--sand));color:#1f0f33;
   box-shadow:0 10px 28px -12px rgba(201,164,92,.7),inset 0 1px 0 rgba(255,255,255,.4)}
 .btn-gold:hover{filter:brightness(1.06);transform:translateY(-1px)}
 .btn-gold:disabled{opacity:.6;cursor:default;transform:none}
-.hero-note{font-size:.85rem;color:#9fb3ab}
+.hero-note{font-size:.85rem;color:#b3a8c6}
 .arch-card{position:relative;justify-self:center;width:min(100%,340px);aspect-ratio:3/4.1;
   border:1px solid rgba(201,164,92,.5);border-radius:170px 170px 18px 18px;padding:14px;
   background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.01))}
@@ -74,10 +74,10 @@ p{margin:0}
 .arch-inner .lantern{width:58px}
 .arch-inner p.ar{font-family:'Amiri','Scheherazade New',serif;font-size:1.6rem;color:var(--sand-hi);direction:rtl}
 .arch-inner p.q{font-family:var(--serif);font-style:italic;font-size:1.12rem;color:#e9e2d4;line-height:1.45}
-.arch-inner p.ref{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:#9fb3ab}
+.arch-inner p.ref{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:#b3a8c6}
 
 /* ── trust strip ── */
-.strip{background:var(--night-2);color:#dfe7e3;border-top:1px solid rgba(201,164,92,.18)}
+.strip{background:var(--night-2);color:#e7e1ef;border-top:1px solid rgba(201,164,92,.18)}
 .strip .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;padding:1.4rem 1.5rem}
 .strip div{display:flex;align-items:center;gap:.7rem;font-size:.86rem}
 .strip svg{flex:none;width:20px;height:20px;color:var(--sand)}
@@ -90,7 +90,7 @@ section{padding:100px 0}
 
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;counter-reset:step}
 .step{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:1.8rem 1.6rem 1.7rem;position:relative;
-  box-shadow:0 1px 2px rgba(31,51,48,.04),0 14px 30px -22px rgba(31,51,48,.3)}
+  box-shadow:0 1px 2px rgba(42,24,64,.04),0 14px 30px -22px rgba(42,24,64,.3)}
 .step-num{font-family:var(--serif);font-size:2.6rem;line-height:1;color:var(--sand);display:block;margin-bottom:.9rem}
 .step h3{margin-bottom:.55rem}
 .step p{color:var(--ink-soft);font-size:.95rem}
@@ -107,7 +107,7 @@ section{padding:100px 0}
 .pull::after{content:"";position:absolute;inset:auto -60px -80px auto;width:240px;height:240px;border-radius:50%;
   background:radial-gradient(circle,rgba(201,164,92,.25),transparent 70%)}
 .pull h2{font-size:2.1rem}
-.pull p{color:#c9d6d0;margin-top:1rem}
+.pull p{color:#d6cee3;margin-top:1rem}
 .pull ul{list-style:none;padding:0;margin:1.6rem 0 0}
 .pull li{display:flex;gap:.7rem;padding:.45rem 0;font-size:.95rem;color:#e9e2d4}
 .pull li::before{content:"✦";color:var(--sand)}
@@ -115,17 +115,17 @@ section{padding:100px 0}
 /* ── form ── */
 .join{background:
   radial-gradient(700px 500px at 100% 0%, rgba(201,164,92,.14), transparent 70%),
-  radial-gradient(700px 500px at 0% 100%, rgba(46,139,132,.14), transparent 70%), var(--cream)}
+  radial-gradient(700px 500px at 0% 100%, rgba(124,77,199,.14), transparent 70%), var(--cream)}
 .join-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:3.5rem;align-items:start}
 .join-copy p{color:var(--ink-soft);margin-top:1rem}
 .join-copy .milestone{margin-top:2rem;padding:1.3rem 1.4rem;border-left:3px solid var(--sand);background:rgba(255,255,255,.55);border-radius:0 12px 12px 0}
 .join-copy .milestone strong{font-family:var(--serif);font-size:1.25rem;font-weight:600;color:var(--ink);display:block}
 .form-card{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:2.2rem;
-  box-shadow:0 2px 4px rgba(31,51,48,.04),0 30px 60px -36px rgba(31,51,48,.45)}
+  box-shadow:0 2px 4px rgba(42,24,64,.04),0 30px 60px -36px rgba(42,24,64,.45)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 .field{margin-bottom:1.1rem}
-label.lbl{display:block;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--ink-soft);margin-bottom:.45rem}
-label.lbl .opt{text-transform:none;letter-spacing:0;font-weight:400;color:var(--ink-faint)}
+label.lbl,span.lbl{display:block;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--ink-soft);margin-bottom:.45rem}
+.lbl .opt{text-transform:none;letter-spacing:0;font-weight:400;color:var(--ink-faint)}
 input[type=text],input[type=email],input[type=tel],input[type=number],select{
   width:100%;font:400 1rem var(--sans);color:var(--ink);background:var(--sunk);border:1px solid var(--line);
   border-radius:10px;padding:.8rem .9rem;outline:none;transition:.15s;appearance:none}
@@ -159,13 +159,13 @@ details[open] summary::after{content:"−"}
 details p{color:var(--ink-soft);margin-top:.7rem;max-width:44rem}
 
 /* ── footer ── */
-footer{background:var(--night);color:#9fb3ab;padding:3rem 0;font-size:.86rem}
+footer{background:var(--night);color:#b3a8c6;padding:3rem 0;font-size:.86rem}
 footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:center}
 footer .brand-name{font-size:1.05rem}
 footer a{color:var(--sand-hi);text-decoration:none}
 
 /* ── live banner (only after launch, if no app link is set yet) ── */
-.live-banner{display:none;background:linear-gradient(180deg,var(--sand-hi),var(--sand));color:#11261f;text-align:center;padding:.7rem 1rem;font-weight:500;font-size:.92rem}
+.live-banner{display:none;background:linear-gradient(180deg,var(--sand-hi),var(--sand));color:#1f0f33;text-align:center;padding:.7rem 1rem;font-weight:500;font-size:.92rem}
 
 @media (max-width:900px){
   .hero{padding:120px 0 80px}

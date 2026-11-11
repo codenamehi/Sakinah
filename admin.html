@@ -15,7 +15,7 @@
 /* ── LIGHT, the default ─────────────────────────────────────────────────── */
 :root{
   color-scheme:light;
-  --night:#0f2a24;--night-2:#143229;--night-3:#1b4238;
+  --night:#2a1248;--night-2:#33185a;--night-3:#45227a;
   --sand:#9b7430;          /* gold as a fill, dark enough for pale text */
   --sand-hi:#b0853c;       /* the lit top edge of a gold button */
   --sand-lt:#7a5a22;       /* gold as text on a pale ground */
@@ -25,17 +25,17 @@
   --paper:#ffffff;         /* cards */
   --paper-hi:#fffdf8;
   --sunk:#f7f1e5;          /* fields */
-  --ink:#15322b;--ink-soft:#5c7168;--ink-faint:#8b9f96;
+  --ink:#2a1a3f;--ink-soft:#6c5f80;--ink-faint:#998fa9;
   --line:#e6dac4;
   --sage:#1d6b66;--sage-bg:#dcefec;--sage-line:#bfe0dc;
   --rose:#a85435;--rose-bg:#fbe6dc;--rose-line:#efc9b8;--on-rose:#fff5ef;
   --amber:#7a5a12;--amber-bg:#fbf0d8;--amber-line:#ecd9b8;
-  --glow-a:rgba(46,139,132,.10);
+  --glow-a:rgba(124,77,199,.10);
   --glow-b:rgba(201,164,92,.16);
   --grain:.038;
   --hair:rgba(255,255,255,.9);
-  --dip:rgba(31,51,48,.055);
-  --lift:0 1px 2px rgba(31,51,48,.05), 0 8px 20px -12px rgba(31,51,48,.2),
+  --dip:rgba(42,24,64,.055);
+  --lift:0 1px 2px rgba(42,24,64,.05), 0 8px 20px -12px rgba(42,24,64,.2),
          inset 0 1px 0 var(--hair);
   --scrim:rgba(40,30,15,.44);
   --radius:10px;
@@ -45,44 +45,44 @@
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
     color-scheme:dark;
-    --night:#0a1f1a;--night-2:#143229;--night-3:#1b4238;
+    --night:#1d0c33;--night-2:#33185a;--night-3:#45227a;
     --sand:#c9a45c;--sand-hi:#dcbb7c;--sand-lt:#e2c68e;--sand-line:#b8934a;
-    --on-sand:#11261f;
-    --cream:#0f2a24;--paper:#163a32;--paper-hi:#1b4339;--sunk:#11302a;
-    --ink:#f4efe6;--ink-soft:#a9bdb4;--ink-faint:#7b918a;
-    --line:#27463e;
+    --on-sand:#1f0f33;
+    --cream:#2a1248;--paper:#2b1a45;--paper-hi:#33204f;--sunk:#24133a;
+    --ink:#f4efe6;--ink-soft:#bdb2cf;--ink-faint:#8f84a2;
+    --line:#3d2b58;
     --sage:#6fc3a4;--sage-bg:#153f36;--sage-line:#2a5b4f;
     --rose:#e29070;--rose-bg:#3b241c;--rose-line:#5a3328;--on-rose:#2b160f;
     --amber:#e8c98e;--amber-bg:#332c19;--amber-line:#5a4a28;
-    --glow-a:rgba(32,100,86,.42);
+    --glow-a:rgba(90,50,150,.42);
     --glow-b:rgba(201,164,92,.11);
     --grain:.055;
     --hair:rgba(255,255,255,.055);
     --dip:rgba(0,0,0,.26);
     --lift:0 1px 2px rgba(0,0,0,.28), 0 10px 24px -14px rgba(0,0,0,.62),
            inset 0 1px 0 var(--hair);
-    --scrim:rgba(4,14,11,.74);
+    --scrim:rgba(12,4,22,.74);
   }
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
-  --night:#0a1f1a;--night-2:#143229;--night-3:#1b4238;
+  --night:#1d0c33;--night-2:#33185a;--night-3:#45227a;
   --sand:#c9a45c;--sand-hi:#dcbb7c;--sand-lt:#e2c68e;--sand-line:#b8934a;
-  --on-sand:#11261f;
-  --cream:#0f2a24;--paper:#163a32;--paper-hi:#1b4339;--sunk:#11302a;
-  --ink:#f4efe6;--ink-soft:#a9bdb4;--ink-faint:#7b918a;
-  --line:#27463e;
+  --on-sand:#1f0f33;
+  --cream:#2a1248;--paper:#2b1a45;--paper-hi:#33204f;--sunk:#24133a;
+  --ink:#f4efe6;--ink-soft:#bdb2cf;--ink-faint:#8f84a2;
+  --line:#3d2b58;
   --sage:#6fc3a4;--sage-bg:#153f36;--sage-line:#2a5b4f;
   --rose:#e29070;--rose-bg:#3b241c;--rose-line:#5a3328;--on-rose:#2b160f;
   --amber:#e8c98e;--amber-bg:#332c19;--amber-line:#5a4a28;
-  --glow-a:rgba(32,100,86,.42);
+  --glow-a:rgba(90,50,150,.42);
   --glow-b:rgba(201,164,92,.11);
   --grain:.055;
   --hair:rgba(255,255,255,.055);
   --dip:rgba(0,0,0,.26);
   --lift:0 1px 2px rgba(0,0,0,.28), 0 10px 24px -14px rgba(0,0,0,.62),
          inset 0 1px 0 var(--hair);
-  --scrim:rgba(4,14,11,.74);
+  --scrim:rgba(12,4,22,.74);
 }
 
 *{box-sizing:border-box}
@@ -108,7 +108,7 @@ input,textarea,select{font-family:inherit;font-size:15px}
 
 /* gate — the dark hero in both themes, same as the member app */
 #gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem;
-  background:radial-gradient(1100px 620px at 50% -12%,#1b4238 0%,transparent 62%),#071711}
+  background:radial-gradient(1100px 620px at 50% -12%,#45227a 0%,transparent 62%),#071711}
 .gate-card{width:100%;max-width:390px;text-align:center}
 .gate-mark{color:#c9a45c;font-size:.72rem;margin-bottom:.5rem}
 .gate-title{font-size:2.3rem;color:#f4efe6;margin:0 0 1.8rem;line-height:1.1}
@@ -123,7 +123,7 @@ input,textarea,select{font-family:inherit;font-size:15px}
   box-shadow:inset 0 2px 5px rgba(0,0,0,.3)}
 .gate-box input:focus{border-color:#c9a45c}
 .btn-primary{width:100%;background:linear-gradient(180deg,#dcbb7c,#c9a45c);
-  color:#11261f;border:1px solid #b8934a;border-radius:6px;
+  color:#1f0f33;border:1px solid #b8934a;border-radius:6px;
   padding:.82rem;font-weight:600;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;
   box-shadow:0 2px 5px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.32);
   transition:filter .18s}
@@ -140,7 +140,7 @@ input,textarea,select{font-family:inherit;font-size:15px}
              inset 0 1px 0 rgba(255,255,255,.05)}
 .topbar .wordmark{color:#c9a45c;font-size:.8rem}
 .topbar .tag{font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;
-  color:#11261f;background:linear-gradient(180deg,#dcbb7c,#c9a45c);
+  color:#1f0f33;background:linear-gradient(180deg,#dcbb7c,#c9a45c);
   padding:.16rem .5rem;border-radius:3px;
   margin-left:.7rem;font-weight:600;font-family:'Inter',sans-serif}
 .topbar-right{display:flex;align-items:center;gap:.7rem}

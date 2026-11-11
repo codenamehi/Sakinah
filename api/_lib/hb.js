@@ -101,7 +101,7 @@ function escapeHtml(s) {
 // the link becomes a button.
 function brandedEmail(bodyText, link, buttonLabel) {
   const button = `<div style="text-align:center;margin:22px 0 26px">
-        <a href="${escapeHtml(link)}" style="background:#c9a45c;color:#11261f;padding:14px 30px;border-radius:999px;text-decoration:none;font-weight:600;font-size:15px;display:inline-block">${escapeHtml(buttonLabel || 'Open Halal Bridge')}</a></div>`;
+        <a href="${escapeHtml(link)}" style="background:#c9a45c;color:#1f0f33;padding:14px 30px;border-radius:999px;text-decoration:none;font-weight:600;font-size:15px;display:inline-block">${escapeHtml(buttonLabel || 'Open Halal Bridge')}</a></div>`;
   const blocks = String(bodyText || '').split(/\n{2,}/).map(b => b.trim()).filter(Boolean);
   const html = blocks.map(b => {
     // Any line that is just the link becomes the button; the rest stays text.
@@ -118,12 +118,12 @@ function brandedEmail(bodyText, link, buttonLabel) {
   }).join('');
   return `<meta charset="utf-8">
 <div style="background:#f5efe3;padding:24px 12px">
-<div style="font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:auto;color:#15322b;font-size:15px;line-height:1.7">
-  <div style="background:#0f2a24;padding:28px;text-align:center;border-radius:12px 12px 0 0">
+<div style="font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:auto;color:#2a1a3f;font-size:15px;line-height:1.7">
+  <div style="background:#2a1248;padding:28px;text-align:center;border-radius:12px 12px 0 0">
     <div style="color:#dcbb7c;font-family:Georgia,serif;font-size:20px;letter-spacing:.32em">HALAL BRIDGE</div>
   </div>
   <div style="background:#fffdf8;padding:30px;border:1px solid #e6dac4;border-top:0">${html}</div>
-  <div style="background:#0f2a24;padding:18px;text-align:center;border-radius:0 0 12px 12px">
+  <div style="background:#2a1248;padding:18px;text-align:center;border-radius:0 0 12px 12px">
     <a href="mailto:${escapeHtml(EMAIL_USER)}" style="color:#dcbb7c;text-decoration:none;font-size:13px">${escapeHtml(EMAIL_USER)}</a>
   </div>
 </div></div>`;
