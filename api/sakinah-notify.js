@@ -1,8 +1,8 @@
 // Vercel Serverless Function — Halal Bridge email notifications.
 //
 // Supabase calls this whenever something happens that a person should hear
-// about. It sits beside send-email.js and reuses the same Gmail credentials,
-// so there is nothing new to set up on the sending side.
+// about. It lives in the Halal Bridge Vercel project and sends from the
+// Halal Bridge email account, separate from any other site.
 //
 // What it sends:
 //   • new row in matches                    -> both members: "you have a new match"
@@ -22,7 +22,7 @@
 //                              the webhook header in Supabase
 //   SAKINAH_APP_URL            (optional) where the member app is hosted
 //
-// GMAIL_USER and GMAIL_APP_PASSWORD are already set for send-email.js.
+//   HB_EMAIL_USER / HB_EMAIL_PASSWORD  the Halal Bridge email account (see api/_lib/hb.js)
 
 const crypto = require('crypto');
 
@@ -30,7 +30,7 @@ const SB_URL     = process.env.SUPABASE_URL;
 const SB_KEY     = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const SECRET     = process.env.SAKINAH_WEBHOOK_SECRET;
 const APP_URL    = process.env.SAKINAH_APP_URL || 'https://sakinah-nine-gamma.vercel.app';
-const ADMIN_EMAIL = process.env.GMAIL_USER || 'admin@nikkahpathways.com.au';
+const ADMIN_EMAIL = process.env.HB_EMAIL_USER;
 
 // Don't email someone twice about the same conversation inside this window.
 // A back-and-forth exchange should feel like a conversation, not an inbox flood.
@@ -42,7 +42,7 @@ function getTransporter() {
     const nodemailer = require('nodemailer');
     _transporter = nodemailer.createTransport({
       service: 'gmail',
-      auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_APP_PASSWORD },
+      auth: { user: process.env.HB_EMAIL_USER, pass: process.env.HB_EMAIL_PASSWORD },
     });
   }
   return _transporter;
@@ -84,7 +84,6 @@ function shell(heading, lines, cta) {
 <div style="font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:auto;color:#232736;font-size:15px;line-height:1.7">
   <div style="background:#1b2240;padding:30px;text-align:center;border-radius:8px 8px 0 0">
     <h1 style="color:#fff;margin:0;font-size:20px;letter-spacing:.3em;font-weight:400">HALAL BRIDGE</h1>
-    <p style="color:#d9bc8c;margin:8px 0 0;font-size:13px;font-style:italic">by Nikkah Pathways</p>
   </div>
   <div style="background:#fff;padding:30px;border:1px solid #e6e1d8">
     <h2 style="color:#1b2240;font-size:18px;margin:0 0 16px;font-weight:600">${heading}</h2>
@@ -94,7 +93,7 @@ function shell(heading, lines, cta) {
     </div>
   </div>
   <div style="background:#1b2240;padding:20px;text-align:center;border-radius:0 0 8px 8px">
-    <p style="color:#fff;margin:0;font-size:14px"><strong>The Nikkah Pathways Team</strong></p>
+    <p style="color:#fff;margin:0;font-size:14px"><strong>The Halal Bridge Team</strong></p>
     <a href="mailto:${ADMIN_EMAIL}" style="color:#d9bc8c;text-decoration:none;font-size:13px">${ADMIN_EMAIL}</a>
   </div>
 </div>`;
@@ -103,7 +102,7 @@ function shell(heading, lines, cta) {
 async function send(to, subject, html) {
   if (!to) return false;
   await getTransporter().sendMail({
-    from: `"Halal Bridge — Nikkah Pathways" <${ADMIN_EMAIL}>`,
+    from: `"Halal Bridge" <${ADMIN_EMAIL}>`,
     to, replyTo: ADMIN_EMAIL, subject, html,
   });
   console.log('sakinah-notify ->', subject, to);

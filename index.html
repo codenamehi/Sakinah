@@ -3,2415 +3,534 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta name="robots" content="noindex,nofollow"/>
-<title>Halal Bridge Admin</title>
+<title>Halal Bridge — Supervised Muslim matchmaking, coming soon</title>
+<meta name="description" content="Halal Bridge is a supervised, verified matchmaking service for single Muslims in Australia. Join the waitlist and be the first to know when we open."/>
+<meta property="og:title" content="Halal Bridge — coming soon"/>
+<meta property="og:description" content="Verified members. Introductions arranged by our team. Every conversation supervised. Join the waitlist."/>
+<meta name="theme-color" content="#0f2a24"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-/* Halal Bridge admin — the same two lights as the member app, run tighter:
-   smaller type, more on screen, nothing decorative. */
-
-/* ── LIGHT, the default ─────────────────────────────────────────────────── */
 :root{
-  color-scheme:light;
   --night:#0f2a24;--night-2:#143229;--night-3:#1b4238;
-  --sand:#9b7430;          /* gold as a fill, dark enough for pale text */
-  --sand-hi:#b0853c;       /* the lit top edge of a gold button */
-  --sand-lt:#7a5a22;       /* gold as text on a pale ground */
-  --sand-line:#c2a265;
-  --on-sand:#fffaf0;
-  --cream:#f5efe3;         /* page */
-  --paper:#ffffff;         /* cards */
-  --paper-hi:#fffdf8;
-  --sunk:#f7f1e5;          /* fields */
+  --sand:#c9a45c;--sand-hi:#dcbb7c;--sand-dk:#9b7430;--sand-lt:#7a5a22;
+  --cream:#f5efe3;--paper:#fffdf8;--sunk:#f7f1e5;
   --ink:#15322b;--ink-soft:#5c7168;--ink-faint:#8b9f96;
-  --line:#e6dac4;
-  --sage:#1d6b66;--sage-bg:#dcefec;--sage-line:#bfe0dc;
-  --rose:#a85435;--rose-bg:#fbe6dc;--rose-line:#efc9b8;--on-rose:#fff5ef;
-  --amber:#7a5a12;--amber-bg:#fbf0d8;--amber-line:#ecd9b8;
-  --glow-a:rgba(46,139,132,.10);
-  --glow-b:rgba(201,164,92,.16);
-  --grain:.038;
-  --hair:rgba(255,255,255,.9);
-  --dip:rgba(31,51,48,.055);
-  --lift:0 1px 2px rgba(31,51,48,.05), 0 8px 20px -12px rgba(31,51,48,.2),
-         inset 0 1px 0 var(--hair);
-  --scrim:rgba(40,30,15,.44);
-  --radius:10px;
+  --line:#e6dac4;--sage:#1d6b66;--sage-bg:#dcefec;--rose:#a85435;--rose-bg:#fbe6dc;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Inter',system-ui,-apple-system,Segoe UI,sans-serif;
+  --wrap:1120px;
 }
-
-/* ── DARK ───────────────────────────────────────────────────────────────── */
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    color-scheme:dark;
-    --night:#0a1f1a;--night-2:#143229;--night-3:#1b4238;
-    --sand:#c9a45c;--sand-hi:#dcbb7c;--sand-lt:#e2c68e;--sand-line:#b8934a;
-    --on-sand:#11261f;
-    --cream:#0f2a24;--paper:#163a32;--paper-hi:#1b4339;--sunk:#11302a;
-    --ink:#f4efe6;--ink-soft:#a9bdb4;--ink-faint:#7b918a;
-    --line:#27463e;
-    --sage:#6fc3a4;--sage-bg:#153f36;--sage-line:#2a5b4f;
-    --rose:#e29070;--rose-bg:#3b241c;--rose-line:#5a3328;--on-rose:#2b160f;
-    --amber:#e8c98e;--amber-bg:#332c19;--amber-line:#5a4a28;
-    --glow-a:rgba(32,100,86,.42);
-    --glow-b:rgba(201,164,92,.11);
-    --grain:.055;
-    --hair:rgba(255,255,255,.055);
-    --dip:rgba(0,0,0,.26);
-    --lift:0 1px 2px rgba(0,0,0,.28), 0 10px 24px -14px rgba(0,0,0,.62),
-           inset 0 1px 0 var(--hair);
-    --scrim:rgba(4,14,11,.74);
-  }
-}
-:root[data-theme="dark"]{
-  color-scheme:dark;
-  --night:#0a1f1a;--night-2:#143229;--night-3:#1b4238;
-  --sand:#c9a45c;--sand-hi:#dcbb7c;--sand-lt:#e2c68e;--sand-line:#b8934a;
-  --on-sand:#11261f;
-  --cream:#0f2a24;--paper:#163a32;--paper-hi:#1b4339;--sunk:#11302a;
-  --ink:#f4efe6;--ink-soft:#a9bdb4;--ink-faint:#7b918a;
-  --line:#27463e;
-  --sage:#6fc3a4;--sage-bg:#153f36;--sage-line:#2a5b4f;
-  --rose:#e29070;--rose-bg:#3b241c;--rose-line:#5a3328;--on-rose:#2b160f;
-  --amber:#e8c98e;--amber-bg:#332c19;--amber-line:#5a4a28;
-  --glow-a:rgba(32,100,86,.42);
-  --glow-b:rgba(201,164,92,.11);
-  --grain:.055;
-  --hair:rgba(255,255,255,.055);
-  --dip:rgba(0,0,0,.26);
-  --lift:0 1px 2px rgba(0,0,0,.28), 0 10px 24px -14px rgba(0,0,0,.62),
-         inset 0 1px 0 var(--hair);
-  --scrim:rgba(4,14,11,.74);
-}
-
 *{box-sizing:border-box}
-html,body{margin:0;padding:0}
-body{
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--sans);color:var(--ink);background:var(--cream);
+  font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+img{max-width:100%}
+a{color:inherit}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 1.5rem}
+.eyebrow{font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;font-weight:500;color:var(--sand-lt)}
+h1,h2,h3{font-family:var(--serif);font-weight:500;line-height:1.12;margin:0}
+h2{font-size:clamp(2rem,4vw,2.9rem)}
+h3{font-size:1.45rem}
+p{margin:0}
+
+/* ── nav ── */
+.nav{position:absolute;top:0;left:0;right:0;z-index:5}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:78px}
+.brand{display:flex;align-items:center;gap:.7rem;text-decoration:none;color:#f4efe6}
+.brand-mark{width:34px;height:34px}
+.brand-name{font-family:var(--serif);font-size:1.3rem;letter-spacing:.32em;text-transform:uppercase}
+.nav-cta{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;font-weight:500;color:#f4efe6;
+  border:1px solid rgba(244,239,230,.32);padding:.6rem 1.05rem;border-radius:999px;text-decoration:none;transition:.2s}
+.nav-cta:hover{border-color:var(--sand);color:var(--sand-hi)}
+
+/* ── hero ── */
+.hero{position:relative;background:var(--night);color:#f4efe6;overflow:hidden;padding:150px 0 110px}
+.hero::before{content:"";position:absolute;inset:0;
   background:
-    radial-gradient(900px 600px at 10% -6%, var(--glow-a) 0%, transparent 66%),
-    radial-gradient(800px 580px at 94% 100%, var(--glow-b) 0%, transparent 64%),
-    var(--cream);
-  background-attachment:fixed;
-  color:var(--ink);
-  font-family:'Inter',system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.6;
-  -webkit-font-smoothing:antialiased;min-height:100vh}
-body::after{
-  content:'';position:fixed;inset:0;z-index:999;pointer-events:none;
-  opacity:var(--grain);
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+    radial-gradient(700px 520px at 82% 40%, rgba(201,164,92,.16), transparent 70%),
+    radial-gradient(900px 600px at 0% 0%, rgba(46,139,132,.22), transparent 66%);}
+.hero-pattern{position:absolute;right:-120px;top:50%;transform:translateY(-50%);width:640px;opacity:.13;pointer-events:none}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.15fr .85fr;gap:3rem;align-items:center}
+.hero .eyebrow{color:var(--sand-hi)}
+.hero h1{font-size:clamp(2.7rem,6vw,4.6rem);margin:1.1rem 0 1.4rem}
+.hero h1 em{font-style:italic;color:var(--sand-hi)}
+.hero-sub{font-size:1.08rem;color:#c9d6d0;max-width:34rem;font-weight:300}
+.hero-actions{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;margin-top:2.2rem}
+.btn{display:inline-flex;align-items:center;gap:.55rem;font:500 .84rem var(--sans);letter-spacing:.12em;text-transform:uppercase;
+  text-decoration:none;cursor:pointer;border-radius:999px;padding:1rem 1.7rem;border:0;transition:.2s}
+.btn-gold{background:linear-gradient(180deg,var(--sand-hi),var(--sand));color:#11261f;
+  box-shadow:0 10px 28px -12px rgba(201,164,92,.7),inset 0 1px 0 rgba(255,255,255,.4)}
+.btn-gold:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.btn-gold:disabled{opacity:.6;cursor:default;transform:none}
+.hero-note{font-size:.85rem;color:#9fb3ab}
+.arch-card{position:relative;justify-self:center;width:min(100%,340px);aspect-ratio:3/4.1;
+  border:1px solid rgba(201,164,92,.5);border-radius:170px 170px 18px 18px;padding:14px;
+  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.01))}
+.arch-inner{height:100%;border:1px solid rgba(201,164,92,.28);border-radius:156px 156px 10px 10px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem 1.6rem;gap:1rem;
+  background:radial-gradient(260px 300px at 50% 32%, rgba(201,164,92,.2), transparent 70%)}
+.arch-inner .lantern{width:58px}
+.arch-inner p.ar{font-family:'Amiri','Scheherazade New',serif;font-size:1.6rem;color:var(--sand-hi);direction:rtl}
+.arch-inner p.q{font-family:var(--serif);font-style:italic;font-size:1.12rem;color:#e9e2d4;line-height:1.45}
+.arch-inner p.ref{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:#9fb3ab}
+
+/* ── trust strip ── */
+.strip{background:var(--night-2);color:#dfe7e3;border-top:1px solid rgba(201,164,92,.18)}
+.strip .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;padding:1.4rem 1.5rem}
+.strip div{display:flex;align-items:center;gap:.7rem;font-size:.86rem}
+.strip svg{flex:none;width:20px;height:20px;color:var(--sand)}
+
+/* ── sections ── */
+section{padding:100px 0}
+.sec-head{max-width:40rem;margin-bottom:3.2rem}
+.sec-head p{color:var(--ink-soft);margin-top:1rem;font-size:1.05rem}
+.sec-head h2{margin-top:.8rem}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;counter-reset:step}
+.step{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:1.8rem 1.6rem 1.7rem;position:relative;
+  box-shadow:0 1px 2px rgba(31,51,48,.04),0 14px 30px -22px rgba(31,51,48,.3)}
+.step-num{font-family:var(--serif);font-size:2.6rem;line-height:1;color:var(--sand);display:block;margin-bottom:.9rem}
+.step h3{margin-bottom:.55rem}
+.step p{color:var(--ink-soft);font-size:.95rem}
+
+.values{background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.values-grid{display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:start}
+.value{display:flex;gap:1.1rem;padding:1.3rem 0;border-bottom:1px solid var(--line)}
+.value:last-child{border-bottom:0}
+.value-icon{flex:none;width:46px;height:46px;border-radius:50%;background:var(--sage-bg);color:var(--sage);display:grid;place-items:center}
+.value-icon svg{width:22px;height:22px}
+.value h3{font-size:1.3rem;margin-bottom:.25rem}
+.value p{color:var(--ink-soft);font-size:.95rem}
+.pull{position:sticky;top:2rem;background:var(--night);color:#f4efe6;border-radius:20px;padding:2.6rem 2.3rem;overflow:hidden}
+.pull::after{content:"";position:absolute;inset:auto -60px -80px auto;width:240px;height:240px;border-radius:50%;
+  background:radial-gradient(circle,rgba(201,164,92,.25),transparent 70%)}
+.pull h2{font-size:2.1rem}
+.pull p{color:#c9d6d0;margin-top:1rem}
+.pull ul{list-style:none;padding:0;margin:1.6rem 0 0}
+.pull li{display:flex;gap:.7rem;padding:.45rem 0;font-size:.95rem;color:#e9e2d4}
+.pull li::before{content:"✦";color:var(--sand)}
+
+/* ── form ── */
+.join{background:
+  radial-gradient(700px 500px at 100% 0%, rgba(201,164,92,.14), transparent 70%),
+  radial-gradient(700px 500px at 0% 100%, rgba(46,139,132,.14), transparent 70%), var(--cream)}
+.join-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:3.5rem;align-items:start}
+.join-copy p{color:var(--ink-soft);margin-top:1rem}
+.join-copy .milestone{margin-top:2rem;padding:1.3rem 1.4rem;border-left:3px solid var(--sand);background:rgba(255,255,255,.55);border-radius:0 12px 12px 0}
+.join-copy .milestone strong{font-family:var(--serif);font-size:1.25rem;font-weight:600;color:var(--ink);display:block}
+.form-card{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:2.2rem;
+  box-shadow:0 2px 4px rgba(31,51,48,.04),0 30px 60px -36px rgba(31,51,48,.45)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.field{margin-bottom:1.1rem}
+label.lbl{display:block;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--ink-soft);margin-bottom:.45rem}
+label.lbl .opt{text-transform:none;letter-spacing:0;font-weight:400;color:var(--ink-faint)}
+input[type=text],input[type=email],input[type=tel],input[type=number],select{
+  width:100%;font:400 1rem var(--sans);color:var(--ink);background:var(--sunk);border:1px solid var(--line);
+  border-radius:10px;padding:.8rem .9rem;outline:none;transition:.15s;appearance:none}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235c7168' stroke-width='1.6' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right .9rem center;padding-right:2.2rem}
+input:focus,select:focus{border-color:var(--sand);box-shadow:0 0 0 3px rgba(201,164,92,.2);background:#fff}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{display:block;text-align:center;padding:.8rem;border:1px solid var(--line);border-radius:10px;background:var(--sunk);
+  cursor:pointer;font-weight:500;transition:.15s}
+.seg input:checked + label{border-color:var(--sand);background:#fff6e4;color:var(--sand-lt);box-shadow:0 0 0 3px rgba(201,164,92,.18)}
+.seg input:focus-visible + label{outline:2px solid var(--sand);outline-offset:2px}
+.consent{display:flex;gap:.7rem;align-items:flex-start;font-size:.88rem;color:var(--ink-soft);margin:.4rem 0 1.4rem}
+.consent input{margin-top:.25rem;width:18px;height:18px;accent-color:var(--sand-dk);flex:none}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.form-error{display:none;background:var(--rose-bg);color:var(--rose);border-radius:10px;padding:.75rem .9rem;font-size:.9rem;margin-bottom:1rem}
+.form-card .btn{width:100%;justify-content:center}
+.privacy{font-size:.8rem;color:var(--ink-faint);text-align:center;margin-top:1rem}
+.done{display:none;text-align:center;padding:1.5rem .5rem}
+.done .tick{width:64px;height:64px;border-radius:50%;background:var(--sage-bg);color:var(--sage);display:grid;place-items:center;margin:0 auto 1.2rem}
+.done h3{font-size:2rem;margin-bottom:.6rem}
+.done p{color:var(--ink-soft);max-width:26rem;margin:0 auto .8rem}
+
+/* ── faq ── */
+.faq{max-width:780px}
+details{border-bottom:1px solid var(--line);padding:1.25rem 0}
+summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:1rem;font-family:var(--serif);font-size:1.35rem;font-weight:500}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:var(--sans);font-weight:300;color:var(--sand-dk);font-size:1.5rem;line-height:1}
+details[open] summary::after{content:"−"}
+details p{color:var(--ink-soft);margin-top:.7rem;max-width:44rem}
+
+/* ── footer ── */
+footer{background:var(--night);color:#9fb3ab;padding:3rem 0;font-size:.86rem}
+footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:center}
+footer .brand-name{font-size:1.05rem}
+footer a{color:var(--sand-hi);text-decoration:none}
+
+/* ── live banner (only after launch, if no app link is set yet) ── */
+.live-banner{display:none;background:linear-gradient(180deg,var(--sand-hi),var(--sand));color:#11261f;text-align:center;padding:.7rem 1rem;font-weight:500;font-size:.92rem}
+
+@media (max-width:900px){
+  .hero{padding:120px 0 80px}
+  .hero .wrap,.values-grid,.join-grid{grid-template-columns:1fr}
+  .arch-card{width:min(100%,280px)}
+  .steps{grid-template-columns:1fr 1fr}
+  .strip .wrap{grid-template-columns:1fr 1fr}
+  .pull{position:relative;top:auto}
+  .hero-pattern{width:420px;right:-200px;top:22%}
+  section{padding:76px 0}
 }
-button{font-family:inherit;cursor:pointer}
-input,textarea,select{font-family:inherit;font-size:15px}
-.display{font-family:'Cormorant Garamond',Georgia,serif;font-weight:300}
-.wordmark{font-family:'Cormorant Garamond',serif;font-weight:400;letter-spacing:.34em;text-transform:uppercase}
-
-/* gate — the dark hero in both themes, same as the member app */
-#gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem;
-  background:radial-gradient(1100px 620px at 50% -12%,#1b4238 0%,transparent 62%),#071711}
-.gate-card{width:100%;max-width:390px;text-align:center}
-.gate-mark{color:#c9a45c;font-size:.72rem;margin-bottom:.5rem}
-.gate-title{font-size:2.3rem;color:#f4efe6;margin:0 0 1.8rem;line-height:1.1}
-.gate-box{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03));
-  border:1px solid rgba(184,147,74,.26);
-  border-radius:var(--radius);padding:1.6rem;text-align:left;backdrop-filter:blur(8px);
-  box-shadow:0 20px 44px -22px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.07)}
-.gate-box label{display:block;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
-  color:rgba(244,239,230,.55);margin-bottom:.4rem}
-.gate-box input{width:100%;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.14);
-  border-radius:6px;padding:.72rem .85rem;color:#f4efe6;margin-bottom:1rem;outline:none;
-  box-shadow:inset 0 2px 5px rgba(0,0,0,.3)}
-.gate-box input:focus{border-color:#c9a45c}
-.btn-primary{width:100%;background:linear-gradient(180deg,#dcbb7c,#c9a45c);
-  color:#11261f;border:1px solid #b8934a;border-radius:6px;
-  padding:.82rem;font-weight:600;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;
-  box-shadow:0 2px 5px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.32);
-  transition:filter .18s}
-.btn-primary:hover{filter:brightness(1.07)}
-.btn-primary:disabled{opacity:.55;cursor:default;box-shadow:none}
-.gate-msg{font-size:.8rem;margin-top:.9rem;text-align:center;min-height:1.1rem;color:#e29070}
-
-/* shell */
-#app{display:none;min-height:100vh;flex-direction:column;position:relative}
-.topbar{background:linear-gradient(180deg,var(--night-2),var(--night));
-  color:#f4efe6;padding:0 1.3rem;height:58px;display:flex;
-  align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;
-  box-shadow:0 1px 0 rgba(0,0,0,.25), 0 8px 20px -14px rgba(0,0,0,.6),
-             inset 0 1px 0 rgba(255,255,255,.05)}
-.topbar .wordmark{color:#c9a45c;font-size:.8rem}
-.topbar .tag{font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;
-  color:#11261f;background:linear-gradient(180deg,#dcbb7c,#c9a45c);
-  padding:.16rem .5rem;border-radius:3px;
-  margin-left:.7rem;font-weight:600;font-family:'Inter',sans-serif}
-.topbar-right{display:flex;align-items:center;gap:.7rem}
-.who{font-size:.76rem;color:rgba(244,239,230,.6);max-width:26vw;overflow:hidden;
-  text-overflow:ellipsis;white-space:nowrap}
-.btn-ghost{background:rgba(255,255,255,.04);border:1px solid rgba(244,239,230,.22);
-  color:rgba(244,239,230,.8);border-radius:5px;padding:.34rem .7rem;font-size:.72rem;
-  transition:border-color .15s,color .15s,background .15s}
-.btn-ghost:hover{border-color:#c9a45c;color:#e2c68e;background:rgba(255,255,255,.08)}
-.btn-theme{background:rgba(255,255,255,.04);border:1px solid rgba(244,239,230,.22);
-  color:rgba(244,239,230,.82);border-radius:5px;width:29px;height:27px;
-  display:inline-flex;align-items:center;justify-content:center;padding:0;flex:none;
-  transition:border-color .15s,color .15s,background .15s}
-.btn-theme:hover{border-color:#c9a45c;color:#e2c68e;background:rgba(255,255,255,.08)}
-/* `.btn-theme svg` is a class plus an element, so it outranks a bare
-   `.icon-sun` and both icons showed at once. Every rule that decides which
-   icon is visible is scoped to the button for that reason. */
-.btn-theme svg{width:14px;height:14px}
-.btn-theme .icon-sun{display:none}
-.btn-theme .icon-moon{display:block}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]) .btn-theme .icon-sun{display:block}
-  :root:not([data-theme="light"]) .btn-theme .icon-moon{display:none}
+@media (max-width:560px){
+  .steps,.grid2{grid-template-columns:1fr}
+  .strip .wrap{grid-template-columns:1fr}
+  .form-card{padding:1.5rem}
+  .nav-cta{display:none}
+  .brand-name{font-size:1.1rem}
 }
-:root[data-theme="dark"] .btn-theme .icon-sun{display:block}
-:root[data-theme="dark"] .btn-theme .icon-moon{display:none}
-
-.tabs{display:flex;background:var(--paper);border-bottom:1px solid var(--line);
-  position:sticky;top:58px;z-index:49;overflow-x:auto;
-  box-shadow:0 6px 16px -14px rgba(0,0,0,.5)}
-.tab{flex:1;min-width:112px;background:none;border:none;padding:.85rem .5rem;font-size:.7rem;
-  letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);
-  border-bottom:2px solid transparent;white-space:nowrap}
-.tab.active{color:var(--ink);border-bottom-color:var(--sand);font-weight:600}
-.tab .count{display:inline-block;background:var(--rose);color:var(--on-rose);border-radius:9px;
-  font-size:.62rem;padding:0 .36rem;margin-left:.3rem;vertical-align:1px;font-weight:700;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
-
-main{flex:1;width:100%;max-width:980px;margin:0 auto;padding:1.5rem 1.1rem 3rem}
-.view{display:none}
-.view.active{display:block}
-.view-head{margin-bottom:1.2rem;display:flex;justify-content:space-between;
-  align-items:flex-end;gap:1rem;flex-wrap:wrap}
-.view-head h2{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:1.6rem;
-  margin:0 0 .1rem;color:var(--ink)}
-.view-head p{margin:0;color:var(--ink-soft);font-size:.84rem}
-
-/* action queue */
-.queue{background:var(--amber-bg);border:1px solid var(--amber-line);border-left:3px solid var(--sand);
-  border-radius:var(--radius);padding:1rem 1.2rem;margin-bottom:1.3rem;
-  box-shadow:0 1px 2px var(--dip)}
-.queue h3{margin:0 0 .5rem;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
-.queue ul{margin:0;padding-left:1.1rem;font-size:.86rem;color:var(--amber)}
-.queue li{margin-bottom:.25rem}
-.queue a{color:var(--sand-lt);cursor:pointer;text-decoration:underline}
-
-.card{background:linear-gradient(180deg,var(--paper-hi),var(--paper));
-  border:1px solid var(--line);border-radius:var(--radius);
-  padding:1.2rem;margin-bottom:.9rem;box-shadow:var(--lift)}
-.card.flag{border-color:var(--rose);border-left:3px solid var(--rose)}
-.row{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
-.name{font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:var(--ink);margin:0 0 .1rem}
-.meta{font-size:.8rem;color:var(--ink-soft);margin:0}
-.pill{display:inline-block;font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;
-  padding:.24rem .58rem;border-radius:20px;font-weight:600;white-space:nowrap;
-  border:1px solid transparent}
-.pill-ok{background:var(--sage-bg);color:var(--sage);border-color:var(--sage-line)}
-.pill-wait{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-line)}
-.pill-off{background:var(--sunk);color:var(--ink-faint);border-color:var(--line)}
-.pill-no{background:var(--rose-bg);color:var(--rose);border-color:var(--rose-line)}
-.actions{margin-top:.9rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
-.btn{border:1px solid var(--line);
-  background:linear-gradient(180deg,var(--paper),var(--sunk));
-  color:var(--ink);border-radius:6px;
-  padding:.46rem .85rem;font-size:.75rem;font-weight:500;
-  box-shadow:0 1px 2px var(--dip);transition:border-color .15s,filter .15s,transform .1s}
-.btn:hover{border-color:var(--sand)}
-.btn:active{transform:translateY(1px)}
-.btn-go{background:linear-gradient(180deg,var(--night-3),var(--night-2));
-  color:#f4efe6;border-color:var(--night-3)}
-.btn-go:hover{border-color:var(--sand);filter:brightness(1.12)}
-.btn-key{background:linear-gradient(180deg,var(--sand-hi),var(--sand));
-  color:var(--on-sand);border-color:var(--sand-line);font-weight:600;
-  box-shadow:0 2px 4px var(--dip), inset 0 1px 0 rgba(255,255,255,.3)}
-.btn-key:hover{filter:brightness(1.07)}
-.btn-bad{color:var(--rose);border-color:var(--rose-line)}
-.btn-bad:hover{background:var(--rose-bg);border-color:var(--rose)}
-.btn:disabled{opacity:.45;cursor:default;box-shadow:none}
-/* A line of text asked for inside the card it belongs to, rather than in a
-   browser dialog. You type why the photo is unreadable while looking at it. */
-.ask{margin-top:.9rem;padding:.9rem;background:var(--sunk);border:1px solid var(--line);
-  border-radius:8px;box-shadow:inset 0 2px 4px var(--dip)}
-.ask-label{display:block;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--ink-soft);margin-bottom:.45rem}
-.ask-quick{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.55rem}
-.ask-quick button{background:var(--paper);border:1px solid var(--line);color:var(--ink-soft);
-  border-radius:999px;padding:.26rem .62rem;font-size:.72rem;text-align:left}
-.ask-quick button:hover{border-color:var(--sand);color:var(--ink)}
-.ask textarea{width:100%;background:var(--paper);border:1px solid var(--line);border-radius:6px;
-  padding:.55rem .7rem;color:var(--ink);outline:none;resize:vertical;min-height:64px;
-  font-size:.84rem;line-height:1.55;font-family:inherit}
-.ask textarea::placeholder{color:var(--ink-faint)}
-.ask textarea:focus{border-color:var(--sand)}
-.ask-foot{display:flex;gap:.5rem;margin-top:.6rem;flex-wrap:wrap}
-.detail{margin-top:.9rem;padding-top:.9rem;border-top:1px solid var(--line);
-  font-size:.86rem;display:none}
-.detail.open{display:block}
-.detail dl{display:grid;grid-template-columns:135px 1fr;gap:.35rem .9rem;margin:0}
-.detail dt{color:var(--ink-soft);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase}
-.detail dd{margin:0}
-
-.field{margin-bottom:.9rem}
-.field label{display:block;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--ink-soft);margin-bottom:.32rem}
-.field input,.field select,.field textarea{width:100%;background:var(--sunk);
-  border:1px solid var(--line);border-radius:6px;padding:.6rem .75rem;color:var(--ink);outline:none;
-  box-shadow:inset 0 2px 4px var(--dip);transition:border-color .15s}
-.field input::placeholder,.field textarea::placeholder{color:var(--ink-faint)}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--sand)}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
-.search{width:100%;background:var(--sunk);border:1px solid var(--line);border-radius:8px;
-  padding:.65rem .9rem;margin-bottom:1rem;outline:none;color:var(--ink);
-  box-shadow:inset 0 2px 4px var(--dip)}
-.search::placeholder{color:var(--ink-faint)}
-.search:focus{border-color:var(--sand)}
-.empty{text-align:center;padding:2.6rem 1.2rem;color:var(--ink-soft)}
-.empty .display{font-size:1.15rem;color:var(--ink);margin-bottom:.3rem}
-.empty p{font-size:.85rem;margin:0}
-
-/* chat — a well sunk into the page, not a card raised off it */
-.thread{background:var(--sunk);border:1px solid var(--line);border-radius:var(--radius);
-  padding:1.1rem;height:46vh;min-height:260px;overflow-y:auto;margin-bottom:.8rem;
-  box-shadow:inset 0 2px 8px var(--dip)}
-.thread.log{height:auto;max-height:42vh}
-.msg{margin-bottom:1rem;display:flex;flex-direction:column;max-width:78%}
-.msg.mine{margin-left:auto;align-items:flex-end}
-.msg-who{font-size:.67rem;letter-spacing:.06em;color:var(--ink-soft);margin-bottom:.2rem}
-.msg-body{padding:.58rem .82rem;border-radius:10px;font-size:.87rem;line-height:1.6;
-  white-space:pre-wrap;word-break:break-word;
-  box-shadow:0 1px 2px var(--dip), inset 0 1px 0 var(--hair)}
-/* Four voices, four bubbles. These were all within a shade of each other,
-   so you had to read the name above every message to know who was speaking. */
-.msg.mine .msg-body{                       /* the team, writing */
-  background:var(--amber-bg);border:1px solid var(--amber-line);
-  border-right:3px solid var(--sand);color:var(--amber);
-  border-bottom-right-radius:3px}
-.msg.theirs .msg-body{                     /* one member */
-  background:var(--sunk);border:1px solid var(--line);border-bottom-left-radius:3px}
-.msg.them-b .msg-body{                     /* the other member */
-  background:var(--sage-bg);border:1px solid var(--sage-line);
-  color:var(--ink);border-bottom-left-radius:3px}
-.msg.wali .msg-body{                       /* a wali, sitting in */
-  background:var(--rose-bg);border:1px solid var(--rose-line);
-  border-left:3px solid var(--rose);color:var(--ink)}
-.msg-who{font-weight:600}
-.msg-time{font-size:.65rem;color:var(--ink-faint);margin-top:.18rem}
-.composer{display:flex;gap:.6rem;align-items:flex-end}
-.composer textarea{flex:1;background:var(--sunk);border:1px solid var(--line);border-radius:8px;
-  padding:.68rem .82rem;resize:none;min-height:46px;max-height:140px;outline:none;line-height:1.5;
-  color:var(--ink);box-shadow:inset 0 2px 4px var(--dip)}
-.composer textarea::placeholder{color:var(--ink-faint)}
-.composer textarea:focus{border-color:var(--sand)}
-.composer button{background:linear-gradient(180deg,var(--sand-hi),var(--sand));
-  color:var(--on-sand);border:1px solid var(--sand-line);border-radius:8px;
-  padding:.72rem 1.2rem;font-size:.75rem;letter-spacing:.07em;text-transform:uppercase;
-  font-weight:600;flex-shrink:0;
-  box-shadow:0 2px 5px var(--dip), inset 0 1px 0 rgba(255,255,255,.3);
-  transition:filter .18s,transform .1s}
-.composer button:hover{filter:brightness(1.07)}
-.composer button:active{transform:translateY(1px)}
-.composer button:disabled{opacity:.45;cursor:default;box-shadow:none;transform:none}
-.back{background:linear-gradient(180deg,var(--paper),var(--sunk));
-  border:1px solid var(--line);border-radius:5px;padding:.34rem .7rem;
-  font-size:.74rem;color:var(--ink-soft);margin-bottom:.9rem;box-shadow:0 1px 2px var(--dip)}
-.back:hover{border-color:var(--sand);color:var(--ink)}
-
-#demo-bar{background:linear-gradient(180deg,var(--sand-hi),var(--sand));
-  color:var(--on-sand);text-align:center;
-  padding:.5rem 1rem;font-size:.8rem;position:sticky;top:0;z-index:60;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
-#demo-bar strong{letter-spacing:.1em;text-transform:uppercase;font-size:.72rem}
-#demo-bar a{margin-left:.6rem;text-decoration:underline;color:var(--on-sand)}
-body.demo .topbar{top:33px}
-body.demo .tabs{top:91px}
-.toast{position:fixed;left:50%;bottom:1.6rem;transform:translateX(-50%) translateY(140%);
-  background:var(--night);color:#f4efe6;border:1px solid var(--line);
-  padding:.75rem 1.3rem;border-radius:7px;font-size:.84rem;
-  box-shadow:0 14px 34px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.07);
-  transition:transform .3s cubic-bezier(.3,1.2,.5,1);
-  z-index:1000;max-width:88vw;text-align:center;visibility:hidden}
-.toast.show{transform:translateX(-50%) translateY(0);visibility:visible}
-.toast.bad{background:var(--rose);color:var(--on-rose);border-color:var(--rose)}
-#loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-  background:var(--cream);color:var(--sand-lt);z-index:300;font-family:'Cormorant Garamond',serif;
-  letter-spacing:.3em;text-transform:uppercase;font-size:.78rem}
-@media(max-width:600px){
-  .grid-2{grid-template-columns:1fr}
-  .detail dl{grid-template-columns:1fr;gap:.15rem}
-  .detail dt{margin-top:.5rem}
-  main{padding:1.1rem .85rem 2.4rem}
-  .msg{max-width:88%}
-  .who{display:none}
-}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
-<script>
-/* Set the theme before the first paint so there's no flash of the wrong one. */
-(function(){
-  try {
-    var t = localStorage.getItem('hb-theme');
-    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
-  } catch (e) {}
-})();
-</script>
 </head>
 <body>
 
-<div id="loading">Halal Bridge Admin</div>
+<div class="live-banner" id="live-banner">Alhamdulillah, Halal Bridge is now open. We're emailing everyone on the waitlist with how to join.</div>
 
-<script>
-window.__sakinahBoot = false;
-setTimeout(function(){
-  if (window.__sakinahBoot) return;
-  var el = document.getElementById('loading');
-  if (!el || el.style.display === 'none') return;
-  el.innerHTML = '<div style="max-width:400px;text-align:center;line-height:2;letter-spacing:normal;'
-    + 'text-transform:none;font-size:.95rem"><strong style="letter-spacing:.2em">HALAL BRIDGE ADMIN</strong>'
-    + '<br><br>This page couldn\'t finish loading.<br>Check your connection and refresh.</div>';
-}, 8000);
-</script>
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Halal Bridge home">
+      <svg class="brand-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <path d="M6 36V20a14 14 0 0 1 28 0v16" stroke="#c9a45c" stroke-width="1.6"/>
+        <path d="M12 36V21a8 8 0 0 1 16 0v15" stroke="#c9a45c" stroke-width="1.2" opacity=".6"/>
+        <path d="M2 36h36" stroke="#c9a45c" stroke-width="1.6"/>
+        <circle cx="20" cy="17" r="1.8" fill="#dcbb7c"/>
+      </svg>
+      <span class="brand-name">Halal Bridge</span>
+    </a>
+    <a class="nav-cta" href="#join">Join the waitlist</a>
+  </div>
+</header>
 
-<!-- ───────── GATE ───────── -->
-<div id="gate" style="display:none">
-  <div class="gate-card">
-    <div class="wordmark gate-mark">Halal Bridge</div>
-    <h1 class="display gate-title">Admin</h1>
-    <div class="gate-box">
-      <label>Email</label>
-      <input type="email" id="g-email" placeholder="you@email.com" autocomplete="email"/>
-      <label>Password</label>
-      <input type="password" id="g-pass" placeholder="••••••••" autocomplete="current-password"/>
-      <button class="btn-primary" id="g-btn">Sign In</button>
-      <div class="gate-msg" id="g-msg"></div>
+<main id="top">
+<section class="hero" aria-labelledby="hero-title">
+  <svg class="hero-pattern" viewBox="0 0 200 200" aria-hidden="true">
+    <defs>
+      <pattern id="star" width="40" height="40" patternUnits="userSpaceOnUse">
+        <path d="M20 2l5 13 13 5-13 5-5 13-5-13-13-5 13-5z" fill="none" stroke="#c9a45c" stroke-width=".7"/>
+        <rect x="12" y="12" width="16" height="16" transform="rotate(45 20 20)" fill="none" stroke="#c9a45c" stroke-width=".5"/>
+      </pattern>
+    </defs>
+    <circle cx="100" cy="100" r="98" fill="url(#star)"/>
+  </svg>
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Coming soon · Australia-wide</span>
+      <h1 id="hero-title">Finding your spouse, <em>the halal way</em> — now online.</h1>
+      <p class="hero-sub">Halal Bridge is a supervised matchmaking service for single Muslims. Every member is verified, every introduction is arranged by our team, and every conversation happens with us present — with your wali welcome to join.</p>
+      <div class="hero-actions">
+        <a class="btn btn-gold" href="#join">Join the waitlist
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <span class="hero-note">Free to join · We'll email you the moment we open</span>
+      </div>
     </div>
+    <div class="arch-card" aria-hidden="true">
+      <div class="arch-inner">
+        <svg class="lantern" viewBox="0 0 60 90" fill="none">
+          <path d="M30 2v10" stroke="#c9a45c" stroke-width="1.4"/>
+          <path d="M22 12h16l4 8H18z" stroke="#c9a45c" stroke-width="1.4"/>
+          <path d="M18 20c-6 14-6 34 0 48h24c6-14 6-34 0-48z" stroke="#c9a45c" stroke-width="1.4" fill="rgba(220,187,124,.12)"/>
+          <path d="M30 20v48M22 22c-3 13-3 31 0 44M38 22c3 13 3 31 0 44" stroke="#c9a45c" stroke-width=".8" opacity=".6"/>
+          <ellipse cx="30" cy="44" rx="6" ry="9" fill="#dcbb7c" opacity=".55"/>
+          <path d="M20 68h20l-4 8H24z" stroke="#c9a45c" stroke-width="1.4"/>
+          <path d="M30 76v8" stroke="#c9a45c" stroke-width="1.4"/>
+        </svg>
+        <p class="q">“And among His signs is that He created for you spouses from among yourselves, that you may find tranquillity in them.”</p>
+        <p class="ref">Surah Ar-Rum · 30:21</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="strip">
+  <div class="wrap">
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Every member ID-verified</div>
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 14.5c2.8 0 5 2.2 5 5"/></svg>Introductions made by people, not swipes</div>
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5h16v11H8l-4 4z"/><path d="M8 10h8"/></svg>Every conversation supervised</div>
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>No public profiles, ever</div>
   </div>
 </div>
 
-<!-- ───────── APP ───────── -->
-<div id="app">
-  <div id="demo-bar" style="display:none">
-    <strong>Demo</strong> — made-up members, nothing is saved. Changes disappear when you refresh.
-    <a href="?" style="color:inherit">Leave demo</a>
-  </div>
-  <div class="topbar">
-    <span><span class="wordmark">Halal Bridge</span><span class="tag">Admin</span></span>
-    <div class="topbar-right">
-      <span class="who" id="who"></span>
-      <button class="btn-theme" id="btn-theme" title="Switch between light and dark"
-              aria-label="Switch between light and dark">
-        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
-        </svg>
-        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <circle cx="12" cy="12" r="4"/>
-          <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
-        </svg>
-      </button>
-      <button class="btn-ghost" id="btn-signout">Sign out</button>
+<section id="how" aria-labelledby="how-title">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">What to expect</span>
+      <h2 id="how-title">How Halal Bridge works</h2>
+      <p>No endless scrolling, no strangers messaging you out of nowhere. Just a careful, guided path from first profile to meeting in person — the way it should be.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><span class="step-num">01</span><h3>Create your profile</h3><p>Tell us about yourself, your deen and what you're looking for in a spouse. Only our team sees the full picture.</p></div>
+      <div class="step"><span class="step-num">02</span><h3>Get verified</h3><p>We check your ID to confirm you are who you say you are. The document is deleted as soon as we've reviewed it.</p></div>
+      <div class="step"><span class="step-num">03</span><h3>We find your matches</h3><p>Our team proposes matches based on what you're both looking for. There's no open directory for anyone to browse.</p></div>
+      <div class="step"><span class="step-num">04</span><h3>Both say yes first</h3><p>You see a proposed match privately. Nothing moves forward unless you <em>both</em> ask to be introduced.</p></div>
+      <div class="step"><span class="step-num">05</span><h3>Talk, supervised</h3><p>We open a conversation with our team in it throughout. Your wali or family can join too. No private numbers, no pressure.</p></div>
+      <div class="step"><span class="step-num">06</span><h3>Meet in person</h3><p>When you're both ready, we arrange the introduction. Afterwards, each of you tells us privately how it went.</p></div>
     </div>
   </div>
+</section>
 
-  <div class="tabs">
-    <button class="tab active" data-view="members">Members <span id="c-members"></span></button>
-    <button class="tab" data-view="idchecks">ID checks <span id="c-id"></span></button>
-    <button class="tab" data-view="matches">Matches <span id="c-matches"></span></button>
-    <button class="tab" data-view="convos">Conversations</button>
-    <button class="tab" data-view="reports">Reports <span id="c-reports"></span></button>
-    <button class="tab" data-view="feedback">After meeting</button>
+<section class="values" aria-labelledby="values-title">
+  <div class="wrap values-grid">
+    <div>
+      <div class="sec-head" style="margin-bottom:1.2rem">
+        <span class="eyebrow">What we stand for</span>
+        <h2 id="values-title">Built around adab, privacy and family</h2>
+      </div>
+      <div class="value">
+        <div class="value-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/></svg></div>
+        <div><h3>Serious, verified members</h3><p>Everyone is ID-checked and approved by our team before they can be matched. Single Muslims, 18 and over, looking for marriage.</p></div>
+      </div>
+      <div class="value">
+        <div class="value-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+        <div><h3>Your privacy protected</h3><p>Your profile is only shown to a match our team has chosen for you. Your contact details are never shared.</p></div>
+      </div>
+      <div class="value">
+        <div class="value-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5h16v11H8l-4 4z"/></svg></div>
+        <div><h3>Supervised from the first word</h3><p>Our team is part of every conversation and can step in at any time. If anything feels wrong, you can report it in one tap.</p></div>
+      </div>
+      <div class="value">
+        <div class="value-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 14.5c2.8 0 5 2.2 5 5"/></svg></div>
+        <div><h3>Family involved</h3><p>Sisters can bring their wali into the conversation, and families are part of the process from the start.</p></div>
+      </div>
+    </div>
+    <aside class="pull">
+      <span class="eyebrow" style="color:var(--sand-hi)">Why a waitlist?</span>
+      <h2 style="margin-top:.8rem">We want real matches waiting for you on day one.</h2>
+      <p>We're opening the doors once 1,000 founding members have joined, so there's a strong community ready from the start. Join now and you'll be among the first in.</p>
+      <ul>
+        <li>First access when we open</li>
+        <li>An email the moment we go live</li>
+        <li>Free to join the waitlist</li>
+      </ul>
+    </aside>
   </div>
+</section>
 
-  <main>
-    <section class="view active" id="view-members">
-      <div class="view-head">
-        <div>
-          <h2>Members</h2>
-          <p>Verify an account once you've checked it against your registrations.</p>
-        </div>
+<section class="join" id="join" aria-labelledby="join-title">
+  <div class="wrap join-grid">
+    <div class="join-copy">
+      <span class="eyebrow">Join the waitlist</span>
+      <h2 id="join-title" style="margin-top:.8rem">Be one of our founding members</h2>
+      <p>It takes a minute. We'll only use your details to tell you when Halal Bridge opens and to plan for the community in your area.</p>
+      <div class="milestone">
+        <strong>Opening at 1,000 members</strong>
+        <span style="color:var(--ink-soft);font-size:.95rem">Share Halal Bridge with friends and family who are looking — the sooner we reach it, the sooner we open, inshallah.</span>
       </div>
-      <div id="queue"></div>
-      <div id="stale"></div>
-      <input class="search" id="m-search" placeholder="Search by name, email or city…"/>
-      <div id="members-list"></div>
-    </section>
+    </div>
 
-    <section class="view" id="view-idchecks">
-      <div class="view-head">
-        <div>
-          <h2>ID checks</h2>
-          <p>Confirm the date of birth matches the document, then approve.</p>
-        </div>
-      </div>
-      <div class="card" style="background:var(--amber-bg);border-color:var(--amber-line)">
-        <p class="meta" style="color:var(--amber);margin:0">
-          These are identity documents. Open one only when you're reviewing it, and don't
-          save copies anywhere. The file is deleted the moment you approve or reject.
-        </p>
-        <div class="actions" style="margin-top:.7rem">
-          <button class="btn" id="sweep-check">Check for stranded documents</button>
-          <span class="meta" id="sweep-out"></span>
-        </div>
-      </div>
-      <div id="id-list"></div>
-    </section>
+    <div class="form-card">
+      <form id="wl-form" novalidate>
+        <div class="form-error" id="wl-error" role="alert"></div>
 
-    <section class="view" id="view-matches">
-      <div class="view-head">
-        <div>
-          <h2>Matches</h2>
-          <p>Propose a pairing. Neither side sees the other until they both ask.</p>
+        <div class="field">
+          <label class="lbl" for="wl-name">Full name</label>
+          <input type="text" id="wl-name" autocomplete="name" maxlength="100" required/>
         </div>
-      </div>
-      <div class="card">
-        <div class="grid-2">
+        <div class="field">
+          <label class="lbl" for="wl-email">Email</label>
+          <input type="email" id="wl-email" autocomplete="email" maxlength="254" required/>
+        </div>
+        <div class="field">
+          <span class="lbl" id="wl-gender-lbl">I am a</span>
+          <div class="seg" role="radiogroup" aria-labelledby="wl-gender-lbl">
+            <input type="radio" name="gender" id="g-brother" value="brother"/><label for="g-brother">Brother</label>
+            <input type="radio" name="gender" id="g-sister" value="sister"/><label for="g-sister">Sister</label>
+          </div>
+        </div>
+        <div class="grid2">
           <div class="field">
-            <label>First member</label>
-            <select id="new-a"></select>
+            <label class="lbl" for="wl-age">Age</label>
+            <input type="number" id="wl-age" min="18" max="80" inputmode="numeric" required/>
           </div>
           <div class="field">
-            <label>Second member</label>
-            <select id="new-b"></select>
+            <label class="lbl" for="wl-state">State</label>
+            <select id="wl-state" required>
+              <option value="">Choose…</option>
+              <option>NSW</option><option>VIC</option><option>QLD</option><option>WA</option>
+              <option>SA</option><option>TAS</option><option>ACT</option><option>NT</option>
+              <option>Outside Australia</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="field">
+            <label class="lbl" for="wl-city">City / suburb <span class="opt">(optional)</span></label>
+            <input type="text" id="wl-city" autocomplete="address-level2" maxlength="80"/>
+          </div>
+          <div class="field">
+            <label class="lbl" for="wl-phone">Mobile <span class="opt">(optional)</span></label>
+            <input type="tel" id="wl-phone" autocomplete="tel" maxlength="30"/>
           </div>
         </div>
         <div class="field">
-          <label>Private note (only you see this)</label>
-          <input type="text" id="new-note" placeholder="e.g. both Sydney, similar age, compatible on relocation"/>
+          <label class="lbl" for="wl-heard">How did you hear about us? <span class="opt">(optional)</span></label>
+          <select id="wl-heard">
+            <option value="">Choose…</option>
+            <option>Banner at the mosque</option>
+            <option>Instagram</option>
+            <option>TikTok</option>
+            <option>Facebook</option>
+            <option>WhatsApp</option>
+            <option>Friend or family</option>
+            <option>Other</option>
+          </select>
         </div>
-        <div id="suggested"></div>
-        <div id="fit"></div>
-        <button class="btn btn-key" id="new-match">Create match</button>
-      </div>
-      <div id="match-stats"></div>
-      <div id="matches-list"></div>
-    </section>
-
-    <section class="view" id="view-convos">
-      <div class="view-head">
-        <div>
-          <h2>Conversations</h2>
-          <p>You are a participant in every one of these.</p>
+        <div class="hp" aria-hidden="true">
+          <label for="wl-website">Leave this empty</label>
+          <input type="text" id="wl-website" tabindex="-1" autocomplete="off"/>
         </div>
-      </div>
-      <div id="retention" class="card" style="background:var(--amber-bg);border-color:var(--amber-line)"></div>
-      <div id="convos-list"></div>
-    </section>
+        <label class="consent">
+          <input type="checkbox" id="wl-consent"/>
+          <span>I'm a single Muslim, 18 or over, and I'm happy for Halal Bridge to email me about the launch.</span>
+        </label>
+        <button class="btn btn-gold" type="submit" id="wl-submit">Join the waitlist</button>
+        <p class="privacy">Your details are private and never shared or shown to anyone.</p>
+      </form>
 
-    <section class="view" id="view-feedback">
-      <div class="view-head">
-        <div>
-          <h2>After they met</h2>
-          <p>What each of them said afterwards, side by side. Neither ever sees
-             the other's answer, which is why they are honest.</p>
-        </div>
+      <div class="done" id="wl-done" role="status" aria-live="polite">
+        <div class="tick"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <h3 id="wl-done-title">JazakAllah khair!</h3>
+        <p id="wl-done-text">You're on the waitlist. We'll email you the moment Halal Bridge opens, inshallah.</p>
+        <p style="font-size:.9rem">Know someone who's looking? Share this page with them.</p>
+        <button class="btn btn-gold" type="button" id="wl-share" style="margin-top:1rem;width:auto">Share Halal Bridge</button>
       </div>
-      <div id="feedback-list"></div>
-    </section>
+    </div>
+  </div>
+</section>
 
-    <section class="view" id="view-reports">
-      <div class="view-head">
-        <div>
-          <h2>Reports</h2>
-          <p>Oldest first, with anything urgent on top. Read the messages before
-             you decide — the report is one side of it.</p>
-        </div>
-        <div class="actions" style="margin-top:0">
-          <button class="btn btn-key" data-rfilter="open">Open</button>
-          <button class="btn" data-rfilter="actioned">Actioned</button>
-          <button class="btn" data-rfilter="dismissed">Dismissed</button>
-          <button class="btn" data-rfilter="all">All</button>
-        </div>
-      </div>
-      <div id="reports-list"></div>
-    </section>
+<section aria-labelledby="faq-title">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Questions</span>
+      <h2 id="faq-title">Good to know</h2>
+    </div>
+    <div class="faq">
+      <details><summary>When will Halal Bridge open?</summary>
+        <p>We're opening once 1,000 founding members have joined the waitlist. Everyone on the list gets an email as soon as we're live, with a link to create their account.</p></details>
+      <details><summary>Who can join?</summary>
+        <p>Single Muslims aged 18 and over who are sincerely looking for marriage. Every member's identity is checked before they can be matched.</p></details>
+      <details><summary>Can people browse my profile?</summary>
+        <p>No. There's no public directory. Your profile is only shown to someone our team has proposed as a match for you, and nothing moves forward unless you both agree.</p></details>
+      <details><summary>Can my wali or family be involved?</summary>
+        <p>Yes. Your wali can be added to your conversations, and our team is present in every one of them from the very first message.</p></details>
+      <details><summary>What happens to my ID document?</summary>
+        <p>It's used only to confirm your identity and date of birth, and it's deleted as soon as our team has reviewed it.</p></details>
+      <details><summary>What do you do with my waitlist details?</summary>
+        <p>We use them to email you when we open and to understand where our members are, so we can plan for every city. We never share or sell them.</p></details>
+    </div>
+  </div>
+</section>
+</main>
 
-    <section class="view" id="view-chat">
-      <button class="back" id="chat-back">← Back</button>
-      <div class="view-head">
-        <div>
-          <h2 id="chat-title">—</h2>
-          <p id="chat-sub"></p>
-        </div>
-      </div>
-      <div class="card" style="padding:.9rem 1.1rem">
-        <div class="actions" style="margin-top:0">
-          <input id="wali-email" placeholder="Wali's email address"
-                 style="flex:1;min-width:180px;background:var(--cream);border:1px solid var(--line);
-                        border-radius:6px;padding:.46rem .7rem;outline:none;font-size:.82rem"/>
-          <button class="btn" id="add-wali">Add wali</button>
-          <button class="btn btn-bad" id="toggle-convo">Close conversation</button>
-        </div>
-      </div>
-      <div class="thread" id="thread"></div>
-      <div class="composer">
-        <textarea id="composer-text" placeholder="Write as the Halal Bridge team…" rows="1"></textarea>
-        <button id="composer-send">Send</button>
-      </div>
-    </section>
-  </main>
-</div>
+<footer>
+  <div class="wrap">
+    <span class="brand"><span class="brand-name">Halal Bridge</span></span>
+    <span>© <span id="yr"></span> Halal Bridge<span id="contact-wrap"></span></span>
+  </div>
+</footer>
 
-<div class="toast" id="toast"></div>
-
-<script type="module">
-import { createClient }
-  from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.0/+esm";
-
+<script>
+/* ── settings ────────────────────────────────────────────────────────────── */
 const SUPABASE_URL = "https://gejqqyilfuaunfinqjit.supabase.co";
 const SUPABASE_KEY = "sb_publishable__Rv3o5oq2TWtbuvtOyTUBQ_B2r_qIER";
-
-window.__sakinahBoot = true;
+// Put the Halal Bridge contact email here once it exists, e.g. "hello@halalbridge.com.au".
+const CONTACT_EMAIL = "";
 
 const $ = id => document.getElementById(id);
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
-  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+$('yr').textContent = new Date().getFullYear();
+if (CONTACT_EMAIL) {
+  $('contact-wrap').innerHTML = ' · <a href="mailto:' + CONTACT_EMAIL + '">' + CONTACT_EMAIL + '</a>';
+}
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   DEMO MODE — add ?demo=1 to the address to explore the panel with made-up
-   members. Nothing is read from or written to your real database; everything
-   lives in memory and disappears on refresh. Useful for seeing how the whole
-   thing fits together before you have real members, and for showing someone
-   else without exposing anyone's details.
-   ═══════════════════════════════════════════════════════════════════════════ */
-const DEMO = new URLSearchParams(location.search).has('demo');
+async function rpc(name, args){
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${name}`, {
+    method: 'POST',
+    headers: { apikey: SUPABASE_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify(args || {})
+  });
+  const text = await res.text();
+  const data = text ? JSON.parse(text) : null;
+  if (!res.ok) throw new Error((data && (data.message || data.hint)) || 'Something went wrong');
+  return data;
+}
 
-function makeDemoClient(){
-  const day = n => new Date(Date.now() - n * 86400000).toISOString();
-  const ago = n => new Date(Date.now() - n * 60000).toISOString();
-  const dob = years => {
-    const d = new Date(); d.setFullYear(d.getFullYear() - years); d.setMonth(3, 12);
-    return d.toISOString().slice(0,10);
-  };
-
-  const S = {
-    members: [
-      { id:'d-hana', name:'Hana Mahmoud', email:'hana@example.com', phone:'0400 111 222',
-        gender:'female', city:'Melbourne', occupation:'Primary teacher', education:"Bachelor of Education",
-        languages:'English, Arabic', bio:'I teach year 3 and spend most weekends with my sisters. Trying to be more consistent with my Qur\'an.',
-        looking_for:'Someone kind, settled in his deen, who wants a family soon inshAllah.',
-        verified:false, status:'active', kind:'member', date_of_birth:dob(27),
-        id_status:'pending', id_file_path:'d-hana/licence.jpg', id_submitted_at:ago(180),
-        created_at:day(2), match_count:0 },
-      { id:'d-aisha', name:'Aisha Rahman', email:'aisha@example.com', phone:'0400 333 444',
-        gender:'female', city:'Sydney', occupation:'Pharmacist', education:"Bachelor of Pharmacy",
-        languages:'English, Urdu', bio:'Community pharmacist in the inner west. I like long walks and I am a terrible cook, which I am working on.',
-        looking_for:'Patience, good character, and someone who prays on time.',
-        verified:true, status:'active', kind:'member', date_of_birth:dob(28),
-        id_status:'approved', id_file_path:null, created_at:day(21), match_count:2,
-        self_paused:false },
-      { id:'d-yusuf', name:'Yusuf Ahmed', email:'yusuf@example.com', phone:'0400 555 666',
-        gender:'male', city:'Sydney', occupation:'Civil engineer', education:"Master of Engineering",
-        languages:'English, Arabic', bio:'Revert of six years alhamdulillah. I work on bridges, which is less exciting than it sounds.',
-        looking_for:'Someone practising and easy to talk to. I would like us to learn together.',
-        verified:true, status:'active', kind:'member', date_of_birth:dob(30),
-        id_status:'approved', id_file_path:null, created_at:day(25), match_count:1 },
-      { id:'d-omar', name:'Omar Siddiqui', email:'omar@example.com', phone:'0400 777 888',
-        gender:'male', city:'Sydney', occupation:'Dentist', education:"Bachelor of Dental Surgery",
-        languages:'English', bio:'Quiet, close to my parents, and I run most mornings.',
-        looking_for:'Someone family-oriented who does not mind an early riser.',
-        verified:true, status:'active', kind:'member', date_of_birth:dob(31),
-        id_status:'approved', id_file_path:null, created_at:day(30), match_count:1,
-        admin_note:'Spoke on the phone — very serious, family are supportive.' },
-      { id:'d-fatima', name:'Fatima Noor', email:'fatima@example.com', phone:'',
-        gender:'female', city:'Melbourne', occupation:'Accountant', education:"Bachelor of Commerce",
-        languages:'English, Somali', bio:'', looking_for:'',
-        verified:false, status:'active', kind:'member', date_of_birth:null,
-        id_status:'none', id_file_path:null, created_at:day(1), match_count:0 },
-      { id:'d-wali', name:'Abu Yusuf', email:'wali@example.com', phone:'0400 999 000',
-        gender:'male', city:'Sydney', occupation:'', education:'', languages:'', bio:'', looking_for:'',
-        verified:false, status:'active', kind:'wali', date_of_birth:null,
-        id_status:'none', id_file_path:null, created_at:day(5), match_count:0 },
-    ],
-    matches: [
-      { id:'d-m1', member_a:'d-aisha', member_b:'d-yusuf', status:'intro_requested',
-        chat_requested_by:['d-aisha','d-yusuf'], conversation_id:null,
-        note:'Both Sydney, close in age, both said relocation is not a dealbreaker.',
-        created_at:day(4) },
-      { id:'d-m2', member_a:'d-aisha', member_b:'d-omar', status:'conversation_open',
-        chat_requested_by:['d-aisha','d-omar'],
-        meeting_requested_by:['d-aisha','d-omar'], conversation_id:'d-c1',
-        note:'', outcome:'talking', outcome_note:'Families have spoken once.',
-        created_at:day(12) },
-      { id:'d-m4', member_a:'d-yusuf', member_b:'d-fatima', status:'declined',
-        chat_requested_by:[], conversation_id:null, declined_by:['d-fatima'],
-        decline_reason:'Looking for someone closer to Melbourne.',
-        note:'', created_at:day(8) },
-      { id:'d-m3', member_a:'d-yusuf', member_b:'d-hana', status:'proposed',
-        chat_requested_by:[], conversation_id:null,
-        note:'Different cities — worth asking how they both feel about that.',
-        created_at:day(1) },
-    ],
-    conversations: [
-      { id:'d-c1', match_id:'d-m2', status:'open', created_by:'demo-admin',
-        last_message_at:ago(42), last_message_preview:'That sounds good, jazakAllah khair.' },
-      // One that ended six weeks ago, so the retention panel has something
-      // real to show and to clear.
-      { id:'d-c3', match_id:null, status:'closed', created_by:'demo-admin',
-        closed_at:new Date(Date.now() - 45*24*3600e3).toISOString(),
-        last_message_at:ago(60*24*45), last_message_preview:'JazakAllah khair for everything.' },
-      // Old enough to clear, but a moderator still has a report on it --
-      // so it must survive every sweep until that is closed.
-      { id:'d-c4', match_id:null, status:'closed', created_by:'demo-admin',
-        closed_at:new Date(Date.now() - 70*24*3600e3).toISOString(),
-        last_message_at:ago(60*24*70), last_message_preview:'Please stop asking.' },
-    ],
-    participants: [
-      { conversation_id:'d-c1', user_id:'d-aisha', role:'member', last_read:ago(40), last_notified_at:null },
-      { conversation_id:'d-c1', user_id:'d-omar',  role:'member', last_read:ago(44), last_notified_at:null },
-      { conversation_id:'d-c1', user_id:'demo-admin', role:'admin', last_read:ago(1), last_notified_at:null },
-      { conversation_id:'d-c1', user_id:'d-wali',  role:'wali',   last_read:ago(50), last_notified_at:null },
-    ],
-    messages: [
-      { id:'d-x1', conversation_id:'d-c1', sender_id:'demo-admin', sender_name:'Halal Bridge team',
-        sender_role:'admin', body:'Assalamu alaykum both. I\'ll be here throughout, and Omar\'s wali Abu Yusuf is in the conversation too. Please keep things respectful and let me know if you need anything.',
-        created_at:ago(120) },
-      { id:'d-x2', conversation_id:'d-c1', sender_id:'d-omar', sender_name:'Omar Siddiqui',
-        sender_role:'member', body:'Wa alaykum assalam. JazakAllah khair for arranging this.', created_at:ago(110) },
-      { id:'d-x3', conversation_id:'d-c1', sender_id:'d-aisha', sender_name:'Aisha Rahman',
-        sender_role:'member', body:'Wa alaykum assalam warahmatullah.', created_at:ago(100) },
-      { id:'d-x4', conversation_id:'d-c1', sender_id:'d-wali', sender_name:'Abu Yusuf',
-        sender_role:'wali', body:'Assalamu alaykum, I am Omar\'s wali and will be following along.', created_at:ago(60) },
-      { id:'d-x5', conversation_id:'d-c1', sender_id:'d-aisha', sender_name:'Aisha Rahman',
-        sender_role:'member', body:'That sounds good, jazakAllah khair.', created_at:ago(42) },
-      { id:'d-x6', conversation_id:'d-c4', sender_id:'d-yusuf', sender_name:'Yusuf Ahmed',
-        sender_role:'member', body:'Can I have your number?', created_at:ago(60*24*71) },
-      { id:'d-x7', conversation_id:'d-c4', sender_id:'d-hana', sender_name:'Hana Mahmoud',
-        sender_role:'member', body:'Please stop asking.', created_at:ago(60*24*70) },
-    ],
-    // Someone verified and ready who nobody has matched in two months.
-    stale: [
-      { id:'d-hana', name:'Hana Mahmoud', email:'hana@example.com', city:'Sydney',
-        age:25, joined_at:ago(60*24*70), last_matched_at:null, matches_so_far:0 },
-    ],
-    // One introduction that has already happened, with both answers in.
-    feedback: [
-      { match_id:'d-m2', met_at:ago(60*24*9),
-        a_name:'Aisha Rahman', a_said:'yes',
-        a_note:'It was easier than I expected. I would like to keep going.',
-        b_name:'Omar Siddiqui', b_said:'no',
-        b_note:'She was lovely, it just is not the right fit for me.' },
-    ],
-    // Two files nothing points at, so the sweep has something to find.
-    // One old enough to sweep, one uploaded two hours ago -- which the guard
-    // must leave alone, because a file that new may be mid-submission.
-    orphans: [
-      { path:'d-hana/1760000000000.jpg', uploaded_at:ago(60*72), belongs_to:'Hana Mahmoud' },
-      { path:'d-omar/1761000000000.jpg', uploaded_at:ago(120),   belongs_to:'Omar Siddiqui' },
-    ],
-    // Two reports so the queue shows both ends of it: one urgent and open,
-    // one already dealt with.
-    reports: [
-      { id:'d-r1', reporter:'d-aisha', reported:'d-omar', conversation_id:'d-c1',
-        match_id:'d-m1', reason:'They asked for my contact details',
-        note:'He asked for my number twice after I said we should keep it here.',
-        severity:'urgent', status:'open', outcome_note:null,
-        handled_by:null, handled_at:null, created_at:ago(20) },
-      // Closed ten days ago, which still holds the chat log back: a dismissed
-      // report can be reopened, and an actioned one may be the first of a
-      // pattern. Left open it would have sat in the moderator queue instead,
-      // which is a different demonstration.
-      { id:'d-r3', reporter:'d-hana', reported:'d-yusuf', conversation_id:'d-c4',
-        match_id:null, reason:"They won't take no for an answer", note:null,
-        severity:'normal', status:'actioned',
-        outcome_note:'Warned him. Watching for a repeat.',
-        handled_by:'demo-admin', handled_at:ago(60*24*10), created_at:ago(60*24*69) },
-      { id:'d-r2', reporter:'d-hana', reported:'d-yusuf', conversation_id:null,
-        match_id:null, reason:'They don\'t seem genuine', note:null,
-        severity:'normal', status:'actioned',
-        outcome_note:'Spoke to him. Nothing in it — crossed wires about the event date.',
-        handled_by:'demo-admin', handled_at:ago(300), created_at:ago(960) },
-    ],
-  };
-
-  // A placeholder standing in for the uploaded document, so the review flow
-  // can be walked through without anyone's real ID being involved.
-  const SAMPLE_DOC = 'data:image/svg+xml;utf8,' + encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="520" height="320">
-      <rect width="520" height="320" rx="14" fill="#eceef4" stroke="#c7cbd8"/>
-      <rect x="28" y="30" width="150" height="180" rx="8" fill="#d6dae5"/>
-      <text x="103" y="128" font-family="Inter,sans-serif" font-size="13" fill="#6b7186"
-            text-anchor="middle">photo</text>
-      <text x="205" y="62" font-family="Inter,sans-serif" font-size="11" fill="#6b7186">NAME</text>
-      <text x="205" y="84" font-family="Inter,sans-serif" font-size="17" fill="#232736">HANA MAHMOUD</text>
-      <text x="205" y="124" font-family="Inter,sans-serif" font-size="11" fill="#6b7186">DATE OF BIRTH</text>
-      <text x="205" y="146" font-family="Inter,sans-serif" font-size="17" fill="#232736">12 / 04 / ${new Date().getFullYear()-27}</text>
-      <text x="205" y="186" font-family="Inter,sans-serif" font-size="11" fill="#6b7186">LICENCE NO.</text>
-      <text x="205" y="206" font-family="Inter,sans-serif" font-size="15" fill="#232736">0000 0000</text>
-      <text x="260" y="268" font-family="Inter,sans-serif" font-size="15" fill="#b4635f"
-            text-anchor="middle" font-weight="bold">SAMPLE — NOT A REAL DOCUMENT</text>
-      <text x="260" y="292" font-family="Inter,sans-serif" font-size="12" fill="#6b7186"
-            text-anchor="middle">a real submission would be a photo of their ID</text>
-    </svg>`);
-
-  const session = { access_token:'demo', user:{ id:'demo-admin', email:'demo@halalbridge (sample data)' } };
-  const member = id => S.members.find(m => m.id === id);
-
-  function build(table){
-    const f = {};
-    const b = {
-      _f: f,
-      select(){ return b; },
-      eq(c,v){ (f[c] ||= []).push(v); return b; },
-      order(){ return b; },
-      insert(r){ b._row = r; return b; },
-      update(p){ b._patch = p; return b; },
-      delete(){ b._del = true; return b; },
-      maybeSingle(){ b._one = true; return b; },
-      single(){ b._one = true; return b; },
-      then(ok, bad){ return Promise.resolve(run()).then(ok, bad); }
-    };
-    function match(row){
-      return Object.entries(f).every(([c,vals]) => vals.every(v => row[c] === v));
+/* ── once launched: send people to the app ───────────────────────────────── */
+(async () => {
+  if (new URLSearchParams(location.search).has('preview')) return; // lets admins still see this page
+  try {
+    const s = await rpc('site_status');
+    if (s && s.launched === true) {
+      if (s.app_url) { location.replace(s.app_url); return; }
+      $('live-banner').style.display = 'block';
     }
-    function run(){
-      if (table === 'admins') return { data:{ id:'demo-admin' }, error:null };
+  } catch (e) { /* the page still works as a waitlist if this fails */ }
+})();
 
-      if (b._patch) {
-        const list = table === 'profiles' ? S.members
-                   : table === 'matches' ? S.matches
-                   : table === 'conversations' ? S.conversations
-                   : table === 'conversation_participants' ? S.participants : [];
-        list.filter(match).forEach(r => Object.assign(r, b._patch));
-        return { data:null, error:null };
-      }
-      if (b._del) {
-        const key = table === 'matches' ? 'matches' : null;
-        if (key) { const keep = S[key].filter(r => !match(r)); S[key].length = 0; S[key].push(...keep); }
-        return { data:null, error:null };
-      }
-      if (b._row) {
-        if (table === 'matches') {
-          const clash = S.matches.some(m =>
-            [m.member_a, m.member_b].sort().join() === [b._row.member_a, b._row.member_b].sort().join());
-          if (clash) return { data:null, error:{ message:'duplicate key value violates matches_unique_pair' } };
-          S.matches.unshift({ id:'d-m' + Date.now(), status:'proposed', chat_requested_by:[], meeting_requested_by:[],
-            conversation_id:null, created_at:new Date().toISOString(), note:'', ...b._row });
-          return { data:null, error:null };
-        }
-        if (table === 'messages') {
-          const row = { id:'d-x' + Date.now(), created_at:new Date().toISOString(), ...b._row };
-          S.messages.push(row);
-          return { data:row, error:null };
-        }
-        return { data:null, error:null };
-      }
-
-      const src = table === 'profiles' ? S.members
-                : table === 'matches' ? S.matches
-                : table === 'conversations' ? S.conversations
-                : table === 'conversation_participants' ? S.participants
-                : table === 'messages' ? S.messages : [];
-      const rows = src.filter(match);
-      return { data: b._one ? (rows[0] ?? null) : rows, error:null };
-    }
-    return b;
-  }
-
-  function rpcBuilder(name, args){
-    const b = { then(ok, bad){ return Promise.resolve(run()).then(ok, bad); } };
-    function run(){
-      if (name === 'admin_members') {
-        const order = m => (m.kind === 'wali' ? 1 : 0) * 10 + (m.id_status === 'pending' ? 0 : 1) * 2 + (m.verified ? 1 : 0);
-        return { data: [...S.members].sort((x,y) => order(x) - order(y)), error:null };
-      }
-      if (name === 'open_conversation') {
-        const m = S.matches.find(x => x.id === args.p_match_id);
-        if (!m) return { data:null, error:{ message:'No such match' } };
-        if (m.conversation_id) return { data:m.conversation_id, error:null };
-        const id = 'd-c' + Date.now();
-        S.conversations.unshift({ id, match_id:m.id, status:'open', created_by:'demo-admin',
-          last_message_at:null, last_message_preview:null });
-        S.participants.push(
-          { conversation_id:id, user_id:m.member_a, role:'member' },
-          { conversation_id:id, user_id:m.member_b, role:'member' },
-          { conversation_id:id, user_id:'demo-admin', role:'admin' });
-        m.conversation_id = id; m.status = 'conversation_open';
-        return { data:id, error:null };
-      }
-      if (name === 'add_participant') {
-        const who = S.members.find(x => (x.email||'').toLowerCase() === String(args.p_email||'').trim().toLowerCase());
-        if (!who) return { data:null, error:{ message:'No Halal Bridge account with that email. They need to sign up first.' } };
-        const existing = S.participants.find(p => p.conversation_id === args.p_convo && p.user_id === who.id);
-        if (existing) existing.role = args.p_role;
-        else S.participants.push({ conversation_id:args.p_convo, user_id:who.id, role:args.p_role });
-        return { data:who.name, error:null };
-      }
-      if (name === 'review_id') {
-        if (!args.p_approve && !String(args.p_reason || '').trim())
-          return { data:null, error:{ message:'Give a reason so they know what to fix' } };
-        const who = member(args.p_user);
-        if (who) {
-          who.id_status = args.p_approve ? 'approved' : 'rejected';
-          who.id_reason = args.p_approve ? null : args.p_reason;
-          who.id_file_path = null;
-        }
-        return { data:null, error:null };
-      }
-      if (name === 'touch_conversation') {
-        const c = S.conversations.find(x => x.id === args.p_convo);
-        if (c) { c.last_message_at = new Date().toISOString();
-                 c.last_message_preview = String(args.p_preview || '').slice(0,80); }
-        return { data:null, error:null };
-      }
-      if (name === 'stale_members') {
-        return { data: (S.stale || []), error:null };
-      }
-      if (name === 'admin_feedback') {
-        return { data: (S.feedback || []), error:null };
-      }
-      if (name === 'purge_pending') {
-        const month = 30*24*3600e3;
-        return { data: (S.conversations || [])
-          .filter(c => c.status === 'closed' && !c.messages_purged_at)
-          .map(c => {
-            const closed = new Date(c.closed_at || c.last_message_at || Date.now()).getTime();
-            const rep = (S.reports || []).find(r => r.conversation_id === c.id);
-            return {
-              conversation_id: c.id,
-              closed_at: new Date(closed).toISOString(),
-              due_at: new Date(closed + month).toISOString(),
-              message_count: (S.messages || []).filter(m => m.conversation_id === c.id).length,
-              held_because: rep && rep.status === 'open' ? 'a report is still open'
-                          : rep && rep.handled_at ? 'a report was handled recently' : null,
-            };
-          }), error:null };
-      }
-      if (name === 'admin_purge_now') {
-        const month = 30*24*3600e3, now = Date.now();
-        let n = 0;
-        (S.conversations || []).forEach(c => {
-          if (c.status !== 'closed' || c.messages_purged_at) return;
-          const closed = new Date(c.closed_at || c.last_message_at || now).getTime();
-          if (closed + month > now) return;
-          const rep = (S.reports || []).find(r => r.conversation_id === c.id);
-          if (rep && (rep.status === 'open' || rep.handled_at)) return;
-          S.messages = (S.messages || []).filter(m => m.conversation_id !== c.id);
-          c.last_message_preview = null;
-          c.messages_purged_at = new Date().toISOString();
-          n++;
-        });
-        return { data:n, error:null };
-      }
-      if (name === 'orphan_id_documents') {
-        // Mirror the real function's guard, so the demo shows the same
-        // behaviour rather than a friendlier version of it.
-        // Honour the interval the same way the real function does, so a
-        // caller can ask for everything and see what the guard is holding.
-        const hours = /^(\d+)\s*hour/.exec(args?.p_older_than || '')?.[1];
-        const cutoff = Date.now() - (hours === undefined ? 24 : Number(hours)) * 3600e3;
-        return { data: (S.orphans || []).filter(
-          o => new Date(o.uploaded_at).getTime() < cutoff), error:null };
-      }
-      if (name === 'arrange_meeting') {
-        const m = S.matches.find(x => x.id === args.p_match_id);
-        if (!m) return { data:null, error:{ message:'No such match' } };
-        m.meeting_at = args.p_when;
-        m.meeting_note = args.p_note || null;
-        m.outcome = m.outcome || 'talking';
-        return { data:null, error:null };
-      }
-      if (name === 'request_chat' || name === 'request_intro') {
-        const m = S.matches.find(x => x.id === args.p_match_id);
-        if (m && !m.chat_requested_by.includes('demo-admin')) m.chat_requested_by.push('demo-admin');
-        return { data:null, error:null };
-      }
-      if (name === 'admin_reports') {
-        const want = args.p_status;
-        const rows = S.reports
-          .filter(r => !want || want === 'all' || r.status === want)
-          .map(r => {
-            const rep = member(r.reporter), rd = member(r.reported);
-            const c   = S.conversations.find(x => x.id === r.conversation_id);
-            return { ...r,
-              reporter_id: r.reporter, reporter_name: rep?.name,
-              reported_id: r.reported, reported_name: rd?.name,
-              reported_status: rd?.status, reported_verified: rd?.verified,
-              reported_prior_reports: S.reports.filter(
-                x => x.reported === r.reported && x.id !== r.id).length,
-              conversation_status: c?.status || null,
-              message_count: S.messages.filter(m => m.conversation_id === r.conversation_id).length,
-              handled_by_name: r.handled_by ? 'You' : null };
-          })
-          // Same order as the real function: urgent first, then oldest first.
-          .sort((a,b) => (b.severity === 'urgent') - (a.severity === 'urgent')
-                      || String(a.created_at).localeCompare(String(b.created_at)));
-        return { data: rows, error:null };
-      }
-      if (name === 'report_log') {
-        const r = S.reports.find(x => x.id === args.p_report);
-        if (!r) return { data:[], error:null };
-        return { data: S.messages
-          .filter(m => m.conversation_id === r.conversation_id)
-          .sort((a,b) => String(a.created_at).localeCompare(String(b.created_at))),
-          error:null };
-      }
-      if (name === 'resolve_report') {
-        if (!['open','actioned','dismissed'].includes(args.p_action))
-          return { data:null, error:{ message:'Unknown action: ' + args.p_action } };
-        const r = S.reports.find(x => x.id === args.p_report);
-        if (!r) return { data:null, error:{ message:'No such report' } };
-        r.status = args.p_action;
-        if (args.p_note) r.outcome_note = [r.outcome_note, args.p_note].filter(Boolean).join(' | ');
-        r.handled_by = args.p_action === 'open' ? null : 'demo-admin';
-        r.handled_at = args.p_action === 'open' ? null : new Date().toISOString();
-        return { data:null, error:null };
-      }
-      if (name === 'set_member_status') {
-        if (!['active','paused','removed'].includes(args.p_status))
-          return { data:null, error:{ message:'Unknown status: ' + args.p_status } };
-        const who = member(args.p_user);
-        if (!who) return { data:null, error:{ message:'No such member' } };
-        who.status = args.p_status;
-        return { data:null, error:null };
-      }
-      return { data:null, error:null };
-    }
-    return b;
-  }
-
-  return {
-    auth: {
-      onAuthStateChange(){ return { data:{ subscription:{ unsubscribe(){} } } }; },
-      async getSession(){ return { data:{ session }, error:null }; },
-      async signInWithPassword(){ return { data:{ session }, error:null }; },
-      async signOut(){ location.search = ''; return { error:null }; }
-    },
-    realtime: { setAuth(){} },
-    from: build,
-    rpc: rpcBuilder,
-    storage: { from(){ return {
-      async createSignedUrl(){ return { data:{ signedUrl: SAMPLE_DOC }, error:null }; },
-      async remove(paths){
-        // A no-op here would have let a broken sweep pass its own test.
-        const gone = Array.isArray(paths) ? paths : [paths];
-        S.orphans = (S.orphans || []).filter(o => !gone.includes(o.path));
-        return { data:null, error:null };
-      },
-      async upload(){ return { data:null, error:null }; }
-    }; } },
-    channel(){ const c = { on(){ return c; }, subscribe(){ return c; } }; return c; },
-    removeChannel(){}
-  };
+/* ── the form ────────────────────────────────────────────────────────────── */
+const form = $('wl-form');
+function showError(msg, focusId){
+  const el = $('wl-error');
+  el.textContent = msg; el.style.display = 'block';
+  if (focusId) $(focusId).focus();
 }
+form.addEventListener('input', () => { $('wl-error').style.display = 'none'; });
 
-const supabase = DEMO ? makeDemoClient() : createClient(SUPABASE_URL, SUPABASE_KEY, {
-  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
-});
-// Exposed in demo only, so the test suite can ask the stand-in client
-// questions the panel's own screens don't surface.
-if (DEMO) window.__sb = supabase;
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if ($('wl-website').value) return; // a bot filled the hidden field
 
-let ME = null, MEMBERS = [], MATCHES = [], CONVOS = [], PARTS = [];
-let REPORTS = [], OPEN_REPORTS = 0, REPORT_FILTER = 'open';
-let currentConvo = null, msgChannel = null, pollTimer = null, MSGS = [];
+  const name   = $('wl-name').value.trim();
+  const email  = $('wl-email').value.trim();
+  const gender = (document.querySelector('input[name=gender]:checked') || {}).value;
+  const age    = parseInt($('wl-age').value, 10);
+  const state  = $('wl-state').value;
 
-function toast(msg, bad){
-  const t = $('toast');
-  t.textContent = msg;
-  t.className = 'toast show' + (bad ? ' bad' : '');
-  clearTimeout(t._t);
-  t._t = setTimeout(() => t.className = 'toast' + (bad ? ' bad' : ''), 3600);
-}
-const fmt = ts => {
-  if (!ts) return '';
-  const d = new Date(ts); if (isNaN(d)) return '';
-  const today = d.toDateString() === new Date().toDateString();
-  return today ? d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})
-               : d.toLocaleDateString([], {day:'numeric',month:'short'}) + ', ' +
-                 d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
-};
-function friendly(e){
-  if (!e) return 'Something went wrong.';
-  const m = (e.message || '').toLowerCase();
-  if (m.includes('invalid login credentials')) return 'That email and password don\'t match.';
-  if (m.includes('duplicate key') || m.includes('matches_unique_pair'))
-    return 'Those two are already matched with each other.';
-  if (m.includes('only an admin')) return 'Your account isn\'t an admin.';
-  if (m.includes('already in an open conversation'))
-    return 'One of them is already talking to someone. That conversation has to end first.';
-  if (m.includes('re-check both'))
-    return 'Confirm you have re-checked both members first.';
-  if (m.includes('contact_details'))
-    return 'That message contains contact details.';
-  if (m.includes('different_people')) return 'Pick two different people.';
-  if (m.includes('failed to fetch')) return 'Network problem — check your connection.';
-  return e.message || 'Something went wrong.';
-}
+  if (!name) return showError('Please enter your name.', 'wl-name');
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return showError('Please enter a valid email address.', 'wl-email');
+  if (!gender) return showError('Please choose brother or sister.', 'g-brother');
+  if (!age || age < 18 || age > 80) return showError('Please enter your age (18 or over).', 'wl-age');
+  if (!state) return showError('Please choose your state.', 'wl-state');
+  if (!$('wl-consent').checked) return showError('Please tick the box to confirm and join.', 'wl-consent');
 
-// ───────── auth ─────────
-$('g-btn').onclick = async () => {
-  const email = $('g-email').value.trim(), pass = $('g-pass').value;
-  if (!email || !pass) { $('g-msg').textContent = 'Enter your email and password.'; return; }
-  $('g-btn').disabled = true; $('g-btn').textContent = 'Please wait…';
-  const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
-  if (error) {
-    $('g-msg').textContent = friendly(error);
-    $('g-btn').disabled = false; $('g-btn').textContent = 'Sign In';
-  }
-};
-$('g-pass').addEventListener('keydown', e => { if (e.key === 'Enter') $('g-btn').click(); });
-$('btn-signout').onclick = async () => { teardown(); await supabase.auth.signOut(); };
-
-/* Light and dark. Nothing stored means follow the device; choosing here
-   pins it and is remembered, separately from the member app's own choice
-   only in the sense that they share one key -- same browser, same answer. */
-$('btn-theme').onclick = () => {
-  const root = document.documentElement;
-  const systemDark = window.matchMedia
-    && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const now  = root.getAttribute('data-theme') || (systemDark ? 'dark' : 'light');
-  const next = now === 'dark' ? 'light' : 'dark';
-  root.setAttribute('data-theme', next);
-  try { localStorage.setItem('hb-theme', next); } catch (e) {}
-  toast(next === 'dark' ? 'Dark' : 'Light');
-};
-
-let routedUid;
-supabase.auth.onAuthStateChange((ev, s) => {
-  if (ev === 'TOKEN_REFRESHED') { if (s) supabase.realtime.setAuth(s.access_token); return; }
-  route(s);
-});
-(async () => route((await supabase.auth.getSession()).data.session))();
-
-function showGate(msg){
-  $('app').style.display = 'none';
-  $('gate').style.display = 'flex';
-  $('g-btn').disabled = false; $('g-btn').textContent = 'Sign In';
-  $('g-pass').value = '';
-  $('g-msg').textContent = msg || '';
-}
-
-async function route(session){
-  const uid = session?.user?.id || null;
-  if (uid === routedUid) return;
-  routedUid = uid;
-  $('loading').style.display = 'none';
-
-  if (!uid) { ME = null; teardown(); showGate(); return; }
-
-  // Being signed in is not the same as being an admin. The admins table is
-  // the authority, and nothing here can write to it.
-  const { data: admin } = await supabase
-    .from('admins').select('id').eq('id', uid).maybeSingle();
-
-  if (!admin) {
-    routedUid = undefined;
-    await supabase.auth.signOut();
-    showGate('That account isn\'t an admin.');
-    return;
-  }
-
-  ME = session.user;
-  if (DEMO) { $('demo-bar').style.display = 'block'; document.body.classList.add('demo'); }
-  supabase.realtime.setAuth(session.access_token);
-  $('gate').style.display = 'none';
-  $('app').style.display = 'flex';
-  $('who').textContent = ME.email;
-  await loadAll();
-  showView('members');
-  // Not awaited: nothing on screen depends on it, and it must never be the
-  // thing that keeps the panel from opening.
-  sweepQuietly();
-  purgeQuietly();
-}
-
-// ───────── data ─────────
-async function loadAll(){
-  const [m, mt, cv, pt, rp] = await Promise.all([
-    supabase.rpc('admin_members'),
-    supabase.from('matches').select('*').order('created_at', { ascending:false }),
-    supabase.from('conversations').select('*').order('last_message_at', { ascending:false, nullsFirst:false }),
-    supabase.from('conversation_participants').select('*'),
-    supabase.rpc('admin_reports', { p_status: 'open' })
-  ]);
-  if (m.error)  { toast('Could not load members: ' + friendly(m.error), true); return; }
-  MEMBERS = m.data || []; MATCHES = mt.data || [];
-  CONVOS  = cv.data || []; PARTS  = pt.data || [];
-  // An older database won't have admin_reports() yet. That's a reason to show
-  // an empty queue, not to fail the whole panel to a blank screen.
-  OPEN_REPORTS = rp.error ? 0 : (rp.data || []).length;
-  paintCounts();
-}
-
-const byId = id => MEMBERS.find(x => x.id === id);
-const nameOf = id => byId(id)?.name || 'Unknown';
-
-function paintCounts(){
-  // Walis aren't candidates, so they never belong in the verification queue.
-  const unver = MEMBERS.filter(m => !m.verified && m.kind !== 'wali').length;
-  const ready = MATCHES.filter(m => (m.chat_requested_by||[]).length >= 2 && !m.conversation_id).length;
-  const meets = MATCHES.filter(m => (m.meeting_requested_by||[]).length >= 2 && !m.meeting_at).length;
-  const ids   = MEMBERS.filter(m => m.id_status === 'pending').length;
-  $('c-members').innerHTML = unver  ? `<span class="count">${unver}</span>` : '';
-  $('c-matches').innerHTML = (ready + meets) ? `<span class="count">${ready + meets}</span>` : '';
-  $('c-id').innerHTML      = ids    ? `<span class="count">${ids}</span>` : '';
-  $('c-reports').innerHTML = OPEN_REPORTS ? `<span class="count">${OPEN_REPORTS}</span>` : '';
-
-  const jobs = [];
-  // Reports go first. Someone is waiting on this one in a way they are not
-  // waiting on a verification.
-  if (OPEN_REPORTS) jobs.push(`<li><a data-jump="reports">${OPEN_REPORTS} report${OPEN_REPORTS>1?'s':''} waiting for a moderator</a></li>`);
-  if (unver) jobs.push(`<li><a data-jump="members">${unver} member${unver>1?'s':''} waiting to be verified</a></li>`);
-  if (ids)   jobs.push(`<li><a data-jump="idchecks">${ids} ID check${ids>1?'s':''} waiting to be reviewed</a></li>`);
-  if (ready) jobs.push(`<li><a data-jump="matches">${ready} match${ready>1?'es':''} where both have asked to message</a></li>`);
-  // The introduction is the one with a person waiting on a date, so it goes
-  // above the ones that are only waiting on a conversation being opened.
-  if (meets) jobs.push(`<li><a data-jump="matches">${meets} introduction${meets>1?'s':''} to arrange — both sides have asked to meet</a></li>`);
-  $('queue').innerHTML = jobs.length
-    ? `<div class="queue"><h3>Needs you</h3><ul>${jobs.join('')}</ul></div>` : '';
-  $('queue').querySelectorAll('[data-jump]').forEach(a => a.onclick = () => showView(a.dataset.jump));
-  paintStale();
-}
-
-// ───────── routing ─────────
-document.querySelectorAll('.tab').forEach(t => t.onclick = () => showView(t.dataset.view));
-function showView(name){
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  $('view-' + name).classList.add('active');
-  const lit = name === 'chat' ? 'convos' : name;
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.view === lit));
-  window.scrollTo(0,0);
-  if (name === 'members') paintMembers();
-  if (name === 'idchecks') paintIdChecks();
-  if (name === 'matches') { paintPickers(); paintMatches(); }
-  if (name === 'convos')  { paintConvos(); paintRetention(); }
-  if (name === 'reports') loadReports();
-  if (name === 'feedback') loadFeedback();
-}
-function teardown(){
-  if (msgChannel) { supabase.removeChannel(msgChannel); msgChannel = null; }
-  if (pollTimer)  { clearInterval(pollTimer); pollTimer = null; }
-  currentConvo = null; MSGS = [];
-}
-$('chat-back').onclick = () => { teardown(); showView('convos'); };
-
-// ───────── members ─────────
-$('m-search').oninput = () => paintMembers();
-$('sweep-check').onclick = () => sweepOrphans();
-
-function paintMembers(){
-  const q = $('m-search').value.trim().toLowerCase();
-  const rows = MEMBERS.filter(m => !q ||
-    [m.name, m.email, m.city].filter(Boolean).join(' ').toLowerCase().includes(q));
-
-  if (!rows.length) {
-    $('members-list').innerHTML = `<div class="empty"><div class="display">No members${q?' match that':' yet'}</div>
-      <p>${q ? 'Try a different search.' : 'They appear here as soon as someone signs up.'}</p></div>`;
-    return;
-  }
-
-  $('members-list').innerHTML = rows.map(m => {
-    const wali = m.kind === 'wali';
-    const pill = wali ? '<span class="pill pill-off">Wali / guardian</span>'
-      : !m.verified ? '<span class="pill pill-wait">Unverified</span>'
-      : m.self_paused ? '<span class="pill pill-off">Paused by them</span>'
-      : m.status === 'paused' ? '<span class="pill pill-off">Paused by you</span>'
-      : '<span class="pill pill-ok">Active</span>';
-    const meta = [m.age, m.gender, m.city, m.occupation].filter(Boolean).map(esc).join(' · ');
-    const idTag = m.kind === 'wali' ? ''
-      : m.id_status === 'approved' ? '<span class="meta" style="color:var(--sage)">Age verified</span>'
-      : m.id_status === 'pending'  ? '<span class="meta" style="color:var(--amber)">ID awaiting review</span>'
-      : m.id_status === 'rejected' ? '<span class="meta" style="color:var(--rose)">ID rejected</span>'
-      : '<span class="meta">Age not verified</span>';
-    const qTag = m.kind === 'wali' ? ''
-      : m.questionnaire_done ? '<span class="meta" style="color:var(--sage)">Questionnaire done</span>'
-      : '<span class="meta" style="color:var(--amber)">Questionnaire unfinished</span>';
-    return `<div class="card">
-      <div class="row">
-        <div style="min-width:0">
-          <h3 class="name">${esc(m.name || '(no name yet)')}</h3>
-          <p class="meta">${esc(m.email || '')}${meta ? ' — ' + meta : ''}</p>
-        </div>${pill}
-      </div>
-      <div class="actions">
-        ${wali ? '' : `<button class="btn ${m.verified ? '' : 'btn-key'}" data-verify="${esc(m.id)}">
-          ${m.verified ? 'Unverify' : 'Verify'}</button>
-        <button class="btn" data-pause="${esc(m.id)}">${m.status === 'paused' ? 'Un-pause' : 'Pause'}</button>`}
-        <button class="btn" data-open="${esc(m.id)}">Details</button>
-        <button class="btn" data-kind="${esc(m.id)}">${wali ? 'Treat as member' : 'Mark as wali'}</button>
-        ${wali ? '' : `<span class="meta">${m.match_count || 0} match${m.match_count === 1 ? '' : 'es'}</span>`}
-        ${idTag}
-        ${qTag}
-      </div>
-      <div class="detail" id="d-${esc(m.id)}">
-        <dl>
-          <dt>Education</dt><dd>${esc(m.education || '—')}</dd>
-          <dt>Languages</dt><dd>${esc(m.languages || '—')}</dd>
-          <dt>About</dt><dd>${esc(m.bio || '—')}</dd>
-          <dt>Looking for</dt><dd>${esc(m.looking_for || '—')}</dd>
-          <dt>Joined</dt><dd>${fmt(m.created_at)}</dd>
-          <dt>Phone</dt><dd>${esc(m.phone || '—')}</dd>
-          <dt>Looking for</dt><dd>${esc(prefSummary(m))}</dd>
-          <dt>Their own details</dt><dd>${esc(selfSummary(m))}</dd>
-          ${m.pref_notes ? `<dt>They added</dt><dd>${esc(m.pref_notes)}</dd>` : ''}
-        </dl>
-        <div class="field" style="margin-top:.9rem;margin-bottom:0">
-          <label>Private note — they never see this</label>
-          <textarea data-note="${esc(m.id)}" rows="2"
-            placeholder="Anything worth remembering: what they're after, who they've met, how a call went.">${esc(m.admin_note || '')}</textarea>
-          <button class="btn" style="margin-top:.5rem" data-savenote="${esc(m.id)}">Save note</button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-
-  $('members-list').querySelectorAll('[data-open]').forEach(b =>
-    b.onclick = () => $('d-' + b.dataset.open).classList.toggle('open'));
-
-  $('members-list').querySelectorAll('[data-verify]').forEach(b => b.onclick = async () => {
-    const m = byId(b.dataset.verify);
-    b.disabled = true;
-    const { error } = await supabase.from('profiles')
-      .update({ verified: !m.verified }).eq('id', m.id);
-    if (error) { toast(friendly(error), true); b.disabled = false; return; }
-    m.verified = !m.verified;
-    toast(m.verified ? `✓ ${m.name} verified` : `${m.name} is no longer verified`);
-    paintCounts(); paintMembers();
-  });
-
-  $('members-list').querySelectorAll('[data-savenote]').forEach(b => b.onclick = async () => {
-    const id = b.dataset.savenote;
-    const text = $('members-list').querySelector(`[data-note="${id}"]`).value.trim();
-    b.disabled = true; b.textContent = 'Saving…';
-    const { error } = await supabase.from('profiles').update({ admin_note: text }).eq('id', id);
-    b.disabled = false; b.textContent = 'Save note';
-    if (error) return toast(friendly(error), true);
-    const m = byId(id); if (m) m.admin_note = text;
-    toast('✓ Note saved');
-  });
-
-  $('members-list').querySelectorAll('[data-kind]').forEach(b => b.onclick = async () => {
-    const m = byId(b.dataset.kind);
-    const next = m.kind === 'wali' ? 'member' : 'wali';
-    b.disabled = true;
-    const { error } = await supabase.from('profiles').update({ kind: next }).eq('id', m.id);
-    if (error) { toast(friendly(error), true); b.disabled = false; return; }
-    m.kind = next;
-    toast(next === 'wali'
-      ? `${m.name} marked as a wali — they won't appear as a match`
-      : `${m.name} is back in the matching pool`);
-    paintCounts(); paintMembers();
-  });
-
-  $('members-list').querySelectorAll('[data-pause]').forEach(b => b.onclick = async () => {
-    const m = byId(b.dataset.pause);
-    const next = m.status === 'paused' ? 'active' : 'paused';
-    b.disabled = true;
-    const { error } = await supabase.from('profiles').update({ status: next }).eq('id', m.id);
-    if (error) { toast(friendly(error), true); b.disabled = false; return; }
-    m.status = next;
-    toast(`${m.name} is now ${next}`);
-    paintMembers();
-  });
-}
-
-const PREF_LABEL = { never_married:'never married', divorced:'divorced', widowed:'widowed',
-  citizen:'citizen', permanent:'permanent resident', temporary:'temporary visa',
-  student:'student visa', yes:'yes', no:'no', maybe:'possibly' };
-
-function prefSummary(m){
-  const bits = [];
-  if (m.pref_age_min || m.pref_age_max)
-    bits.push(`aged ${m.pref_age_min ?? 'any'}–${m.pref_age_max ?? 'any'}`);
-  if ((m.pref_cities || []).length) bits.push(`in ${m.pref_cities.join(', ')}`);
-  if ((m.pref_marital || []).length)
-    bits.push(m.pref_marital.map(x => PREF_LABEL[x] || x).join(' or '));
-  if (m.pref_relocate) bits.push(`would move: ${PREF_LABEL[m.pref_relocate]}`);
-  if (m.pref_children) bits.push(`children ok: ${PREF_LABEL[m.pref_children]}`);
-  if (m.pref_residency_importance) bits.push(`residency matters ${m.pref_residency_importance}/5`);
-  return bits.length ? bits.join(' · ') : 'Not set yet';
-}
-function selfSummary(m){
-  const bits = [];
-  if (m.marital_status) bits.push(PREF_LABEL[m.marital_status] || m.marital_status);
-  if (m.residency)      bits.push(PREF_LABEL[m.residency] || m.residency);
-  if (m.has_children === true)  bits.push('has children');
-  if (m.has_children === false) bits.push('no children');
-  return bits.length ? bits.join(' · ') : 'Not set yet';
-}
-
-// ───────── ID checks ─────────
-
-/* ───────── asking for a line of text ─────────
-   prompt() is suppressed outright by some mobile browsers: it returns null,
-   which every caller here read as "cancelled". On a phone the Reject button
-   therefore did nothing at all, and said nothing about why -- and since
-   review_id refuses a rejection without a reason, there was no way to reject
-   from a phone even if the dialog had appeared. This asks inside the card
-   instead, which also means you type why a photo is unreadable while you are
-   looking at it. */
-function askInline(hostId, cfg){
-  const host = $(hostId);
-  if (!host) return;
-  if (host.dataset.open === '1') return closeAsk(host);   // tapping again backs out
-  host.dataset.open = '1';
-  host.innerHTML = `<div class="ask">
-    <span class="ask-label">${esc(cfg.label)}</span>
-    ${(cfg.quick || []).length ? `<div class="ask-quick">${
-      cfg.quick.map(q => `<button type="button" data-q="${esc(q)}">${esc(q)}</button>`).join('')
-    }</div>` : ''}
-    <textarea placeholder="${esc(cfg.placeholder || '')}"></textarea>
-    <div class="ask-foot">
-      <button class="btn btn-key" data-go>${esc(cfg.go || 'Send')}</button>
-      <button class="btn" data-cancel>Cancel</button>
-    </div>
-  </div>`;
-
-  const ta = host.querySelector('textarea');
-  const go = host.querySelector('[data-go]');
-  setTimeout(() => ta.focus(), 40);
-
-  // The quick phrases fill the box rather than sending on their own, so you
-  // can still add the detail that makes the message worth reading.
-  host.querySelectorAll('[data-q]').forEach(q => q.onclick = () => {
-    const add = q.dataset.q;
-    ta.value = ta.value.trim() ? ta.value.trim() + ' ' + add : add;
-    ta.focus();
-  });
-  host.querySelector('[data-cancel]').onclick = () => closeAsk(host);
-  go.onclick = async () => {
-    const text = ta.value.trim();
-    if (cfg.required && !text) return toast(cfg.requiredMsg || 'Please write something.', true);
-    go.disabled = true; go.textContent = 'Sending\u2026';
-    let err;
-    try { err = await cfg.onGo(text); }
-    catch (e) { err = 'Something went wrong. Please try again.'; }
-    if (err) {
-      go.disabled = false; go.textContent = cfg.go || 'Send';
-      return toast(err, true);
-    }
-    closeAsk(host);
-  };
-}
-function closeAsk(host){ host.dataset.open = '0'; host.innerHTML = ''; }
-
-/* Documents nothing points at any more: an upload from a tab that was closed
-   before the record saved, or one superseded by a second submission. Photos
-   are the only thing in this product that costs real storage -- a message is
-   a couple of hundred bytes, a photo of a licence is a few megabytes -- so
-   it is worth being able to find them. */
-/* The quiet version, run once when the panel opens. review_id clears the
-   profile's reference first and the browser deletes the file second -- so a
-   dropped connection, or a closed tab, between those two leaves the photo in
-   the bucket with nothing pointing at it and no way to reach it. That turned
-   "we delete it as soon as we've checked it" into a promise that held only
-   when the network cooperated. This closes it. */
-/* Chat logs. A conversation stops being ours to keep once it has ended, so
-   the messages go a month later -- but never while a moderator still has a
-   report on it, because the usual moment to report someone is on the way
-   out. This screen shows what is due and what is being held, so deletion is
-   visible rather than silent. */
-async function paintRetention(){
-  const box = $('retention');
-  if (!box) return;
-  const { data, error } = await supabase.rpc('purge_pending');
-  if (error) { box.style.display = 'none'; return; }
-  const rows = data || [];
-  if (!rows.length) {
-    box.innerHTML = `<p class="meta" style="margin:0;color:var(--amber)">
-      Nothing waiting to be cleared. Messages are deleted a month after a
-      conversation ends, unless a report is still open on it.</p>`;
-    return;
-  }
-  const held = rows.filter(r => r.held_because);
-  const due  = rows.filter(r => !r.held_because && new Date(r.due_at) <= new Date());
-  const soon = rows.filter(r => !r.held_because && new Date(r.due_at) > new Date());
-  const msgs = n => n.reduce((t, r) => t + Number(r.message_count || 0), 0);
-
-  box.innerHTML = `
-    <p class="meta" style="margin:0 0 .5rem;color:var(--amber)">
-      <strong>Chat logs.</strong> Deleted a month after a conversation ends.</p>
-    <ul class="meta" style="margin:0;padding-left:1.1rem;color:var(--amber)">
-      ${due.length  ? `<li><strong>${due.length}</strong> ready to clear now
-                       (${msgs(due)} messages)</li>` : ''}
-      ${soon.length ? `<li>${soon.length} not due yet — the earliest on
-                       ${esc(fmt(soon[0].due_at))}</li>` : ''}
-      ${held.length ? `<li>${held.length} held back: ${
-                       esc([...new Set(held.map(h => h.held_because))].join('; '))}</li>` : ''}
-    </ul>
-    ${due.length ? `<div class="actions" style="margin-top:.6rem">
-      <button class="btn btn-bad" id="purge-go">Clear them now</button></div>` : ''}`;
-
-  const go = $('purge-go');
-  if (go) go.onclick = async () => {
-    go.disabled = true; go.textContent = 'Clearing…';
-    const { data: n, error: err } = await supabase.rpc('admin_purge_now');
-    if (err) { go.disabled = false; go.textContent = 'Clear them now';
-               return toast(friendly(err), true); }
-    toast(`Cleared ${n} conversation${n === 1 ? '' : 's'}`);
-    await loadAll();
-    paintRetention(); paintConvos();
-  };
-}
-
-// Run on sign-in alongside the document sweep, so the month-old logs go
-// whether or not anyone thinks to press a button.
-async function purgeQuietly(){
-  const { data, error } = await supabase.rpc('admin_purge_now');
-  if (!error && data) toast(`Cleared ${data} old conversation${data === 1 ? '' : 's'}`);
-}
-
-async function sweepQuietly(){
-  const { data, error } = await supabase.rpc('orphan_id_documents');
-  if (error || !data || !data.length) return;
-  const { error: delErr } = await supabase.storage.from('id-documents')
-    .remove(data.map(r => r.path));
-  if (delErr) return;
-  toast(`Cleared ${data.length} leftover document${data.length>1?'s':''}`);
-}
-
-async function sweepOrphans(){
-  const out = $('sweep-out'), btn = $('sweep-check');
-  btn.disabled = true; out.textContent = 'Looking…';
-  const { data, error } = await supabase.rpc('orphan_id_documents');
-  btn.disabled = false;
-  if (error) { out.textContent = ''; return toast(friendly(error), true); }
-  const rows = data || [];
-  if (!rows.length) { out.textContent = 'Nothing stranded — the bucket is clean.'; return; }
-
-  out.innerHTML = `<strong>${rows.length} stranded file${rows.length>1?'s':''}</strong>` +
-    ` — ${rows.map(r => esc(r.belongs_to || 'unknown')).slice(0,4).join(', ')}` +
-    `${rows.length > 4 ? ' and others' : ''}. ` +
-    `<button class="btn btn-bad" id="sweep-go" style="margin-left:.4rem">Delete them</button>`;
-
-  $('sweep-go').onclick = async () => {
-    const b = $('sweep-go'); b.disabled = true; b.textContent = 'Deleting…';
-    const { error: delErr } = await supabase.storage.from('id-documents')
-      .remove(rows.map(r => r.path));
-    if (delErr) { b.disabled = false; b.textContent = 'Delete them';
-                  return toast(friendly(delErr), true); }
-    out.textContent = `Deleted ${rows.length} file${rows.length>1?'s':''}.`;
-    toast('Cleared');
-  };
-}
-
-function paintIdChecks(){
-  const rows = MEMBERS.filter(m => m.id_status === 'pending');
-  if (!rows.length) {
-    $('id-list').innerHTML = `<div class="empty"><div class="display">Nothing to review</div>
-      <p>ID checks appear here as members submit them.</p></div>`;
-    return;
-  }
-  $('id-list').innerHTML = rows.map(m => {
-    const age = m.date_of_birth ? ageFrom(m.date_of_birth) : null;
-    return `<div class="card">
-      <div class="row">
-        <div style="min-width:0">
-          <h3 class="name">${esc(m.name || '(no name)')}</h3>
-          <p class="meta">${esc(m.email || '')}${m.phone ? ' · ' + esc(m.phone) : ''}</p>
-        </div>
-        <span class="pill pill-wait">Awaiting review</span>
-      </div>
-      <div class="detail open" style="border-top:1px solid var(--line)">
-        <dl>
-          <dt>Date of birth</dt><dd><strong>${esc(m.date_of_birth || '—')}</strong>
-            ${age !== null ? ` — that makes them <strong>${age}</strong>` : ''}</dd>
-          <dt>Submitted</dt><dd>${fmt(m.id_submitted_at)}</dd>
-        </dl>
-      </div>
-      <div class="actions">
-        <button class="btn btn-go" data-viewdoc="${esc(m.id)}">View document</button>
-        <button class="btn btn-key" data-approve="${esc(m.id)}">Approve</button>
-        <button class="btn btn-bad" data-reject="${esc(m.id)}">Reject</button>
-      </div>
-      <div id="ask-${esc(m.id)}"></div>
-      <div id="doc-${esc(m.id)}" style="margin-top:.9rem"></div>
-    </div>`;
-  }).join('');
-
-  $('id-list').querySelectorAll('[data-viewdoc]').forEach(b => b.onclick = async () => {
-    const m = byId(b.dataset.viewdoc);
-    const box = $('doc-' + m.id);
-    if (box.innerHTML) { box.innerHTML = ''; b.textContent = 'View document'; return; }
-    if (!m.id_file_path) { toast('No document on file for them.', true); return; }
-    b.disabled = true;
-    // A link that works for a few minutes, not a public URL. The bucket is
-    // private, so this is the only way the image can be seen at all.
-    const { data, error } = await supabase.storage.from('id-documents')
-      .createSignedUrl(m.id_file_path, 300);
-    b.disabled = false;
-    if (error) return toast('Could not open it: ' + friendly(error), true);
-    const isPdf = /\.pdf$/i.test(m.id_file_path);
-    box.innerHTML = isPdf
-      ? `<a class="btn" href="${esc(data.signedUrl)}" target="_blank" rel="noopener">Open PDF in a new tab</a>`
-      : `<img src="${esc(data.signedUrl)}" alt="Identity document"
-             style="max-width:100%;border-radius:8px;border:1px solid var(--line)"/>`;
-    b.textContent = 'Hide document';
-  });
-
-  // review() now reports failure by returning a message, so approving has to
-  // show it -- otherwise a refused approval would look like it worked.
-  $('id-list').querySelectorAll('[data-approve]').forEach(b => b.onclick = async () => {
-    b.disabled = true;
-    const err = await review(b.dataset.approve, true);
-    b.disabled = false;
-    if (err) toast(err, true);
-  });
-  $('id-list').querySelectorAll('[data-reject]').forEach(b => b.onclick = () => {
-    const id = b.dataset.reject;
-    askInline('ask-' + id, {
-      label: 'Why? They see this word for word, so write it to them',
-      quick: [
-        'The photo is too blurry to read.',
-        "The date of birth doesn't match what you entered.",
-        "The name doesn't match your profile.",
-        'The document has expired.',
-        'Part of the document is cut off.',
-        'We need a government ID, not a photo of you.',
-      ],
-      placeholder: 'e.g. The photo is too blurry to read the date of birth.',
-      go: 'Reject and tell them',
-      required: true,
-      requiredMsg: 'A reason is needed so they know what to fix.',
-      onGo: text => review(id, false, text),
+  const btn = $('wl-submit');
+  btn.disabled = true; btn.textContent = 'Joining…';
+  try {
+    const result = await rpc('join_waitlist', {
+      p_name: name, p_email: email, p_gender: gender, p_age: age, p_state: state,
+      p_city: $('wl-city').value.trim() || null,
+      p_phone: $('wl-phone').value.trim() || null,
+      p_heard_from: $('wl-heard').value || null,
+      p_consent: true
     });
-  });
-}
-
-// Returns a message on failure so the caller can keep the reason box open
-// with what was typed still in it. Returning nothing used to mean the box
-// closed on an error and the words had to be written out again.
-async function review(userId, approve, reason){
-  const m = byId(userId);
-  const path = m?.id_file_path;
-  const { error } = await supabase.rpc('review_id',
-    { p_user: userId, p_approve: approve, p_reason: reason || null });
-  if (error) return friendly(error);
-
-  // The document has served its purpose. Keeping identity documents after
-  // the check is done is pure liability, so remove it now.
-  if (path) {
-    const del = await supabase.storage.from('id-documents').remove([path]);
-    // If this fails the profile no longer points at the file, so nothing in
-    // the panel can reach it again. The sweep below is what actually
-    // guarantees it goes, rather than this one network call succeeding.
-    if (del.error) toast('Reviewed. The document will be cleared on the next sweep.', true);
-  }
-  toast(approve ? `✓ ${m?.name || 'Member'} verified — their age is now confirmed`
-                : `${m?.name || 'Member'} asked to send a clearer document`);
-  await loadAll();
-  paintIdChecks();
-}
-
-function ageFrom(dob){
-  if (!dob) return null;
-  const b = new Date(dob); if (isNaN(b)) return null;
-  const t = new Date();
-  let a = t.getFullYear() - b.getFullYear();
-  const mo = t.getMonth() - b.getMonth();
-  if (mo < 0 || (mo === 0 && t.getDate() < b.getDate())) a--;
-  return a;
-}
-
-// ───────── matches ─────────
-function paintPickers(){
-  // Only verified, active members can be matched — that is the whole point
-  // of verifying.
-  // Someone who has paused themselves is not available to be matched, and
-  // offering them would mean proposing a match they have opted out of.
-  const pool = MEMBERS.filter(m =>
-    m.verified && m.status !== 'paused' && !m.self_paused && m.kind !== 'wali');
-  const opts = sel => '<option value="">— choose —</option>' + pool.map(m =>
-    `<option value="${esc(m.id)}">${esc(m.name || m.email)}${m.city ? ' (' + esc(m.city) + ')' : ''}</option>`).join('');
-  const a = $('new-a'), b = $('new-b');
-  const keepA = a.value, keepB = b.value;
-  a.innerHTML = opts(); b.innerHTML = opts();
-  a.value = keepA; b.value = keepB;
-  if (!pool.length) {
-    a.innerHTML = b.innerHTML = '<option value="">No verified members yet</option>';
-  }
-}
-
-// ───────── do these two actually fit? ─────────
-// Preferences are only worth collecting if they are in front of you at the
-// moment you decide. This checks both directions -- it is no good if he
-// suits her and she falls outside his criteria.
-const AGE = m => {
-  if (!m?.date_of_birth) return m?.age ?? null;
-  const b = new Date(m.date_of_birth), t = new Date();
-  let a = t.getFullYear() - b.getFullYear();
-  const mo = t.getMonth() - b.getMonth();
-  if (mo < 0 || (mo === 0 && t.getDate() < b.getDate())) a--;
-  return a;
-};
-const LABEL = { never_married:'never married', divorced:'divorced', widowed:'widowed',
-                citizen:'a citizen', permanent:'a permanent resident',
-                temporary:'on a temporary visa', student:'on a student visa' };
-
-function checkFit(a, b){
-  const notes = [];
-  const oneWay = (x, y, xn, yn) => {
-    const age = AGE(y);
-    if (age !== null && (x.pref_age_min || x.pref_age_max)) {
-      const lo = x.pref_age_min ?? 0, hi = x.pref_age_max ?? 999;
-      if (age < lo || age > hi)
-        notes.push({ bad:true, t:`${yn} is ${age}; ${xn} is looking for ${lo}–${hi}.` });
-    }
-    const cities = x.pref_cities || [];
-    if (cities.length && y.city && !cities.includes(y.city)) {
-      const moves = y.pref_relocate === 'yes' || y.pref_relocate === 'maybe';
-      notes.push({ bad:!moves,
-        t:`${yn} is in ${y.city}; ${xn} listed ${cities.join(', ')}.` +
-          (moves ? ` ${yn} would consider moving.` : '') });
-    }
-    const wants = x.pref_marital || [];
-    if (wants.length && y.marital_status && !wants.includes(y.marital_status))
-      notes.push({ bad:true,
-        t:`${yn} is ${LABEL[y.marital_status] || y.marital_status}; ${xn} didn't list that.` });
-    if (x.pref_children === 'no' && y.has_children === true)
-      notes.push({ bad:true, t:`${yn} has children; ${xn} said no.` });
-    if ((x.pref_residency_importance ?? 0) >= 4 &&
-        y.residency && !['citizen','permanent'].includes(y.residency))
-      notes.push({ bad:true,
-        t:`${yn} is ${LABEL[y.residency] || y.residency}; ${xn} rated residency ${x.pref_residency_importance}/5.` });
-  };
-  const an = (a.name || 'They').split(' ')[0], bn = (b.name || 'They').split(' ')[0];
-  oneWay(a, b, an, bn);
-  oneWay(b, a, bn, an);
-  if (a.gender && b.gender && a.gender === b.gender)
-    notes.unshift({ bad:true, t:`Both are listed as ${a.gender}.` });
-  return notes;
-}
-
-function paintFit(){
-  const a = byId($('new-a').value), b = byId($('new-b').value);
-  const box = $('fit');
-  if (!a || !b || a.id === b.id) { box.innerHTML = ''; return; }
-  const notes = checkFit(a, b);
-  const blocking = notes.some(n => n.bad);
-  box.innerHTML = notes.length
-    ? `<div class="card" style="box-shadow:none;margin-bottom:1rem;padding:1rem 1.2rem;
-             background:${blocking ? 'var(--rose-bg)' : 'var(--amber-bg)'};
-             border-color:${blocking ? 'var(--rose)' : 'var(--amber-line)'}">
-         <p class="meta" style="margin:0 0 .4rem;font-weight:600;
-            color:${blocking ? 'var(--rose)' : 'var(--amber)'}">
-           ${blocking ? 'Worth a second look' : 'Minor differences'}</p>
-         <ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:var(--ink-soft);line-height:1.7">
-           ${notes.map(n => `<li>${esc(n.t)}</li>`).join('')}
-         </ul>
-       </div>`
-    : `<div class="card" style="box-shadow:none;margin-bottom:1rem;padding:.8rem 1.2rem;
-             background:var(--sage-bg);border-color:var(--line)">
-         <p class="meta" style="margin:0;color:var(--sage);font-weight:600">
-           They fit each other's stated criteria.</p>
-       </div>`;
-}
-
-// Picking the first person is enough: the engine ranks everyone they could
-// be matched with, so you choose from a shortlist rather than guessing.
-async function paintSuggestions(){
-  const id = $('new-a').value;
-  const box = $('suggested');
-  if (!id) { box.innerHTML = ''; return; }
-
-  box.innerHTML = '<p class="meta" style="margin:0 0 1rem">Working out who suits them…</p>';
-  const { data, error } = await supabase.rpc('suggest_matches', { p_user:id, p_limit:10 });
-  if (error) { box.innerHTML = `<p class="meta" style="margin:0 0 1rem;color:var(--rose)">${esc(friendly(error))}</p>`; return; }
-
-  const who = byId(id)?.name || 'them';
-  if (!data || !data.length) {
-    box.innerHTML = `<div class="card" style="box-shadow:none;margin-bottom:1rem;padding:1rem 1.2rem;
-        background:var(--amber-bg);border-color:var(--amber-line)">
-      <p class="meta" style="margin:0;color:var(--amber)">
-        Nobody is eligible for ${esc(who)} right now. Usually that means the other
-        person hasn't finished their questionnaire, isn't verified, is already
-        in a conversation, or a dealbreaker rules them out.</p></div>`;
-    return;
-  }
-
-  box.innerHTML = `<div class="card" style="box-shadow:none;margin-bottom:1rem;padding:1rem 1.2rem">
-    <p class="meta" style="margin:0 0 .7rem;font-weight:600;color:var(--night)">
-      Best matches for ${esc(who)}</p>
-    ${data.map(r => `
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;
-                  padding:.55rem 0;border-top:1px solid var(--line)">
-        <div style="min-width:0">
-          <strong>${esc(r.name || 'Unnamed')}</strong>
-          <span class="meta"> ${[r.age, r.city, r.occupation].filter(Boolean).map(esc).join(' · ')}</span>
-          ${r.one_way_to_them !== r.one_way_to_me ? `<div class="meta" style="font-size:.76rem">
-             ${esc(who)} scores them ${r.one_way_to_them}, they score ${esc(who)} ${r.one_way_to_me}
-             — the lower one counts</div>` : ''}
-        </div>
-        <div style="display:flex;align-items:center;gap:.7rem;flex-shrink:0">
-          <span class="pill ${r.score >= 75 ? 'pill-ok' : r.score >= 50 ? 'pill-wait' : 'pill-off'}">${r.score}%</span>
-          <button class="btn" data-pick="${esc(r.candidate)}">Choose</button>
-        </div>
-      </div>`).join('')}
-    <p class="meta" style="margin:.8rem 0 0;font-size:.76rem">
-      Members never see a score. It's here so you can judge quickly, not so it
-      can be shown to them.</p>
-  </div>`;
-
-  box.querySelectorAll('[data-pick]').forEach(b => b.onclick = () => {
-    $('new-b').value = b.dataset.pick;
-    paintFit();
-    $('new-b').scrollIntoView({ block:'center', behavior:'smooth' });
-  });
-}
-
-$('new-a').onchange = () => { paintFit(); paintSuggestions(); };
-$('new-b').onchange = paintFit;
-
-$('new-match').onclick = async () => {
-  const a = $('new-a').value, b = $('new-b').value;
-  if (!a || !b)  return toast('Choose two members.', true);
-  if (a === b)   return toast('Pick two different people.', true);
-  const btn = $('new-match'); btn.disabled = true;
-  const { error } = await supabase.from('matches').insert({
-    member_a: a, member_b: b, note: $('new-note').value.trim()
-  });
-  btn.disabled = false;
-  if (error) return toast(friendly(error), true);
-  $('new-note').value = ''; $('new-a').value = ''; $('new-b').value = '';
-  $('fit').innerHTML = ''; $('suggested').innerHTML = '';
-  toast('✓ Match created — both will be told they have a new match');
-  await loadAll(); paintMatches();
-};
-
-function paintMatches(){
-  const married = MATCHES.filter(m => m.outcome === 'married').length;
-  const talking = MATCHES.filter(m => m.outcome === 'talking').length;
-  const open    = MATCHES.filter(m => m.conversation_id && !m.outcome).length;
-  $('match-stats').innerHTML = MATCHES.length
-    ? `<div class="card" style="display:flex;gap:2rem;flex-wrap:wrap;padding:1rem 1.2rem">
-         <span class="meta"><strong style="color:var(--night);font-size:1.1rem">${MATCHES.length}</strong> matches made</span>
-         <span class="meta"><strong style="color:var(--night);font-size:1.1rem">${open}</strong> in conversation</span>
-         <span class="meta"><strong style="color:var(--night);font-size:1.1rem">${talking}</strong> still talking</span>
-         <span class="meta"><strong style="color:var(--sage);font-size:1.1rem">${married}</strong> married</span>
-       </div>` : '';
-
-  if (!MATCHES.length) {
-    $('matches-list').innerHTML = `<div class="empty"><div class="display">No matches yet</div>
-      <p>Create one above once you have two verified members.</p></div>`;
-    return;
-  }
-  $('matches-list').innerHTML = MATCHES.map(m => {
-    const asked = (m.chat_requested_by || []).length;
-    const both  = asked >= 2;
-    const met   = (m.meeting_requested_by || []).length;
-    const bothMeet = met >= 2;
-    let pill, note, action = '';
-    if (m.conversation_id) {
-      // Once they're talking, the thing that needs you is the introduction.
-      if (m.meeting_at) {
-        pill = '<span class="pill pill-ok">Introduction set</span>';
-        note = `Meeting ${esc(fmt(m.meeting_at))}.` +
-               (m.meeting_note ? ` <em>${esc(m.meeting_note)}</em>` : '');
-        action = `<button class="btn" data-goconvo="${esc(m.conversation_id)}">Open conversation</button>
-                  <button class="btn" data-arrange="${esc(m.id)}">Change it</button>`;
-      } else if (bothMeet) {
-        pill = '<span class="pill pill-wait">Introduction asked</span>';
-        note = 'Both have asked to meet. Arrange it and tell them the time.';
-        action = `<button class="btn btn-key" data-arrange="${esc(m.id)}">Arrange the introduction</button>
-                  <button class="btn" data-goconvo="${esc(m.conversation_id)}">Open conversation</button>`;
-      } else if (met === 1) {
-        pill = '<span class="pill pill-ok">Messaging</span>';
-        note = `${esc(nameOf(m.meeting_requested_by[0]))} has asked to meet. ` +
-               'The other hasn\'t, and has not been told.';
-        action = `<button class="btn" data-goconvo="${esc(m.conversation_id)}">Open conversation</button>`;
-      } else {
-        pill = '<span class="pill pill-ok">Messaging</span>';
-        note = 'Talking now.';
-        action = `<button class="btn" data-goconvo="${esc(m.conversation_id)}">Open conversation</button>`;
-      }
-    } else if (both) {
-      pill = '<span class="pill pill-wait">Both asked to message</span>';
-      note = m.verified_both
-        ? 'Both re-checked. Ready to open.'
-        : 'Both have asked to message. Re-check them before opening anything.';
-      action = m.verified_both
-        ? `<button class="btn btn-key" data-openconvo="${esc(m.id)}">Open conversation</button>`
-        : `<button class="btn btn-key" data-dblcheck="${esc(m.id)}">Confirm both re-checked</button>`;
-    } else if (asked === 1) {
-      pill = '<span class="pill pill-wait">One asked</span>';
-      note = `${esc(nameOf(m.chat_requested_by[0]))} has asked to message. Waiting on the other.`;
-    } else if (m.status === 'declined') {
-      pill = '<span class="pill pill-no">Declined</span>';
-      const who = (m.declined_by || []).map(nameOf).join(', ');
-      note = `Declined by ${esc(who || 'a member')}.` +
-             (m.decline_reason ? ` They said: <em>${esc(m.decline_reason)}</em>` : '');
+    if (result === 'already') {
+      $('wl-done-title').textContent = "You're already on the list";
+      $('wl-done-text').textContent = "That email is already on our waitlist, so you're all set. We'll email you the moment Halal Bridge opens, inshallah.";
     } else {
-      pill = '<span class="pill pill-off">Proposed</span>';
-      note = 'Neither has responded yet.';
+      // Confirmation email. Fire and forget: the sign-up already worked.
+      fetch('/api/welcome-email', { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ email }) }).catch(() => {});
     }
-
-    const outcome = m.outcome || '';
-    return `<div class="card">
-      <div class="row">
-        <div style="min-width:0">
-          <h3 class="name">${esc(nameOf(m.member_a))} &amp; ${esc(nameOf(m.member_b))}</h3>
-          <p class="meta">${note}${m.note ? ' — <em>' + esc(m.note) + '</em>' : ''}</p>
-        </div>${pill}
-      </div>
-      <div class="actions">
-        ${action}
-        <button class="btn btn-bad" data-remove="${esc(m.id)}">Remove</button>
-        <span class="meta">${fmt(m.created_at)}</span>
-      </div>
-      <div id="arr-${esc(m.id)}"></div>
-      <div class="detail open" style="border-top:1px solid var(--line);margin-top:.9rem">
-        <div class="grid-2" style="align-items:end">
-          <div class="field" style="margin-bottom:0">
-            <label>Where did it get to?</label>
-            <select data-outcome="${esc(m.id)}">
-              <option value=""        ${outcome===''        ?'selected':''}>Not recorded</option>
-              <option value="talking" ${outcome==='talking' ?'selected':''}>Still talking</option>
-              <option value="married" ${outcome==='married' ?'selected':''}>Married alhamdulillah</option>
-              <option value="ended"   ${outcome==='ended'   ?'selected':''}>Didn't proceed</option>
-            </select>
-          </div>
-          <div class="field" style="margin-bottom:0">
-            <label>Note</label>
-            <input type="text" data-outnote="${esc(m.id)}" value="${esc(m.outcome_note || '')}"
-                   placeholder="Optional"/>
-          </div>
-        </div>
-        <div class="grid-2" style="margin-top:.8rem">
-          <div class="field" style="margin-bottom:0">
-            <label>1-on-1 meeting</label>
-            <input type="date" data-meeting="${esc(m.id)}"
-                   value="${m.meeting_at ? String(m.meeting_at).slice(0,10) : ''}"/>
-          </div>
-          <div class="field" style="margin-bottom:0">
-            <label>Where / who is attending</label>
-            <input type="text" data-meetnote="${esc(m.id)}" value="${esc(m.meeting_note || '')}"
-                   placeholder="e.g. Sydney venue, wali attending"/>
-          </div>
-        </div>
-        <button class="btn" style="margin-top:.6rem" data-saveout="${esc(m.id)}">Save</button>
-      </div>
-    </div>`;
-  }).join('');
-
-  $('matches-list').querySelectorAll('[data-dblcheck]').forEach(b => b.onclick = async () => {
-    const m = MATCHES.find(x => x.id === b.dataset.dblcheck);
-    const a = byId(m?.member_a), c = byId(m?.member_b);
-    if (!confirm(
-      'Second check before anything opens between them.\n\n' +
-      `• ${a?.name || '?'} — ID ${a?.id_status || 'not submitted'}, ` +
-        `${a?.verified ? 'verified' : 'NOT VERIFIED'}\n` +
-      `• ${c?.name || '?'} — ID ${c?.id_status || 'not submitted'}, ` +
-        `${c?.verified ? 'verified' : 'NOT VERIFIED'}\n\n` +
-      'Confirm you have re-checked both?')) return;
-    b.disabled = true;
-    const { error } = await supabase.from('matches')
-      .update({ verified_both:true, verified_both_at:new Date().toISOString() }).eq('id', m.id);
-    if (error) { toast(friendly(error), true); b.disabled = false; return; }
-    toast('✓ Re-checked — you can open the conversation now');
-    await loadAll(); paintMatches();
-  });
-
-  $('matches-list').querySelectorAll('[data-openconvo]').forEach(b => b.onclick = async () => {
-    b.disabled = true; b.textContent = 'Opening…';
-    const { data, error } = await supabase.rpc('open_conversation', { p_match_id: b.dataset.openconvo });
-    if (error) { toast(friendly(error), true); b.disabled = false; b.textContent = 'Open conversation'; return; }
-    toast('✓ Conversation opened — both members have been told');
-    await loadAll(); showView('convos');
-    const c = CONVOS.find(c => c.id === data);
-    if (c) openChat(c);
-  });
-
-  $('matches-list').querySelectorAll('[data-goconvo]').forEach(b => b.onclick = () => {
-    const c = CONVOS.find(c => c.id === b.dataset.goconvo);
-    if (c) { showView('convos'); openChat(c); } else toast('That conversation has been deleted.', true);
-  });
-
-  // Arranging the introduction. The date goes through arrange_meeting()
-  // rather than a direct update so the member app's view of it comes from
-  // one place, and so a member can never set their own meeting time.
-  $('matches-list').querySelectorAll('[data-arrange]').forEach(b => b.onclick = () => {
-    const id = b.dataset.arrange;
-    const m  = MATCHES.find(x => x.id === id);
-    askInline('arr-' + id, {
-      label: 'When is it? Both of them will see this time',
-      quick: ['Saturday afternoon', 'Sunday after Dhuhr', 'A weekday evening'],
-      placeholder: 'e.g. 2026-11-08 14:00 — the community hall, with Sr Mariam there',
-      go: 'Save the introduction',
-      required: true,
-      requiredMsg: 'Put a date and time in, so we can tell them something real.',
-      onGo: async text => {
-        // A date at the front, the arrangement after it. Anything the
-        // browser can't read as a date is kept as the note instead, so a
-        // typo never silently becomes "no meeting".
-        const firstBit = text.split('—')[0].split('-—')[0].trim();
-        const when = new Date(firstBit.replace(' ', 'T'));
-        if (isNaN(when.getTime())) {
-          return 'Start with a date and time we can read, e.g. 2026-11-08 14:00';
-        }
-        const { error } = await supabase.rpc('arrange_meeting', {
-          p_match_id: id, p_when: when.toISOString(),
-          p_note: text.slice(firstBit.length).replace(/^[\s—-]+/, '').trim() || null
-        });
-        if (error) return friendly(error);
-        toast(`Introduction set for ${nameOf(m?.member_a)} and ${nameOf(m?.member_b)}`);
-        await loadAll();
-        paintMatches();
-      }
-    });
-  });
-
-  $('matches-list').querySelectorAll('[data-saveout]').forEach(b => b.onclick = async () => {
-    const id = b.dataset.saveout;
-    const outcome = $('matches-list').querySelector(`[data-outcome="${id}"]`).value || null;
-    const outnote = $('matches-list').querySelector(`[data-outnote="${id}"]`).value.trim() || null;
-    const meetVal = $('matches-list').querySelector(`[data-meeting="${id}"]`)?.value || '';
-    const meetNote = $('matches-list').querySelector(`[data-meetnote="${id}"]`)?.value.trim() || null;
-    b.disabled = true; b.textContent = 'Saving…';
-    const { error } = await supabase.from('matches')
-      .update({ outcome, outcome_note: outnote,
-                meeting_at: meetVal ? new Date(meetVal + 'T12:00:00').toISOString() : null,
-                meeting_note: meetNote }).eq('id', id);
-    b.disabled = false; b.textContent = 'Save';
-    if (error) return toast(friendly(error), true);
-    toast(outcome === 'married' ? '✓ Recorded — mabrook!' : '✓ Outcome saved');
-    await loadAll();
-  });
-
-  $('matches-list').querySelectorAll('[data-remove]').forEach(b => b.onclick = async () => {
-    if (!confirm('Remove this match? They will no longer see each other.')) return;
-    b.disabled = true;
-    const { error } = await supabase.from('matches').delete().eq('id', b.dataset.remove);
-    if (error) { toast(friendly(error), true); b.disabled = false; return; }
-    toast('Match removed');
-    await loadAll(); paintMatches();
-  });
-}
-
-// ───────── conversations ─────────
-const partsOf = cid => PARTS.filter(p => p.conversation_id === cid);
-
-function paintConvos(){
-  if (!CONVOS.length) {
-    $('convos-list').innerHTML = `<div class="empty"><div class="display">No conversations yet</div>
-      <p>Open one from a match where both sides have asked.</p></div>`;
-    return;
+    form.style.display = 'none';
+    $('wl-done').style.display = 'block';
+    $('wl-done').scrollIntoView({ behavior:'smooth', block:'center' });
+  } catch (err) {
+    showError(err.message && err.message.length < 140 ? err.message : 'Something went wrong. Please try again in a moment.');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Join the waitlist';
   }
-  // Anyone who has written to us directly is waiting on a reply, so they go
-  // above two people who are talking to each other quite happily.
-  const ordered = [...CONVOS].sort((a, b) =>
-    (b.kind === 'support') - (a.kind === 'support'));
-  $('convos-list').innerHTML = ordered.map(c => {
-    const ps = partsOf(c.id);
-    const members = ps.filter(p => p.role === 'member').map(p => nameOf(p.user_id));
-    const extra = ps.filter(p => p.role === 'wali').map(p => nameOf(p.user_id));
-    // A member writing to us privately, rather than two members talking.
-    const support = c.kind === 'support';
-    return `<div class="card${support ? ' flag' : ''}" style="cursor:pointer" data-convo="${esc(c.id)}">
-      <div class="row">
-        <div style="min-width:0">
-          <h3 class="name">${support
-            ? esc(members[0] || 'A member') + ' &rarr; the team'
-            : esc(members.join(' & ') || 'Conversation')}</h3>
-          <p class="meta">${esc(c.last_message_preview || 'No messages yet')}</p>
-          ${extra.length ? `<p class="meta">Wali present: ${esc(extra.join(', '))}</p>` : ''}
-        </div>
-        ${support ? '<span class="pill pill-wait">Asking us</span>'
-         : c.status === 'closed' ? '<span class="pill pill-no">Closed</span>'
-                                 : '<span class="pill pill-ok">Open</span>'}
-      </div>
-    </div>`;
-  }).join('');
-  $('convos-list').querySelectorAll('[data-convo]').forEach(el =>
-    el.onclick = () => openChat(CONVOS.find(c => c.id === el.dataset.convo)));
-}
-
-function renderThread(){
-  const t = $('thread');
-  if (!MSGS.length) { t.innerHTML = '<div class="empty"><p>No messages yet.</p></div>'; return; }
-  const bottom = t.scrollHeight - t.scrollTop - t.clientHeight < 60;
-  t.innerHTML = MSGS.map(m => {
-    const mine = m.sender_id === ME.id;
-    // The two members get a bubble each, so a three-way conversation reads
-    // as three people rather than as you and a wall of identical replies.
-    const members = [...new Set(MSGS.filter(x => x.sender_role === 'member')
-                                    .map(x => x.sender_id))];
-    const cls = mine ? 'mine'
-      : m.sender_role === 'wali'  ? 'theirs wali'
-      : m.sender_role === 'admin' ? 'mine'
-      : members.indexOf(m.sender_id) === 1 ? 'theirs them-b' : 'theirs';
-    const tag = m.sender_role === 'wali' ? ' · Wali' : (m.sender_role === 'admin' && !mine ? ' · Team' : '');
-    return `<div class="msg ${cls}">
-      <span class="msg-who">${mine ? 'You' : esc(m.sender_name || 'Member')}${tag}</span>
-      <div class="msg-body">${esc(m.body)}</div>
-      <span class="msg-time">${fmt(m.created_at)}</span>
-    </div>`;
-  }).join('');
-  if (bottom) t.scrollTop = t.scrollHeight;
-}
-function merge(incoming){
-  const seen = new Set(MSGS.map(m => m.id));
-  let added = false;
-  for (const m of incoming) if (!seen.has(m.id)) { MSGS.push(m); seen.add(m.id); added = true; }
-  if (added) { MSGS.sort((a,b) => new Date(a.created_at) - new Date(b.created_at)); renderThread(); }
-}
-async function fetchMessages(){
-  const { data, error } = await supabase.from('messages')
-    .select('id,sender_id,sender_name,sender_role,body,created_at')
-    .eq('conversation_id', currentConvo.id).order('created_at', { ascending:true });
-  if (error) return false;
-  merge(data); return true;
-}
-
-async function openChat(c){
-  if (!c) return;
-  teardown();
-  currentConvo = c;
-  showView('chat');
-
-  const ps = partsOf(c.id);
-  const members = ps.filter(p => p.role === 'member').map(p => nameOf(p.user_id));
-  const others  = ps.filter(p => p.role !== 'member').map(p => nameOf(p.user_id) + ' (' + p.role + ')');
-  const support = c.kind === 'support';
-  $('chat-title').textContent = support
-    ? (members[0] || 'A member') + ' — asking us'
-    : (members.join(' & ') || 'Conversation');
-  $('chat-sub').textContent = support
-    ? 'A private line. Nobody they have been matched with can see this.'
-    : 'Also present: ' + (others.join(', ') || 'just you');
-  // Adding a wali to someone's private line to us would defeat the point
-  // of it being private.
-  $('wali-email').style.display = support ? 'none' : '';
-  $('add-wali').style.display   = support ? 'none' : '';
-
-  const closed = c.status === 'closed';
-  $('toggle-convo').textContent = closed ? 'Reopen conversation' : 'Close conversation';
-  $('toggle-convo').className = 'btn ' + (closed ? '' : 'btn-bad');
-  $('composer-text').disabled = closed;
-  $('composer-send').disabled = closed;
-  $('composer-text').placeholder = closed
-    ? 'Reopen the conversation to write.' : 'Write as the Halal Bridge team…';
-
-  $('thread').innerHTML = '<div class="empty"><p>Loading…</p></div>';
-  MSGS = [];
-  if (!await fetchMessages()) {
-    $('thread').innerHTML = '<div class="empty"><p>Couldn\'t load this conversation.</p></div>';
-    return;
-  }
-  renderThread(); $('thread').scrollTop = $('thread').scrollHeight;
-
-  const id = c.id;
-  msgChannel = supabase.channel('admin:convo:' + id)
-    .on('postgres_changes', { event:'INSERT', schema:'public', table:'messages',
-                              filter:'conversation_id=eq.' + id },
-        p => { if (currentConvo?.id === id) merge([p.new]); })
-    .subscribe();
-  pollTimer = setInterval(() => { if (currentConvo?.id === id) fetchMessages(); }, 12000);
-}
-
-$('toggle-convo').onclick = async () => {
-  if (!currentConvo) return;
-  const next = currentConvo.status === 'closed' ? 'open' : 'closed';
-  const b = $('toggle-convo'); b.disabled = true;
-  const { error } = await supabase.from('conversations')
-    .update({ status: next }).eq('id', currentConvo.id);
-  b.disabled = false;
-  if (error) return toast(friendly(error), true);
-  currentConvo.status = next;
-  toast(next === 'closed' ? 'Conversation closed' : 'Conversation reopened');
-  await loadAll();
-  openChat(CONVOS.find(c => c.id === currentConvo.id) || currentConvo);
-};
-
-$('add-wali').onclick = async () => {
-  const email = $('wali-email').value.trim();
-  if (!email || !currentConvo) return toast('Enter the wali\'s email address.', true);
-  const b = $('add-wali'); b.disabled = true;
-  const { data, error } = await supabase.rpc('add_participant',
-    { p_convo: currentConvo.id, p_email: email, p_role: 'wali' });
-  b.disabled = false;
-  if (error) return toast(friendly(error), true);
-  $('wali-email').value = '';
-  toast(`✓ ${data} added as wali`);
-  await loadAll();
-  openChat(CONVOS.find(c => c.id === currentConvo.id) || currentConvo);
-};
-
-const composer = $('composer-text');
-composer.addEventListener('input', () => {
-  composer.style.height = 'auto';
-  composer.style.height = Math.min(composer.scrollHeight, 140) + 'px';
-});
-composer.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('composer-send').click(); }
 });
 
-$('composer-send').onclick = async () => {
-  const text = composer.value.trim();
-  if (!text || !currentConvo) return;
-  const b = $('composer-send'); b.disabled = true;
-  // sender_name and sender_role are stamped by the database from the
-  // participants table, so what's sent here is only a fallback.
-  const { data, error } = await supabase.from('messages').insert({
-    conversation_id: currentConvo.id, sender_id: ME.id,
-    sender_name: 'Halal Bridge team', sender_role: 'admin', body: text
-  }).select().maybeSingle();
-  b.disabled = false;
-  if (error) return toast('Could not send: ' + friendly(error), true);
-  composer.value = ''; composer.style.height = 'auto';
-  if (data) merge([data]);
-  supabase.rpc('touch_conversation', { p_convo: currentConvo.id, p_preview: text })
-    .then(() => {}, () => {});
-};
-
-// ───────── people nobody has got to ─────────
-// Verified, available, questionnaire finished, and still waiting. They are
-// invisible in a list sorted by anything else, and they are the ones who
-// quietly leave.
-async function paintStale(){
-  const box = $('stale');
-  if (!box) return;
-  const { data, error } = await supabase.rpc('stale_members');
-  if (error || !data || !data.length) { box.innerHTML = ''; return; }
-  const rows = data;
-  box.innerHTML = `<div class="queue" style="border-left-color:var(--rose)">
-    <h3>Waiting on you</h3>
-    <ul>
-      <li><strong>${rows.length}</strong> verified member${rows.length>1?'s':''}
-          ${rows.length>1?'have':'has'} been ready for six weeks or more with no match:
-          ${rows.slice(0,5).map(r => esc(r.name || 'someone')).join(', ')}${
-            rows.length > 5 ? ` and ${rows.length - 5} more` : ''}.</li>
-    </ul>
-    <p class="meta" style="margin:.4rem 0 0;color:var(--amber)">
-      Longest wait: ${esc(rows[0].name || 'someone')}, since
-      ${esc(fmt(rows[0].last_matched_at || rows[0].joined_at))}.</p>
-  </div>`;
-}
-
-// ───────── after they met ─────────
-async function loadFeedback(){
-  const box = $('feedback-list');
-  box.innerHTML = '<div class="empty"><p>Loading…</p></div>';
-  const { data, error } = await supabase.rpc('admin_feedback');
-  if (error) {
-    box.innerHTML = `<div class="empty"><div class="display">Couldn't load it</div>
-      <p>${esc(friendly(error))}</p></div>`;
-    return;
-  }
-  const rows = data || [];
-  if (!rows.length) {
-    box.innerHTML = `<div class="empty"><div class="display">Nothing yet</div>
-      <p>Once an introduction has happened, what each of them says about it
-         afterwards appears here.</p></div>`;
-    return;
-  }
-  const word = v => v === 'yes' ? '<span class="pill pill-ok">Would continue</span>'
-    : v === 'unsure' ? '<span class="pill pill-wait">Not sure</span>'
-    : v === 'no' ? '<span class="pill pill-no">Not right</span>'
-    : '<span class="pill pill-off">Hasn\'t said</span>';
-
-  box.innerHTML = rows.map(r => {
-    // Both saying yes is the thing you are looking for; one yes and one no
-    // is the thing that needs you to break it gently.
-    const both = r.a_said === 'yes' && r.b_said === 'yes';
-    const split = (r.a_said === 'no') !== (r.b_said === 'no')
-               && r.a_said && r.b_said;
-    return `<div class="card${both ? '' : split ? ' flag' : ''}">
-      <div class="row">
-        <div style="min-width:0">
-          <h3 class="name">${esc(r.a_name || '—')} &amp; ${esc(r.b_name || '—')}</h3>
-          <p class="meta">Met ${esc(fmt(r.met_at))}</p>
-        </div>
-        ${both ? '<span class="pill pill-ok">Both said yes</span>'
-         : split ? '<span class="pill pill-no">One yes, one no</span>' : ''}
-      </div>
-      <div class="detail open" style="display:block">
-        <dl>
-          <dt>${esc(r.a_name || 'One of them')}</dt>
-          <dd>${word(r.a_said)}${r.a_note ? '<br>' + esc(r.a_note) : ''}</dd>
-          <dt>${esc(r.b_name || 'The other')}</dt>
-          <dd>${word(r.b_said)}${r.b_note ? '<br>' + esc(r.b_note) : ''}</dd>
-        </dl>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// ───────── reports ─────────
-// The queue a moderator works through. A report is one side of a story, so
-// the chat log loads underneath it rather than in a separate screen -- the
-// decision gets made with the messages in view, not from the summary.
-
-document.querySelectorAll('[data-rfilter]').forEach(b => b.onclick = () => {
-  REPORT_FILTER = b.dataset.rfilter;
-  document.querySelectorAll('[data-rfilter]').forEach(x =>
-    x.classList.toggle('btn-key', x.dataset.rfilter === REPORT_FILTER));
-  loadReports();
+$('wl-share').addEventListener('click', async () => {
+  const data = { title: 'Halal Bridge', text: 'Supervised, verified Muslim matchmaking — join the waitlist:', url: location.origin + location.pathname };
+  try {
+    if (navigator.share) await navigator.share(data);
+    else { await navigator.clipboard.writeText(data.url); $('wl-share').textContent = 'Link copied'; }
+  } catch (e) {}
 });
-
-async function loadReports(){
-  $('reports-list').innerHTML = '<div class="empty"><p>Loading…</p></div>';
-  const { data, error } = await supabase.rpc('admin_reports', { p_status: REPORT_FILTER });
-  if (error) {
-    $('reports-list').innerHTML =
-      `<div class="empty"><div class="display">Couldn't load reports</div>
-       <p>${esc(friendly(error))}</p>
-       <p style="margin-top:.6rem">If this says the function is missing, run the
-          latest schema in the SQL editor.</p></div>`;
-    return;
-  }
-  REPORTS = data || [];
-  if (REPORT_FILTER === 'open') { OPEN_REPORTS = REPORTS.length; paintCounts(); }
-  paintReports();
-}
-
-function paintReports(){
-  if (!REPORTS.length) {
-    $('reports-list').innerHTML = `<div class="empty">
-      <div class="display">Nothing here</div>
-      <p>${REPORT_FILTER === 'open'
-          ? 'No open reports. '
-          : 'No reports with that status. '}</p></div>`;
-    return;
-  }
-
-  $('reports-list').innerHTML = REPORTS.map(r => {
-    const urgent = r.severity === 'urgent';
-    const open   = r.status === 'open';
-    const repeat = Number(r.reported_prior_reports || 0);
-
-    const pill = open
-      ? (urgent ? '<span class="pill pill-no">Urgent</span>'
-                : '<span class="pill pill-wait">Open</span>')
-      : (r.status === 'actioned' ? '<span class="pill pill-ok">Actioned</span>'
-                                 : '<span class="pill pill-off">Dismissed</span>');
-
-    return `<div class="card${urgent && open ? ' flag' : ''}">
-      <div class="row">
-        <div style="min-width:0">
-          <p class="name">${esc(r.reported_name || 'Unknown')}</p>
-          <p class="meta">reported by ${esc(r.reporter_name || 'a member')}
-             · ${esc(fmt(r.created_at))}</p>
-        </div>
-        ${pill}
-      </div>
-
-      <div class="detail open" style="display:block">
-        <dl>
-          <dt>Reason</dt><dd>${esc(r.reason || '—')}</dd>
-          ${r.note ? `<dt>In their words</dt><dd>${esc(r.note)}</dd>` : ''}
-          <dt>Conversation</dt>
-          <dd>${esc(r.conversation_status || 'gone')} ·
-              ${esc(String(r.message_count || 0))} message${r.message_count == 1 ? '' : 's'}</dd>
-          <dt>About them</dt>
-          <dd>${r.reported_verified ? 'verified' : 'not verified'}
-              · ${esc(r.reported_status || 'active')}
-              ${repeat ? ` · <strong>${repeat} other report${repeat>1?'s':''}</strong>` : ''}</dd>
-          ${r.outcome_note ? `<dt>Your note</dt><dd>${esc(r.outcome_note)}</dd>` : ''}
-          ${r.handled_by_name ? `<dt>Handled by</dt>
-             <dd>${esc(r.handled_by_name)} · ${esc(fmt(r.handled_at))}</dd>` : ''}
-        </dl>
-      </div>
-
-      <div id="rlog-${esc(r.id)}"></div>
-      <div id="rask-${esc(r.id)}"></div>
-
-      <div class="actions">
-        <button class="btn" data-rlog="${esc(r.id)}">Read the messages</button>
-        ${r.conversation_id
-          ? `<button class="btn" data-ropen="${esc(r.conversation_id)}">Open the conversation</button>` : ''}
-        ${open ? `
-          <button class="btn btn-key" data-raction="actioned" data-rid="${esc(r.id)}">Actioned</button>
-          <button class="btn" data-raction="dismissed" data-rid="${esc(r.id)}">Dismiss</button>
-          ${r.reported_id && r.reported_status !== 'paused'
-            ? `<button class="btn btn-bad" data-rpause="${esc(r.reported_id)}">Pause them</button>` : ''}
-          ${r.reported_status === 'paused'
-            ? `<button class="btn" data-runpause="${esc(r.reported_id)}">Un-pause them</button>` : ''}
-        ` : `<button class="btn" data-raction="open" data-rid="${esc(r.id)}">Reopen</button>`}
-      </div>
-    </div>`;
-  }).join('');
-
-  const list = $('reports-list');
-
-  list.querySelectorAll('[data-rlog]').forEach(b => b.onclick = async () => {
-    const box = $('rlog-' + b.dataset.rlog);
-    if (box.innerHTML) { box.innerHTML = ''; b.textContent = 'Read the messages'; return; }
-    b.disabled = true; b.textContent = 'Loading…';
-    const { data, error } = await supabase.rpc('report_log', { p_report: b.dataset.rlog });
-    b.disabled = false; b.textContent = 'Hide the messages';
-    if (error) { b.textContent = 'Read the messages'; return toast(friendly(error), true); }
-    if (!data || !data.length) {
-      box.innerHTML = '<p class="meta" style="margin-top:.8rem">No messages in that conversation.</p>';
-      return;
-    }
-    // The reporter's own messages sit on the right, so the shape of the
-    // exchange is readable at a glance -- who pushed and who backed away.
-    box.innerHTML = `<div class="thread log" style="margin-top:.9rem">` + data.map(m => {
-      const mine = m.sender_id && m.sender_id === currentReportReporter(b.dataset.rlog);
-      // A wali's messages are tinted here exactly as they are in the live
-      // chat, so the log reads the same way the conversation did.
-      const side = m.sender_role === 'wali' ? 'wali' : (mine ? 'mine' : 'theirs');
-      return `<div class="msg ${side}">
-        <div class="msg-who">${esc(m.sender_name || 'Someone')}${
-          m.sender_role && m.sender_role !== 'member' ? ' · ' + esc(m.sender_role) : ''}</div>
-        <div class="msg-body">${esc(m.body)}</div>
-        <div class="msg-time">${esc(fmt(m.created_at))}</div>
-      </div>`;
-    }).join('') + '</div>';
-  });
-
-  list.querySelectorAll('[data-ropen]').forEach(b => b.onclick = () => {
-    const c = CONVOS.find(x => x.id === b.dataset.ropen);
-    if (!c) return toast('That conversation is no longer here.', true);
-    openChat(c);
-  });
-
-  list.querySelectorAll('[data-raction]').forEach(b => b.onclick = async () => {
-    const action = b.dataset.raction, id = b.dataset.rid;
-
-    const close = async note => {
-      const { error } = await supabase.rpc('resolve_report',
-        { p_report: id, p_action: action, p_note: (note || '').trim() || null });
-      if (error) return friendly(error);
-      toast(action === 'open' ? 'Reopened' : 'Closed');
-      loadReports();
-    };
-
-    // Reopening needs no note; closing one does, and that note used to be
-    // asked for with prompt(), which a phone browser may never show.
-    if (action === 'open') {
-      b.disabled = true;
-      const err = await close(null);
-      b.disabled = false;
-      if (err) toast(err, true);
-      return;
-    }
-
-    askInline('rask-' + id, {
-      label: action === 'actioned'
-        ? 'What did you do? Only the team ever reads this'
-        : 'Why are you dismissing it? Only the team ever reads this',
-      quick: action === 'actioned'
-        ? ['Spoke to them.', 'Final warning given.', 'Paused their account.',
-           'Removed them.', 'Conversation closed.']
-        : ['Nothing in it.', 'A misunderstanding.', 'Already dealt with.',
-           'Not enough to act on.'],
-      placeholder: action === 'actioned'
-        ? 'e.g. Spoke to him. Final warning.'
-        : 'e.g. Crossed wires about the event date.',
-      go: action === 'actioned' ? 'Mark as actioned' : 'Dismiss it',
-      required: true,
-      requiredMsg: 'Write a line, so the next person to look knows what happened.',
-      onGo: close,
-    });
-  });
-
-  list.querySelectorAll('[data-rpause],[data-runpause]').forEach(b => b.onclick = async () => {
-    const pausing = !!b.dataset.rpause;
-    const who = b.dataset.rpause || b.dataset.runpause;
-    b.disabled = true;
-    const { error } = await supabase.rpc('set_member_status',
-      { p_user: who, p_status: pausing ? 'paused' : 'active' });
-    b.disabled = false;
-    if (error) return toast(friendly(error), true);
-    toast(pausing ? 'Paused — they won\'t be matched with anyone'
-                  : 'Back in the pool');
-    await loadAll();
-    loadReports();
-  });
-}
-
-const currentReportReporter = id => REPORTS.find(r => r.id === id)?.reporter_id || null;
 </script>
 </body>
 </html>
