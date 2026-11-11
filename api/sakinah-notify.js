@@ -82,17 +82,17 @@ const profileOf = id => one(`profiles?id=eq.${id}&select=id,name,email`);
 function shell(heading, lines, cta) {
   return `<meta charset="utf-8">
 <div style="font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:auto;color:#232736;font-size:15px;line-height:1.7">
-  <div style="background:#1b2240;padding:30px;text-align:center;border-radius:8px 8px 0 0">
+  <div style="background:#2a1248;padding:30px;text-align:center;border-radius:8px 8px 0 0">
     <h1 style="color:#fff;margin:0;font-size:20px;letter-spacing:.3em;font-weight:400">HALAL BRIDGE</h1>
   </div>
   <div style="background:#fff;padding:30px;border:1px solid #e6e1d8">
-    <h2 style="color:#1b2240;font-size:18px;margin:0 0 16px;font-weight:600">${heading}</h2>
+    <h2 style="color:#2a1248;font-size:18px;margin:0 0 16px;font-weight:600">${heading}</h2>
     ${lines.map(l => `<p style="margin:0 0 14px">${l}</p>`).join('')}
     <div style="text-align:center;margin:28px 0 8px">
-      <a href="${APP_URL}" style="background:#d9bc8c;color:#1b2240;padding:14px 32px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:15px;display:inline-block">${cta}</a>
+      <a href="${APP_URL}" style="background:#d9bc8c;color:#2a1248;padding:14px 32px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:15px;display:inline-block">${cta}</a>
     </div>
   </div>
-  <div style="background:#1b2240;padding:20px;text-align:center;border-radius:0 0 8px 8px">
+  <div style="background:#2a1248;padding:20px;text-align:center;border-radius:0 0 8px 8px">
     <p style="color:#fff;margin:0;font-size:14px"><strong>The Halal Bridge Team</strong></p>
     <a href="mailto:${ADMIN_EMAIL}" style="color:#d9bc8c;text-decoration:none;font-size:13px">${ADMIN_EMAIL}</a>
   </div>
