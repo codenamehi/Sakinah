@@ -436,7 +436,7 @@ setTimeout(function(){
   </div>
 
   <div class="tabs">
-    <button class="tab" data-view="waitlist">Waitlist <span id="c-waitlist"></span></button>
+    <button class="tab" data-view="waitlist">Beta sign-ups <span id="c-waitlist"></span></button>
     <button class="tab active" data-view="members">Members <span id="c-members"></span></button>
     <button class="tab" data-view="idchecks">ID checks <span id="c-id"></span></button>
     <button class="tab" data-view="matches">Matches <span id="c-matches"></span></button>
@@ -449,8 +449,8 @@ setTimeout(function(){
     <section class="view" id="view-waitlist">
       <div class="view-head">
         <div>
-          <h2>Waitlist</h2>
-          <p>Everyone who has signed up on the coming-soon page. The public site stays a waitlist until you press Go live.</p>
+          <h2>Closed beta registrations</h2>
+          <p>Everyone who has registered on the public page. The page keeps taking registrations until you press Open the beta.</p>
         </div>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap">
           <button class="btn" id="wl-refresh">Refresh</button>
@@ -461,12 +461,12 @@ setTimeout(function(){
       <div class="card wl-hero">
         <div class="row" style="align-items:flex-end">
           <div>
-            <p class="meta">Sign-ups so far</p>
+            <p class="meta">Registrations so far</p>
             <div class="wl-big"><span id="wl-count">–</span><span class="wl-goal"> / <span id="wl-goal-text">1,000</span></span></div>
           </div>
-          <span id="wl-status-pill" class="pill pill-wait">Not live yet</span>
+          <span id="wl-status-pill" class="pill pill-wait">Beta not open</span>
         </div>
-        <div class="wl-bar" role="progressbar" aria-label="Progress to launch goal" aria-valuemin="0" aria-valuemax="100" id="wl-bar"><span id="wl-bar-fill"></span></div>
+        <div class="wl-bar" role="progressbar" aria-label="Progress to opening the beta" aria-valuemin="0" aria-valuemax="100" id="wl-bar"><span id="wl-bar-fill"></span></div>
         <p class="meta" id="wl-bar-note"></p>
       </div>
 
@@ -483,20 +483,20 @@ setTimeout(function(){
       </div>
 
       <div class="card" id="wl-launch">
-        <h3 class="name">Launch</h3>
-        <p class="meta" style="margin:.25rem 0 1rem">When you press Go live, the coming-soon page sends visitors to the app link below. Then send the launch email to everyone on the list.</p>
+        <h3 class="name">Open the beta</h3>
+        <p class="meta" style="margin:.25rem 0 1rem">When you press Open the beta, the public page sends visitors to the app link below. Then send the access email to everyone who registered.</p>
         <label class="wl-lbl" for="wl-app-url">Link to the live app</label>
         <input class="search" id="wl-app-url" placeholder="https://app.yourdomain.com.au" style="margin-bottom:.8rem"/>
-        <label class="wl-lbl" for="wl-goal-input">Launch goal</label>
+        <label class="wl-lbl" for="wl-goal-input">Registrations needed to open</label>
         <input class="search" id="wl-goal-input" type="number" min="1" style="margin-bottom:.8rem;max-width:160px"/>
-        <label class="wl-lbl" for="wl-subject">Launch email subject</label>
+        <label class="wl-lbl" for="wl-subject">Access email subject</label>
         <input class="search" id="wl-subject" style="margin-bottom:.8rem"/>
-        <label class="wl-lbl" for="wl-body">Launch email message <span style="text-transform:none;letter-spacing:0;font-weight:400">— {{firstname}} becomes their first name, {{link}} the app link</span></label>
+        <label class="wl-lbl" for="wl-body">Access email message <span style="text-transform:none;letter-spacing:0;font-weight:400">— {{firstname}} becomes their first name, {{link}} the app link</span></label>
         <textarea class="search" id="wl-body" rows="12" style="font-family:inherit;line-height:1.55;resize:vertical"></textarea>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.9rem">
           <button class="btn" id="wl-save">Save changes</button>
-          <button class="btn btn-key" id="wl-golive">Go live</button>
-          <button class="btn btn-go" id="wl-send">Send launch email</button>
+          <button class="btn btn-key" id="wl-golive">Open the beta</button>
+          <button class="btn btn-go" id="wl-send">Send access email</button>
         </div>
         <p class="meta" id="wl-send-status" style="margin-top:.8rem"></p>
       </div>
@@ -2273,8 +2273,8 @@ let WAITLIST = [], SETTINGS = {}, WL_LOADED = false;
 
 const DEMO_SETTINGS = {
   launched:false, launch_goal:1000, app_url:'',
-  launch_email_subject:'Halal Bridge is now live',
-  launch_email_body:'Assalamu alaykum {{firstname}},\n\nAlhamdulillah, Halal Bridge is now open.\n\nCreate your account here:\n{{link}}\n\nJazakAllah khair,\nThe Halal Bridge Team'
+  launch_email_subject:'Your Halal Bridge beta access is open',
+  launch_email_body:'Assalamu alaykum {{firstname}},\n\nAlhamdulillah, the Halal Bridge closed beta is now open.\n\nCreate your account here:\n{{link}}\n\nJazakAllah khair,\nThe Halal Bridge Team'
 };
 let _demoWl = null;
 function demoWaitlist(){
@@ -2298,7 +2298,7 @@ async function loadWaitlist(){
   const [w, st] = await Promise.all([ supabase.rpc('admin_waitlist'), supabase.rpc('admin_site_settings') ]);
   if (w.error || st.error) {
     const e = w.error || st.error;
-    $('wl-list').innerHTML = `<div class="empty"><div class="display">Couldn't load the waitlist</div>
+    $('wl-list').innerHTML = `<div class="empty"><div class="display">Couldn't load the registrations</div>
       <p>${esc(friendly(e))}. If this is the first time, run <code>supabase/waitlist.sql</code> in the Supabase SQL editor.</p></div>`;
     return;
   }
@@ -2323,11 +2323,11 @@ function paintWaitlist(){
   $('wl-bar-fill').style.width = pct + '%';
   $('wl-bar').setAttribute('aria-valuenow', pct);
   $('wl-bar-note').textContent = n >= goal
-    ? `Goal reached, alhamdulillah. You can go live whenever you're ready.`
+    ? `Goal reached, alhamdulillah. You can open the beta whenever you're ready.`
     : `${pct}% of the way there. ${(goal - n).toLocaleString()} more to go.`;
   $('wl-status-pill').className = 'pill ' + (live ? 'pill-ok' : 'pill-wait');
-  $('wl-status-pill').textContent = live ? 'Live' : 'Not live yet';
-  $('wl-golive').textContent = live ? 'Take offline' : 'Go live';
+  $('wl-status-pill').textContent = live ? 'Beta open' : 'Beta not open';
+  $('wl-golive').textContent = live ? 'Close the beta' : 'Open the beta';
   $('wl-golive').className = live ? 'btn btn-bad' : 'btn btn-key';
   $('c-waitlist').innerHTML = n ? `<span class="count">${n.toLocaleString()}</span>` : '';
 
@@ -2352,9 +2352,9 @@ function paintWaitlist(){
 
   const sent = WAITLIST.filter(x => x.launch_emailed_at).length;
   const bounced = WAITLIST.filter(x => x.launch_email_error).length;
-  if (live) $('wl-send-status').textContent = `Launch email sent to ${sent.toLocaleString()} of ${n.toLocaleString()}.`
+  if (live) $('wl-send-status').textContent = `Access email sent to ${sent.toLocaleString()} of ${n.toLocaleString()}.`
     + (bounced ? ` ${bounced} couldn't be delivered (see the CSV).` : '');
-  else $('wl-send-status').textContent = 'The launch email can be sent once you go live.';
+  else $('wl-send-status').textContent = 'The access email can be sent once the beta is open.';
 
   paintWaitlistList();
 }
@@ -2364,8 +2364,8 @@ function paintWaitlistList(){
   const rows = WAITLIST.filter(x => !q ||
     [x.name, x.email, x.city, x.state, x.phone].filter(Boolean).join(' ').toLowerCase().includes(q));
   if (!rows.length) {
-    $('wl-list').innerHTML = `<div class="empty"><div class="display">${q ? 'No one matches that' : 'No sign-ups yet'}</div>
-      <p>${q ? 'Try a different search.' : 'People appear here as soon as they join on the coming-soon page.'}</p></div>`;
+    $('wl-list').innerHTML = `<div class="empty"><div class="display">${q ? 'No one matches that' : 'No registrations yet'}</div>
+      <p>${q ? 'Try a different search.' : 'People appear here as soon as they register on the public page.'}</p></div>`;
     return;
   }
   const shown = rows.slice(0, 500);
@@ -2385,14 +2385,14 @@ $('wl-search').oninput = () => paintWaitlistList();
 $('wl-refresh').onclick = () => loadWaitlist();
 
 $('wl-export').onclick = () => {
-  if (!WAITLIST.length) return toast('No sign-ups yet');
+  if (!WAITLIST.length) return toast('No registrations yet');
   const cols = ['name','email','gender','age','city','state','phone','heard_from','created_at','launch_emailed_at','launch_email_error'];
-  const head = ['Name','Email','Brother/Sister','Age','City','State','Mobile','Heard from','Joined','Launch email sent','Launch email problem'];
+  const head = ['Name','Email','Brother/Sister','Age','City','State','Mobile','Heard from','Joined','Access email sent','Access email problem'];
   const csv = '﻿' + [head, ...WAITLIST.map(x => cols.map(c => x[c] ?? ''))]
     .map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([csv], { type:'text/csv;charset=utf-8' }));
-  a.download = 'halal-bridge-waitlist.csv'; a.click();
+  a.download = 'halal-bridge-beta-registrations.csv'; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 };
 
@@ -2419,13 +2419,13 @@ $('wl-golive').onclick = async () => {
   if (!live) {
     if (!/^https:\/\//.test(v.app_url)) { toast('Add the link to the live app first (starting with https://)', true); $('wl-app-url').focus(); return; }
     const goal = v.launch_goal, n = WAITLIST.length;
-    const msg = (n < goal ? `You have ${n.toLocaleString()} of ${goal.toLocaleString()} sign-ups.\n\n` : '')
-      + `Go live now?\n\nVisitors to the coming-soon page will be sent to:\n${v.app_url}`;
+    const msg = (n < goal ? `You have ${n.toLocaleString()} of ${goal.toLocaleString()} registrations.\n\n` : '')
+      + `Open the beta now?\n\nVisitors to the public page will be sent to:\n${v.app_url}`;
     if (!confirm(msg)) return;
-    if (await saveSettings({ launched: true })) toast('Halal Bridge is live. Now send the launch email.');
+    if (await saveSettings({ launched: true })) toast('The beta is open. Now send the access email.');
   } else {
-    if (!confirm('Take the site offline and show the coming-soon page again?')) return;
-    if (await saveSettings({ launched: false })) toast('Back to the coming-soon page');
+    if (!confirm('Close the beta and show the registration page again?')) return;
+    if (await saveSettings({ launched: false })) toast('Back to the registration page');
   }
 };
 
@@ -2434,11 +2434,11 @@ $('wl-golive').onclick = async () => {
 let SENDING = false;
 $('wl-send').onclick = async () => {
   if (SENDING) { SENDING = false; return; }
-  if (SETTINGS.launched !== true) { toast('Go live first', true); return; }
+  if (SETTINGS.launched !== true) { toast('Open the beta first', true); return; }
   const pending = WAITLIST.filter(x => !x.launch_emailed_at && !x.launch_email_error).length;
-  if (!pending) { toast('Everyone has already been sent the launch email'); return; }
+  if (!pending) { toast('Everyone has already been sent the access email'); return; }
   if (!await saveSettings()) return;
-  if (!confirm(`Send the launch email to ${pending.toLocaleString()} people?`)) return;
+  if (!confirm(`Send the access email to ${pending.toLocaleString()} people?`)) return;
 
   SENDING = true;
   $('wl-send').textContent = 'Stop sending';
@@ -2468,9 +2468,9 @@ $('wl-send').onclick = async () => {
     status.textContent = `Sent ${total.toLocaleString()}, then stopped: ${e.message}`;
   } finally {
     SENDING = false;
-    $('wl-send').textContent = 'Send launch email';
+    $('wl-send').textContent = 'Send access email';
     if (!DEMO) await loadWaitlist(); else paintWaitlist();
-    toast(`Launch email sent to ${total.toLocaleString()} ${total === 1 ? 'person' : 'people'}`);
+    toast(`Access email sent to ${total.toLocaleString()} ${total === 1 ? 'person' : 'people'}`);
   }
 };
 
